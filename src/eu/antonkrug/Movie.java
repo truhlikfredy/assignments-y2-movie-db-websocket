@@ -1,7 +1,5 @@
 package eu.antonkrug;
 
-import java.util.ArrayList;
-
 public class Movie {
 
 	private String									name;

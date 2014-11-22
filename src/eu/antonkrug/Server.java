@@ -4,35 +4,32 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 
-public class Database {
+public class Server {
 
 	public final static Boolean	VERBOSE	= true;
 
 	public static void main(String[] args) {
-		Database app = new Database();
-		app.importCSV();
+		Server svr = new Server();
+		svr.importCSV();
 	}
 
-	public ArrayList<Movie>					movies;
-	public ArrayList<MovieCategory>	categories;
-
-	public Database() {
-		this.movies = new ArrayList<Movie>();
-		this.categories = new ArrayList<MovieCategory>();
+	private DB db;
+	
+	public Server() {
+		db=DB.getInstance();
 	}
 
 	public void addMovie(String name) {
 		MovieCategory category = new MovieCategory(name);
-		int index = this.categories.indexOf(category);
+		int index = db.categories.indexOf(category);
 
 		if (index >= 0) {
-			this.categories.get(index).incTimesUsed();
+			db.categories.get(index).incTimesUsed();
 		} else {
-			this.categories.add(new MovieCategory(name));
-			Collections.sort(this.categories, MovieCategory.BY_NAME);
+			db.categories.add(new MovieCategory(name));
+			Collections.sort(db.categories, MovieCategory.BY_NAME);
 		}
 	}
 
