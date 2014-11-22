@@ -3,8 +3,6 @@ package eu.antonkrug;
 import java.util.ArrayList;
 
 public class Movie {
-	public static ArrayList<Movie>	movies			= new ArrayList<Movie>();
-	public static MovieCategories		categories	= new MovieCategories();
 
 	private String									name;
 	private Integer									year;
