@@ -109,4 +109,38 @@ public class DB implements Serializable {
 		return user;
 	}
 
+	public ArrayList<MovieGenre> getGenres() {
+		return genres;
+	}
+
+	public void setGenres(ArrayList<MovieGenre> genres) {
+		this.genres = genres;
+	}
+
+	public Boolean getGenresDirty() {
+		return genresDirty;
+	}
+
+	public void setGenresDirty(Boolean genresDirty) {
+		this.genresDirty = genresDirty;
+	}
+
+	public HashMap<Integer, Movie> getMovies() {
+		return movies;
+	}
+
+	public void setMovies(HashMap<Integer, Movie> movies) {
+		this.movies = movies;
+	}
+
+	public ArrayList<User> getUsers() {
+		return users;
+	}
+
+	public void setUsers(ArrayList<User> users) {
+		this.users = users;
+	}
+	
+
+
 }

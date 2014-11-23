@@ -5,10 +5,15 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Formatter;
 
-// low memory footprint and high performance libaries http://trove.starlight-systems.com/
+// Benchmark: http://cern.antonkrug.eu/
 
-import gnu.trove.list.array.TByteArrayList;
-import gnu.trove.list.array.TIntArrayList;
+// low memory footprint and high performance libaries http://trove.starlight-systems.com/
+//import gnu.trove.list.array.TByteArrayList;
+//import gnu.trove.list.array.TIntArrayList;
+
+//high performance scientific libaries https://dst.lbl.gov/ACSSoftware/colt/
+import cern.colt.list.IntArrayList;
+import cern.colt.list.ByteArrayList;
 
 /**
  * User class, contains sha-1 hashing mechanism for better password security.
@@ -19,21 +24,27 @@ import gnu.trove.list.array.TIntArrayList;
  */
 
 public class User {
-	private String					userName;
-	private String					firstName;
-	private String					lastName;
-	private String					password;
+	private String				userName;
+	private String				firstName;
+	private String				lastName;
+	private String				password;
+	
 	// sparse matrix using primitive types as vectors and minimal object overhead
-	private TIntArrayList		ratingMovie;
-	private TByteArrayList	ratingRating;
+	
+	// private TIntArrayList ratingMovie;
+	// private TByteArrayList ratingRating;
+	private IntArrayList	ratingMovie;
+	private ByteArrayList	ratingRating;
 
 	public User(String userName, String firstName, String lastName, String password) {
 		this.userName = userName;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.setPassword(password);
-		this.ratingMovie = new TIntArrayList();
-		this.ratingRating = new TByteArrayList();
+//		this.ratingMovie = new TIntArrayList();
+//		this.ratingRating = new TByteArrayList();
+		this.ratingMovie = new IntArrayList();
+		this.ratingRating = new ByteArrayList();
 	}
 
 	public String getUserName() {
