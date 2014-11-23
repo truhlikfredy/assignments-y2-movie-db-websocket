@@ -1,18 +1,12 @@
 package eu.antonkrug;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.Collections;
-
 public class Server {
 
 	public final static Boolean	VERBOSE	= true;
 
 	public static void main(String[] args) {
 		Server svr = new Server();
-		svr.importCSV();
+		svr.importData();
 	}
 
 	private DB db;
@@ -20,71 +14,14 @@ public class Server {
 	public Server() {
 		db=DB.getInstance();
 	}
-
-	public void addMovie(String name) {
-		MovieCategory category = new MovieCategory(name);
-		int index = db.categories.indexOf(category);
-
-		if (index >= 0) {
-			db.categories.get(index).incTimesUsed();
-		} else {
-			db.categories.add(new MovieCategory(name));
-			Collections.sort(db.categories, MovieCategory.BY_NAME);
-		}
+	
+	public void importData() {
+		FileCSV importer = new FileCSV("films_fx.csv","ratings_fx.csv");
+		importer.loadMovies();
+		importer.loadRatings();
 	}
 
-	public void importCSV() {
 
-		String csvFile = "films_fx.csv";
-		BufferedReader br = null;
-		String line = "";
 
-		try {
-
-			br = new BufferedReader(new FileReader(csvFile));
-			while ((line = br.readLine()) != null) {
-
-				String[] data = line.split(",");
-
-				int key = -1;
-				String name = "Not given";
-				int year = -1;
-				String genre = "Not categorized";
-
-				if (VERBOSE && (data.length == 0 || data.length > 4))
-					System.out.println("Wrong line, but still we can continue parsing: " + line);
-
-				try {
-					if (data.length > 0) key = Integer.parseInt(data[0]);
-					if (data.length > 2) year = Integer.parseInt(data[2]);
-				} catch (NumberFormatException e) {
-					if (VERBOSE) System.out.println("Wrong numbers in line, but we can continue: " + line);
-				}
-
-				if (data.length > 1) name = data[1];
-				if (data.length > 3) genre = data[3];
-
-				System.out.println(" Movie " + key + " name=" + name + " , year=" + year + " , gengre="
-						+ genre);
-
-			}
-
-		} catch (FileNotFoundException e) {
-			System.out.println("File is missing.");
-		} catch (IOException e) {
-			// different execption
-			e.printStackTrace();
-		} finally {
-			// when done, try to close file
-			if (br != null) {
-				try {
-					br.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		if (VERBOSE) System.out.println("Done");
-	}
 
 }

@@ -2,9 +2,15 @@ package eu.antonkrug;
 
 public class Movie {
 
-	private String									name;
-	private Integer									year;
-	private MovieCategory						category;
+	private String			name;
+	private Integer			year;
+	private MovieGenre	category;
+
+	public Movie(String name, Integer year, MovieGenre category) {
+		this.name = name;
+		this.year = year;
+		this.category = category;
+	}
 
 	public String getName() {
 		return name;
@@ -22,11 +28,11 @@ public class Movie {
 		this.year = year;
 	}
 
-	public MovieCategory getCategory() {
+	public MovieGenre getCategory() {
 		return category;
 	}
 
-	public void setCategory(MovieCategory category) {
+	public void setCategory(MovieGenre category) {
 		this.category = category;
 	}
 
@@ -35,5 +41,4 @@ public class Movie {
 		return "Movie [name=" + name + ", year=" + year + ", category=" + category + "]";
 	}
 
-	
 }
