@@ -6,7 +6,11 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Formatter;
 
 // low memory footprint and high performance libaries http://trove.starlight-systems.com/
-import gnu.trove.map.hash.TIntByteHashMap;
+
+import gnu.trove.list.array.TByteArrayList;
+import gnu.trove.list.array.TIntArrayList;
+import gnu.trove.list.linked.TByteLinkedList;
+import gnu.trove.list.linked.TIntLinkedList;
 
 /**
  * User class, contains sha-1 hashing mechanism for better password security.
@@ -21,14 +25,17 @@ public class User {
 	private String					firstName;
 	private String					lastName;
 	private String					password;
-	private TIntByteHashMap	ratings;
+	// sparse matrix using primitive types as vectors and minimal object overhead
+	private TIntArrayList		ratingMovie;
+	private TByteArrayList	ratingRating;
 
 	public User(String userName, String firstName, String lastName, String password) {
 		this.userName = userName;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.setPassword(password);
-		this.ratings = new TIntByteHashMap(60,(float)(0.9));
+		this.ratingMovie = new TIntArrayList();
+		this.ratingRating = new TByteArrayList();
 	}
 
 	public String getUserName() {
@@ -56,7 +63,12 @@ public class User {
 	}
 
 	public void addRating(int movie, byte rating) {
-		this.ratings.put(movie, rating);
+		this.ratingMovie.add(movie);
+		this.ratingRating.add(rating);
+	}
+
+	public byte getRating(int movie) {
+		return this.ratingRating.get(this.ratingMovie.indexOf(movie));
 	}
 
 	/**
