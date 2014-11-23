@@ -9,8 +9,6 @@ import java.util.Formatter;
 
 import gnu.trove.list.array.TByteArrayList;
 import gnu.trove.list.array.TIntArrayList;
-import gnu.trove.list.linked.TByteLinkedList;
-import gnu.trove.list.linked.TIntLinkedList;
 
 /**
  * User class, contains sha-1 hashing mechanism for better password security.

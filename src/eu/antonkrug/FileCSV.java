@@ -108,9 +108,12 @@ public class FileCSV {
 					
 					if (lastUser!=null) {
 						for (int i=0;i<data.length;i++) {
-							int rating = Integer.parseInt(data[i]);
-							if (rating != 0) {
-								lastUser.addRating(i+1, (byte)(rating));
+							
+							Rating rating = Rating.getRating(data[i]);
+							
+							//add all SEEN movies
+							if (rating != Rating.NOT_SEEN) {
+								lastUser.addRating(i+1, rating.getValue());
 							}
 						}
 					}
