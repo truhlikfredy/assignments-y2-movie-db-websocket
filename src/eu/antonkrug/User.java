@@ -24,60 +24,176 @@ import cern.colt.list.ByteArrayList;
  */
 
 public class User {
-	private String				userName;
 	private String				firstName;
 	private String				lastName;
 	private String				password;
-	
+	private int						ratingDirty;
+
 	// sparse matrix using primitive types as vectors and minimal object overhead
-	
+
 	// private TIntArrayList ratingMovie;
 	// private TByteArrayList ratingRating;
 	private IntArrayList	ratingMovie;
 	private ByteArrayList	ratingRating;
+	private String				userName;
 
+	// Dirty is not Boolean but int, so I could support different algorithms,
+	// merge sort for little bit dirty arrays and quick sort for very dirty
+	// arrays.
+
+	/**
+	 * Constructor for User class
+	 * 
+	 * @param userName
+	 * @param firstName
+	 * @param lastName
+	 * @param password
+	 */
 	public User(String userName, String firstName, String lastName, String password) {
 		this.userName = userName;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.setPassword(password);
-//		this.ratingMovie = new TIntArrayList();
-//		this.ratingRating = new TByteArrayList();
+		// this.ratingMovie = new TIntArrayList();
+		// this.ratingRating = new TByteArrayList();
 		this.ratingMovie = new IntArrayList();
 		this.ratingRating = new ByteArrayList();
+		this.ratingDirty = 0;
 	}
 
-	public String getUserName() {
-		return userName;
+	/**
+	 * Add new score rating to this users database
+	 * 
+	 * @param movie
+	 * @param rating
+	 */
+	public void addRating(int movie, byte rating) {
+		this.ratingMovie.add(movie);
+		this.ratingRating.add(rating);
+
+		this.ratingDirty++;
 	}
 
-	public void setUserName(String userName) {
-		this.userName = userName;
-	}
+	// *********** GETTERs ********************
 
 	public String getFirstName() {
 		return firstName;
-	}
-
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
 	}
 
 	public String getLastName() {
 		return lastName;
 	}
 
+	/**
+	 * Gettin just hash of password is not so risky as getting plain text
+	 * password.
+	 * 
+	 * @return
+	 */
+	public String getPassword() {
+		return password;
+	}
+
+	public byte getRating(int movie) {
+		// if it's dirty sort it first
+		if (ratingDirty > 0) sortRating();
+
+		return this.ratingRating.getQuick(this.ratingMovie.indexOf(movie));
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	/**
+	 * Check if the given password matches with the password stored in database
+	 * 
+	 * @param passString
+	 *          plain text version of the password
+	 * @return
+	 */
+	public Boolean matchPassword(String passString) {
+		return this.password.equals(this.toHash(passString));
+	}
+
+	/**
+	 * Check if the given password matches with the password stored in database
+	 * 
+	 * @param passString
+	 *          SHA-1 version of the password
+	 * @return
+	 */
+	public Boolean matchPasswordHash(String passHash) {
+		return this.password.equals(passHash);
+	}
+
+	// *********** SETTERs ********************
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}
 
-	public void addRating(int movie, byte rating) {
-		this.ratingMovie.add(movie);
-		this.ratingRating.add(rating);
+	public void setPassword(String password) {
+		this.password = this.toHash(password);
 	}
 
-	public byte getRating(int movie) {
-		return this.ratingRating.get(this.ratingMovie.indexOf(movie));
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
+	/**
+	 * Will call aproperiate sorting algorithm
+	 */
+	private void sortRating() {
+		// add merge sort and depending how dirty it is change algorithms
+		this.sortRatingQuickSort(0, this.ratingMovie.size());
+		this.ratingDirty = 0;
+	}
+
+	/**
+	 * Quick sort implementation for ratings
+	 * 
+	 * @param left
+	 * @param right
+	 */
+	private void sortRatingQuickSort(int left, int right) {
+		int index = left;
+		int j = right;
+		int pivot = this.ratingMovie.get((left + right) / 2);
+
+		while (index <= j) {
+			while (this.ratingMovie.get(index) < pivot)
+				index++;
+			while (this.ratingMovie.get(j) > pivot)
+				j--;
+
+			if (index <= j) this.swapRating(index++, j--);
+		}
+
+		if (left < index - 1) sortRatingQuickSort(left, index - 1);
+		if (right > index) sortRatingQuickSort(index, right);
+	}
+
+	/**
+	 * Swap both movie and rating, this way sorting will keep both of them aligned
+	 * and can be used by different sorting algorithms to perform swap
+	 * 
+	 * @param a
+	 * @param b
+	 */
+
+	private void swapRating(int a, int b) {
+		int tmp = this.ratingMovie.get(a);
+		this.ratingMovie.set(a, this.ratingMovie.get(b));
+		this.ratingMovie.set(b, tmp);
+
+		byte tmpb = this.ratingRating.get(a);
+		this.ratingRating.set(a, this.ratingRating.get(b));
+		this.ratingRating.set(b, tmpb);
 	}
 
 	/**
@@ -115,28 +231,6 @@ public class User {
 		}
 
 		return ret;
-	}
-
-	/**
-	 * Gettin just hash of password is not so risky as getting plain text
-	 * password.
-	 * 
-	 * @return
-	 */
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = this.toHash(password);
-	}
-
-	public Boolean matchPassword(String passString) {
-		return this.password.equals(this.toHash(passString));
-	}
-
-	public Boolean matchPasswordHash(String passHash) {
-		return this.password.equals(passHash);
 	}
 
 	@Override

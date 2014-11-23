@@ -47,6 +47,8 @@ public class FileXML {
 		try {
 			encoded = Files.readAllBytes(Paths.get(fileName));
 			XStream xstream = new XStream(new DomDriver());
+			
+			//no supress :-)
 			FileXML tmp = (FileXML)xstream.fromXML(new String(encoded, "UTF-8"));
 
 			DB db = DB.obj();
