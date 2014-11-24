@@ -3,23 +3,27 @@ package eu.antonkrug;
 public enum DBInputOutputEnum {
 
 	CSV(1) {
-		public void load() {
-			this.getDbio().loadCVS(this.getFileName());
+		public Boolean load() {
+			if (!this.isDbioOK()) return false;
+			return this.getDbio().loadCVS(this.getFileName());
 		}
 	},
 	DAT(3) {
-		public void load() {
-			this.getDbio().loadDAT(this.getFileName());
+		public Boolean load() {
+			if (!this.isDbioOK()) return false;
+			return this.getDbio().loadDAT(this.getFileName());
 		}
 	},
 	NULL(0) {
-		public void load() {
+		public Boolean load() {
 			System.out.println("ERROR: Tried to load unknow file!");
+			return false;
 		}
 	},
 	XML(2) {
-		public void load() {
-			this.getDbio().loadXML(this.getFileName());
+		public Boolean load() {
+			if (!this.isDbioOK()) return false;
+			return this.getDbio().loadXML(this.getFileName());
 		}
 	};
 
@@ -95,8 +99,9 @@ public enum DBInputOutputEnum {
 
 	/**
 	 * Abstract method for load, depedning on enum it will be doing something else
+	 * @return 
 	 */
-	public abstract void load();
+	public abstract Boolean load();
 
 	/**
 	 * @param dbio
@@ -122,4 +127,17 @@ public enum DBInputOutputEnum {
 		this.type = type;
 	}
 
+	/**
+	 * Check if dbio is set, to be sure it enum was called from getIntance
+	 * @return
+	 */
+	public Boolean isDbioOK() {
+		if (this.getDbio()==null) {
+			System.out.println("Tried used enum without getInstance!");
+			return false;
+		} else {
+			return true;
+		}		
+	}
+	
 }

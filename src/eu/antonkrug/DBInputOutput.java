@@ -46,7 +46,7 @@ public class DBInputOutput implements Serializable {
 	 * Will detect filenames for CSV and call calls on both of them.
 	 * @param fileName
 	 */
-	public void loadCVS(String fileName) {
+	public Boolean loadCVS(String fileName) {
 
 		// detect base and extension of filename
 		String base = "";
@@ -70,10 +70,12 @@ public class DBInputOutput implements Serializable {
 			
 		} else {
 			if (VERBOSE) System.out.println("Not CSV extension. Not loading the file");
+			return false;
 		}
+		return true;
 	}
 
-	private void loadCVSfile(String fileName) {
+	private Boolean loadCVSfile(String fileName) {
 
 		BufferedReader br = null;
 		String line = "";
@@ -165,9 +167,11 @@ public class DBInputOutput implements Serializable {
 
 		} catch (FileNotFoundException e) {
 			System.out.println("File is missing!");
+			return false;
 		} catch (IOException e) {
 			// different execption
 			e.printStackTrace();
+			return false;
 		} finally {
 			// when done, try to close file
 			if (br != null) {
@@ -180,9 +184,10 @@ public class DBInputOutput implements Serializable {
 			}
 		}
 		if (VERBOSE) System.out.println("File loaded.");
+		return true;		
 	}
 
-	public void loadDAT(String fileName) {
+	public Boolean loadDAT(String fileName) {
 		File file = new File(fileName);
 		FileInputStream fis;
 
@@ -197,24 +202,36 @@ public class DBInputOutput implements Serializable {
 
 					tmp = (DBInputOutput) ois.readObject();
 					this.returnFields(tmp);
-
+				
 				} catch (ClassNotFoundException e) {
 					System.out.println("Class not found!");
 					e.printStackTrace();
+					return false;
+					
 				}
 			} catch (IOException e) {
 				System.out.println("Not able to serialize");
 				e.printStackTrace();
+				return false;
+			} finally {
+				try {
+					fis.close();
+				} catch (IOException e) {
+					System.out.println("Can't close the file!");
+					e.printStackTrace();
+					return false;
+				}				
 			}
-
 		} catch (FileNotFoundException e) {
 			System.out.println("Not able to write to file: " + fileName);
 			e.printStackTrace();
+			return false;
 		}
-
+		
+		return true;
 	}
 
-	public void loadXML(String fileName) {
+	public Boolean loadXML(String fileName) {
 		byte[] encoded;
 
 		try {
@@ -229,8 +246,9 @@ public class DBInputOutput implements Serializable {
 		} catch (IOException e) {
 			System.out.println("ERROR: XML Load failed!");
 			e.printStackTrace();
+			return false;
 		}
-
+		return true;
 	}
 
 	/**
@@ -257,7 +275,7 @@ public class DBInputOutput implements Serializable {
 		db.setUsers(loaded.users);
 	}
 
-	public void saveDAT(String fileName) {
+	public Boolean saveDAT(String fileName) {
 		this.populateFields();
 
 		File file = new File(fileName);
@@ -275,15 +293,24 @@ public class DBInputOutput implements Serializable {
 				System.out.println("Not able to serialize");
 				e.printStackTrace();
 			}
+			
+			try {
+				fos.close();
+			} catch (IOException e) {
+				System.out.println("Can't close the file!");
+				e.printStackTrace();
+				return false;				
+			}
 
 		} catch (FileNotFoundException e) {
 			System.out.println("Not able to write to file: " + fileName);
 			e.printStackTrace();
-		}
-
+			return false;
+		} 
+		return true;
 	}
 
-	public void saveXML(String fileName) {
+	public Boolean saveXML(String fileName) {
 		this.populateFields();
 
 		XStream xstream = new XStream(new DomDriver());
@@ -297,8 +324,9 @@ public class DBInputOutput implements Serializable {
 		} catch (FileNotFoundException e) {
 			System.out.println("Not able to write to file: " + fileName);
 			e.printStackTrace();
+			return false;
 		}
-
+		return true;
 	}
 
 	/**

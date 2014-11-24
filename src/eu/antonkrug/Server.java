@@ -22,18 +22,21 @@ public class Server {
 	}
 	
 	public void importData() {
-		FileCSV importer = new FileCSV("films_fx.csv","ratings_fx.csv");
+//		FileCSV importer = new FileCSV("films_fx.csv","ratings_fx.csv");
 //		importer.loadMovies();
 //		importer.loadRatings();
 		
-		DBInputOutput xml = new DBInputOutput();
+//		DBInputOutput xml = new DBInputOutput();
 //		xml.saveXML("sasa");
 //		xml.loadXML("sasa");
-		xml.loadDat("test.dat");
-		DB.obj().compatibilityForEachUser();
-		DB.obj().purgeCacheForEachUser();
-		xml.saveXML("sasa2");
+//		xml.loadDat("test.dat");
+//		DB.obj().compatibilityForEachUser();
+//		DB.obj().purgeCacheForEachUser();
+//		xml.saveXML("sasa2");
 //		xml.saveDat("test.dat");
+		
+		DBInputOutputEnum data = DBInputOutputEnum.getInstance("movies.csv");
+		data.load();
 		
 		
 //		System.out.println(DB.obj().users.get(0).ratingMovie.get(0));
