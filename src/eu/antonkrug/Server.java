@@ -26,7 +26,7 @@ public class Server {
 //		importer.loadMovies();
 //		importer.loadRatings();
 		
-		FileXML xml = new FileXML();
+		DBInputOutput xml = new DBInputOutput();
 //		xml.saveXML("sasa");
 //		xml.loadXML("sasa");
 		xml.loadDat("test.dat");
