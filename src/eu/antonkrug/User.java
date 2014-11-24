@@ -29,6 +29,11 @@ import cern.colt.list.ByteArrayList;
 
 public class User implements Comparable<User>, Serializable {
 
+	/**
+	 * Generate new ID if you will change anything in this class, if you change
+	 * stuff often then comment it out and let the compiler generate one for you
+	 * which will change automaticly if you will do any modifications to the class
+	 */
 	private static final long	serialVersionUID	= 5878250555642530179L;
 
 	private static final int	CACHE_ENTRIES	= 100;

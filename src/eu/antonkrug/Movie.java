@@ -2,8 +2,19 @@ package eu.antonkrug;
 
 import java.io.Serializable;
 
+/**
+ * Movie class containg name, year and genre
+ * 
+ * @author Anton Krug
+ * 
+ */
 public class Movie implements Serializable{
 
+	/**
+	 * Generate new ID if you will change anything in this class, if you change
+	 * stuff often then comment it out and let the compiler generate one for you
+	 * which will change automaticly if you will do any modifications to the class
+	 */
 	private static final long	serialVersionUID	= -2527051303955958396L;
 	
 	private String			name;

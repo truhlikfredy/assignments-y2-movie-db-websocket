@@ -1,5 +1,11 @@
 package eu.antonkrug;
 
+/**
+ * Main Class which is running server instance of the application
+ * 
+ * @author Anton Krug
+ * 
+ */
 public class Server {
 
 	public final static Boolean	VERBOSE	= true;
@@ -22,10 +28,12 @@ public class Server {
 		
 		FileXML xml = new FileXML();
 //		xml.saveXML("sasa");
-		xml.loadXML("sasa");
+//		xml.loadXML("sasa");
+		xml.loadDat("test.dat");
 		DB.obj().compatibilityForEachUser();
-//		DB.obj().purgeCacheForEachUser();
-		xml.saveDat("test.dat");
+		DB.obj().purgeCacheForEachUser();
+		xml.saveXML("sasa2");
+//		xml.saveDat("test.dat");
 		
 		
 //		System.out.println(DB.obj().users.get(0).ratingMovie.get(0));

@@ -4,7 +4,9 @@ import java.io.Serializable;
 import java.util.Comparator;
 
 /**
- * Movie category class.
+ * Movie genre category class. It keeps tracks how many each category was used.
+ * Renaming of a Category can be done from one place and will affect all Movies
+ * using this Genre
  * 
  * @author Anton Krug
  * 
@@ -20,10 +22,10 @@ public class MovieGenre implements Serializable {
 	 * stuff often then comment it out and let the compiler generate one for you
 	 * which will change automaticly if you will do any modifications to the class
 	 */
-	private static final long											serialVersionUID	= 5470272780131654013L;
-	
-	private String																name;
-	private int																		timesUsed;
+	private static final long										serialVersionUID	= 5470272780131654013L;
+
+	private String															name;
+	private int																	timesUsed;
 
 	public MovieGenre(String name) {
 		this.name = name;
@@ -66,5 +68,5 @@ public class MovieGenre implements Serializable {
 	public String toString() {
 		return "MovieCategory [name=" + name + ", timesUsed=" + timesUsed + "]";
 	}
-	
+
 }

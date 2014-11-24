@@ -1,9 +1,17 @@
 package eu.antonkrug;
 
 import java.io.BufferedReader;
+
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+
+/**
+ * FileCSV class
+ * 
+ * @author Anton Krug
+ * 
+ */
 
 public class FileCSV {
 

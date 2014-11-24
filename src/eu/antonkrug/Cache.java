@@ -12,6 +12,11 @@ import java.util.Comparator;
 
 public class Cache implements Serializable {
 
+	/**
+	 * Generate new ID if you will change anything in this class, if you change
+	 * stuff often then comment it out and let the compiler generate one for you
+	 * which will change automaticly if you will do any modifications to the class
+	 */
 	private static final long	serialVersionUID	= 1215105944352599392L;
 	
 	public static final Comparator<Cache>	BY_SUM			= new BySum();
