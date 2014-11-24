@@ -6,6 +6,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Formatter;
 
 // Benchmark: http://cern.antonkrug.eu/
@@ -13,7 +14,6 @@ import java.util.Formatter;
 // low memory footprint and high performance libaries http://trove.starlight-systems.com/
 //import gnu.trove.list.array.TByteArrayList;
 //import gnu.trove.list.array.TIntArrayList;
-
 
 //high performance scientific libaries https://dst.lbl.gov/ACSSoftware/colt/
 import cern.colt.list.IntArrayList;
@@ -36,7 +36,7 @@ public class User implements Comparable<User>, Serializable {
 	 */
 	private static final long	serialVersionUID	= 5878250555642530179L;
 
-	private static final int	CACHE_ENTRIES	= 100;
+	private static final int	CACHE_ENTRIES			= 100;
 
 	private String						firstName;
 	private String						lastName;
@@ -88,12 +88,24 @@ public class User implements Comparable<User>, Serializable {
 
 		this.ratingDirty++;
 	}
-	
+
 	/**
 	 * Empties cache
 	 */
 	public void purgeCache() {
-		this.topCache = new ArrayList<Cache>();	
+		this.topCache = new ArrayList<Cache>();
+	}
+
+	private class calculateAllComparator implements Comparator<Cache> {
+		private int	count;
+
+		public calculateAllComparator(int count) {
+			this.count = count;
+		}
+
+		public int compare(Cache left, Cache right) {
+			return left.getSum() - right.getSum();
+		}
 	}
 
 	/**
@@ -138,9 +150,9 @@ public class User implements Comparable<User>, Serializable {
 
 		// go for each rating of both users and find matching ones, on matching ones
 		// calculated compatibility score
-		for (int left = 0; left < leftMovies.length ; left++) {
+		for (int left = 0; left < leftMovies.length; left++) {
 			// progress right pointer till we are on same or futher movie;
-			while (leftMovies[left] > rightMovies[right] && right < rightMovies.length-1)
+			while (right < rightMovies.length - 1 && leftMovies[left] > rightMovies[right])
 				right++;
 
 			// if they both rated the same movie
