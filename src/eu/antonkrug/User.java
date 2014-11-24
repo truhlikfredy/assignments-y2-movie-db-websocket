@@ -6,7 +6,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Formatter;
 
 // Benchmark: http://cern.antonkrug.eu/
@@ -96,18 +95,6 @@ public class User implements Comparable<User>, Serializable {
 		this.topCache = new ArrayList<Cache>();
 	}
 
-	private class calculateAllComparator implements Comparator<Cache> {
-		private int	count;
-
-		public calculateAllComparator(int count) {
-			this.count = count;
-		}
-
-		public int compare(Cache left, Cache right) {
-			return left.getSum() - right.getSum();
-		}
-	}
-
 	/**
 	 * Calculate compatibility for all and keep just few top
 	 */
@@ -160,7 +147,9 @@ public class User implements Comparable<User>, Serializable {
 				sum += leftScores[left] * rightScores[right];
 			}
 		}
+		
 		return sum;
+		
 	}
 
 	// *********** GETTERs ********************
