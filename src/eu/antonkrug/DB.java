@@ -140,7 +140,17 @@ public class DB implements Serializable {
 	public void setUsers(ArrayList<User> users) {
 		this.users = users;
 	}
+
+	public void compatibilityForEachUser() {
+		for (User user:this.users) {
+			user.calculateAll();
+		}
+	}
+
+	public void purgeCacheForEachUser() {
+		for (User user:this.users) {
+			user.purgeCache();
+		}
+	}
 	
-
-
 }

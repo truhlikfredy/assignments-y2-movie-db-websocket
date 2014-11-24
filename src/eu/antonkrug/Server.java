@@ -23,6 +23,16 @@ public class Server {
 		FileXML xml = new FileXML();
 //		xml.saveXML("sasa");
 		xml.loadXML("sasa");
+		DB.obj().compatibilityForEachUser();
+//		DB.obj().purgeCacheForEachUser();
+		xml.saveDat("test.dat");
+		
+		
+//		System.out.println(DB.obj().users.get(0).ratingMovie.get(0));
+//		User usr = DB.obj().getUsers().get(0);
+		User usr = DB.obj().getUsers().get(0);
+		usr.calculateAll();
+		System.out.println("Done.");		
 		
 	}
 

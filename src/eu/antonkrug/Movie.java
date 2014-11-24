@@ -1,7 +1,11 @@
 package eu.antonkrug;
 
-public class Movie {
+import java.io.Serializable;
 
+public class Movie implements Serializable{
+
+	private static final long	serialVersionUID	= -2527051303955958396L;
+	
 	private String			name;
 	private Integer			year;
 	private MovieGenre	category;

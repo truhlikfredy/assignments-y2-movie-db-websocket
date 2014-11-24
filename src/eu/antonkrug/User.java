@@ -1,8 +1,11 @@
 package eu.antonkrug;
 
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Formatter;
 
 // Benchmark: http://cern.antonkrug.eu/
@@ -10,6 +13,7 @@ import java.util.Formatter;
 // low memory footprint and high performance libaries http://trove.starlight-systems.com/
 //import gnu.trove.list.array.TByteArrayList;
 //import gnu.trove.list.array.TIntArrayList;
+
 
 //high performance scientific libaries https://dst.lbl.gov/ACSSoftware/colt/
 import cern.colt.list.IntArrayList;
@@ -23,19 +27,25 @@ import cern.colt.list.ByteArrayList;
  * 
  */
 
-public class User {
-	private String				firstName;
-	private String				lastName;
-	private String				password;
-	private int						ratingDirty;
+public class User implements Comparable<User>, Serializable {
+
+	private static final long	serialVersionUID	= 5878250555642530179L;
+
+	private static final int	CACHE_ENTRIES	= 100;
+
+	private String						firstName;
+	private String						lastName;
+	private String						password;
+	private int								ratingDirty;
 
 	// sparse matrix using primitive types as vectors and minimal object overhead
 
 	// private TIntArrayList ratingMovie;
 	// private TByteArrayList ratingRating;
-	private IntArrayList	ratingMovie;
-	private ByteArrayList	ratingRating;
-	private String				userName;
+	private IntArrayList			ratingMovie;
+	private ByteArrayList			ratingRating;
+	private String						userName;
+	private ArrayList<Cache>	topCache;
 
 	// Dirty is not Boolean but int, so I could support different algorithms,
 	// merge sort for little bit dirty arrays and quick sort for very dirty
@@ -73,9 +83,70 @@ public class User {
 
 		this.ratingDirty++;
 	}
+	
+	/**
+	 * Empties cache
+	 */
+	public void purgeCache() {
+		this.topCache = new ArrayList<Cache>();	
+	}
+
+	/**
+	 * Calculate compatibility for all and keep just few top
+	 */
+
+	public void calculateAll() {
+		this.purgeCache();
+		ArrayList<Cache> tmp = new ArrayList<Cache>();
+
+		for (User user : DB.obj().getUsers()) {
+			tmp.add(new Cache(user, this.calculateCompability(user)));
+		}
+		Collections.sort(tmp, Cache.BY_SUM_DESC);
+
+		for (int i = 0; i < CACHE_ENTRIES && i < tmp.size(); i++) {
+			this.topCache.add(tmp.get(i));
+		}
+	}
+
+	/**
+	 * Calculate compability for given user
+	 * 
+	 * @param againtToWhoom
+	 * @return
+	 */
+	public int calculateCompability(User againtToWhoom) {
+		if (this.equals(againtToWhoom)) return 0;
+
+		// will return quickly if sort is not necesary
+		sortRating();
+		int[] leftMovies = this.ratingMovie.elements();
+		byte[] leftScores = this.ratingRating.elements();
+
+		// will return quickly if sort is not necesary
+		againtToWhoom.sortRating();
+		int[] rightMovies = againtToWhoom.getRatingMovie().elements();
+		byte[] rightScores = againtToWhoom.getRatingRating().elements();
+
+		int right = 0;
+		int sum = 0;
+
+		// go for each rating of both users and find matching ones, on matching ones
+		// calculated compatibility score
+		for (int left = 0; left < leftMovies.length ; left++) {
+			// progress right pointer till we are on same or futher movie;
+			while (leftMovies[left] > rightMovies[right] && right < rightMovies.length-1)
+				right++;
+
+			// if they both rated the same movie
+			if (leftMovies[left] == rightMovies[right]) {
+				sum += leftScores[left] * rightScores[right];
+			}
+		}
+		return sum;
+	}
 
 	// *********** GETTERs ********************
-
 	public String getFirstName() {
 		return firstName;
 	}
@@ -95,10 +166,19 @@ public class User {
 	}
 
 	public byte getRating(int movie) {
-		// if it's dirty sort it first
-		if (ratingDirty > 0) sortRating();
+		// if it's dirty sort it first so we can use binary search
+		// will return quickly if sort is not necesary
+		sortRating();
 
-		return this.ratingRating.getQuick(this.ratingMovie.indexOf(movie));
+		return this.ratingRating.getQuick(this.ratingMovie.binarySearch(movie));
+	}
+
+	public IntArrayList getRatingMovie() {
+		return ratingMovie;
+	}
+
+	public ByteArrayList getRatingRating() {
+		return ratingRating;
 	}
 
 	public String getUserName() {
@@ -128,7 +208,6 @@ public class User {
 	}
 
 	// *********** SETTERs ********************
-
 	public void setFirstName(String firstName) {
 		this.firstName = firstName;
 	}
@@ -141,6 +220,14 @@ public class User {
 		this.password = this.toHash(password);
 	}
 
+	public void setRatingMovie(IntArrayList ratingMovie) {
+		this.ratingMovie = ratingMovie;
+	}
+
+	public void setRatingRating(ByteArrayList ratingRating) {
+		this.ratingRating = ratingRating;
+	}
+
 	public void setUserName(String userName) {
 		this.userName = userName;
 	}
@@ -148,10 +235,12 @@ public class User {
 	/**
 	 * Will call aproperiate sorting algorithm
 	 */
-	private void sortRating() {
-		// add merge sort and depending how dirty it is change algorithms
-		this.sortRatingQuickSort(0, this.ratingMovie.size());
-		this.ratingDirty = 0;
+	public void sortRating() {
+		if (ratingDirty > 0) {
+			// add merge sort and depending how dirty it is change algorithms
+			this.sortRatingQuickSort(0, this.ratingMovie.size());
+			this.ratingDirty = 0;
+		}
 	}
 
 	/**
@@ -237,6 +326,13 @@ public class User {
 	public String toString() {
 		return "User [userName=" + userName + ", firstName=" + firstName + ", lastName=" + lastName
 				+ "]";
+	}
+
+	@Override
+	public int compareTo(User user) {
+		// no other fields do not have to be compared, because userName should be
+		// unique and not 2 users with same username should be allowed
+		return this.userName.compareTo(user.userName);
 	}
 
 }
