@@ -7,23 +7,46 @@ public enum DBInputOutputEnum {
 			if (!this.isDbioOK()) return false;
 			return this.getDbio().loadCVS(this.getFileName());
 		}
+
+		public Boolean save() {
+			System.out.println("Save to CVS not supported");
+			return false;
+		}
 	},
+	
 	DAT(3) {
 		public Boolean load() {
 			if (!this.isDbioOK()) return false;
 			return this.getDbio().loadDAT(this.getFileName());
 		}
+		
+		public Boolean save() {
+			if (!this.isDbioOK()) return false;
+			return this.getDbio().loadDAT(this.getFileName());
+		}
 	},
+	
 	NULL(0) {
 		public Boolean load() {
 			System.out.println("ERROR: Tried to load unknow file!");
 			return false;
 		}
+
+		public Boolean save() {
+			System.out.println("ERROR: Tried to load unknow file!");
+			return false;
+		}
 	},
+	
 	XML(2) {
 		public Boolean load() {
 			if (!this.isDbioOK()) return false;
 			return this.getDbio().loadXML(this.getFileName());
+		}
+
+		public Boolean save() {
+			if (!this.isDbioOK()) return false;
+			return this.getDbio().saveXML(this.getFileName());
 		}
 	};
 
@@ -102,6 +125,12 @@ public enum DBInputOutputEnum {
 	 * @return 
 	 */
 	public abstract Boolean load();
+
+	/**
+	 * Abstract method for save, depedning on enum it will be doing something else
+	 * @return 
+	 */
+	public abstract Boolean save();
 
 	/**
 	 * @param dbio

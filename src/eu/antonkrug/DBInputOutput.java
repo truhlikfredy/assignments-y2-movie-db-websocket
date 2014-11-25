@@ -23,6 +23,8 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
  * DB Input Output class is focused on loading and saving data from/to files in
  * three different formats: CVS, XML and bytestreams (DAT extension).
  * 
+ * To-do: CVS export, JSON import/export
+ * 
  * @author Anton Krug
  * 
  */
