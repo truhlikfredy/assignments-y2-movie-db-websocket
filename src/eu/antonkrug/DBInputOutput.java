@@ -19,8 +19,6 @@ import java.util.HashMap;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
-//TODO ak nahram nejakym sposobom nastav loaded
-
 /**
  * DB Input Output class is focused on loading and saving data from/to files in
  * three different formats: CVS, XML and bytestreams (DAT extension).
@@ -73,8 +71,11 @@ public class DBInputOutput implements Serializable {
 		if (extension.toLowerCase().equals("csv")) {
 
 			// load both CVS's
-			this.loadCVSfile(base + "." + extension);
-			this.loadCVSfile(base + "-users." + extension);
+			if (!this.loadCVSfile(base + "." + extension)) return false;
+			if (!this.loadCVSfile(base + "-users." + extension)) return false;
+			
+			DB.obj().setLoaded(true);
+			DB.obj().setLoadedFileName(fileName);
 
 		} else {
 			if (VERBOSE) System.out.println("Not CSV extension. Not loading the file");
@@ -213,8 +214,12 @@ public class DBInputOutput implements Serializable {
 				DBInputOutput tmp;
 				try {
 
+					//actual reading
 					tmp = (DBInputOutput) ois.readObject();
 					this.returnFields(tmp);
+					
+					DB.obj().setLoaded(true);
+					DB.obj().setLoadedFileName(fileName);
 
 				} catch (ClassNotFoundException e) {
 					System.out.println("Class not found!");
@@ -255,6 +260,9 @@ public class DBInputOutput implements Serializable {
 			DBInputOutput tmp = (DBInputOutput) xstream.fromXML(new String(encoded, "UTF-8"));
 
 			this.returnFields(tmp);
+			
+			DB.obj().setLoaded(true);
+			DB.obj().setLoadedFileName(fileName);
 
 		} catch (IOException e) {
 			System.out.println("ERROR: XML Load failed!");

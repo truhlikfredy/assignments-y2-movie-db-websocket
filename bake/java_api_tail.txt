@@ -13,7 +13,7 @@
     for (API api : allEnums) {
       if (api.getValue() == number) return api;
     }
-    return null;
+    return API.NOT_VALID;
   }
 
   private final int value;

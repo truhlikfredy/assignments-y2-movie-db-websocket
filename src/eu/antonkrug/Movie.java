@@ -2,6 +2,7 @@ package eu.antonkrug;
 
 import java.io.Serializable;
 
+//TODO description
 /**
  * Movie class containg name, year and genre
  * 

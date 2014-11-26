@@ -48,6 +48,7 @@ public class DB implements Serializable {
 	private ArrayList<MovieGenre>		genres;
 	private Boolean									genresDirty;
 	private Boolean									loaded;
+	private String									loadedFileName;
 	private HashMap<Integer, Movie>	movies;
 	private ArrayList<User>					users;
 
@@ -57,9 +58,23 @@ public class DB implements Serializable {
 		this.genresDirty = false;
 		this.users = new ArrayList<User>();
 		this.loaded = false;
+		this.loadedFileName = "";
 	}
 
-	
+	/**
+	 * @return the loadedFile
+	 */
+	public String getLoadedFileName() {
+		return loadedFileName;
+	}
+
+	/**
+	 * @param loadedFile the loadedFile to set
+	 */
+	public void setLoadedFileName(String loadedFileName) {
+		this.loadedFileName = loadedFileName;
+	}
+
 	public void addMovie(int key, String name, int year, String genreName) {
 		// Find genre already created or create new one
 
@@ -129,14 +144,14 @@ public class DB implements Serializable {
 	/**
 	 * @return the loaded
 	 */
-	public Boolean getLoaded() {
+	public Boolean isLoaded() {
 		return loaded;
 	}
 
 	public Movie getMovie(int index) {
 		return this.movies.get(index);
 	}
-	
+
 	public HashMap<Integer, Movie> getMovies() {
 		return movies;
 	}
@@ -160,7 +175,8 @@ public class DB implements Serializable {
 	}
 
 	/**
-	 * @param loaded the loaded to set
+	 * @param loaded
+	 *          the loaded to set
 	 */
 	public void setLoaded(Boolean loaded) {
 		this.loaded = loaded;

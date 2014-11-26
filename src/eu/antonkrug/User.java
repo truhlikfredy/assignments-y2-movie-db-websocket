@@ -41,6 +41,7 @@ public class User implements Comparable<User>, Serializable {
 	private String						lastName;
 	private String						password;
 	private int								ratingDirty;
+	private Boolean 					loggedIn;
 
 	// sparse matrix using primitive types as vectors and minimal object overhead
 
@@ -50,6 +51,7 @@ public class User implements Comparable<User>, Serializable {
 	private ByteArrayList			ratingRating;
 	private String						userName;
 	private ArrayList<Cache>	topCache;
+	private ArrayList<Movie>  reccomended;
 
 	// Dirty is not Boolean but int, so I could support different algorithms,
 	// merge sort for little bit dirty arrays and quick sort for very dirty
@@ -73,6 +75,48 @@ public class User implements Comparable<User>, Serializable {
 		this.ratingMovie = new IntArrayList();
 		this.ratingRating = new ByteArrayList();
 		this.ratingDirty = 0;
+	}
+
+	/**
+	 * @return the reccomended
+	 */
+	public ArrayList<Movie> getReccomended() {
+		return reccomended;
+	}
+
+	/**
+	 * @param reccomended the reccomended to set
+	 */
+	public void setReccomended(ArrayList<Movie> reccomended) {
+		this.reccomended = reccomended;
+	}
+
+	/**
+	 * @return the ratingDirty
+	 */
+	public int getRatingDirty() {
+		return ratingDirty;
+	}
+
+	/**
+	 * @param ratingDirty the ratingDirty to set
+	 */
+	public void setRatingDirty(int ratingDirty) {
+		this.ratingDirty = ratingDirty;
+	}
+
+	/**
+	 * @return the loggedIn
+	 */
+	public Boolean getLoggedIn() {
+		return loggedIn;
+	}
+
+	/**
+	 * @param loggedIn the loggedIn to set
+	 */
+	public void setLoggedIn(Boolean loggedIn) {
+		this.loggedIn = loggedIn;
 	}
 
 	/**
@@ -105,9 +149,17 @@ public class User implements Comparable<User>, Serializable {
 		this.purgeCache();
 		ArrayList<Cache> tmp = new ArrayList<Cache>();
 
+		int bucket=0;
 		for (User user : DB.obj().getUsers()) {
-			tmp.add(new Cache(user, this.calculateCompability(user)));
+			int scoreSum = this.calculateCompability(user);
+			
+			//if there is enough good matches stop
+			if (scoreSum>Cache.CACHE_THRESHOLD) bucket+=scoreSum;
+			if (bucket>Cache.CACHE_BUCKET) break;
+			
+			tmp.add(new Cache(user, scoreSum));
 		}
+		
 		Collections.sort(tmp, Cache.BY_SUM_DESC);
 
 		for (int i = 0; i < CACHE_ENTRIES && i < tmp.size(); i++) {

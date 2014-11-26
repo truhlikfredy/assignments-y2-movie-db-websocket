@@ -10,7 +10,6 @@ import java.util.Comparator;
  * 
  */
 
-//TODO stop after threshold
 public class Cache implements Serializable {
 
 	/**
@@ -18,11 +17,14 @@ public class Cache implements Serializable {
 	 * stuff often then comment it out and let the compiler generate one for you
 	 * which will change automaticly if you will do any modifications to the class
 	 */
-	private static final long	serialVersionUID	= 1215105944352599392L;
-	
-	public static final Comparator<Cache>	BY_SUM			= new BySum();
-	public static final Comparator<Cache>	BY_SUM_DESC	= new BySumDesc();
-	public static final Comparator<Cache>	BY_USER			= new ByUser();
+	private static final long							serialVersionUID	= 1215105944352599392L;
+
+	public static final int								CACHE_THRESHOLD		= 200;
+	public static final int								CACHE_BUCKET			= 3000;
+
+	public static final Comparator<Cache>	BY_SUM						= new BySum();
+	public static final Comparator<Cache>	BY_SUM_DESC				= new BySumDesc();
+	public static final Comparator<Cache>	BY_USER						= new ByUser();
 
 	/**
 	 * Caches can be sorted by compatibility sum

@@ -12,6 +12,7 @@ package eu.antonkrug;
 public enum API {
   //@ff  to turn off formating
 
+  NOT_VALID(0),
   R_LOGIN(1),
   A_PASS_FAIL(2),
   A_IS_ADMIN(3),
@@ -35,6 +36,10 @@ public enum API {
   R_LOAD(20),
   R_SAVE(21),
   R_SHUTDOWN(22),
+  R_PURGE_CACHE(23),
+  R_CACHE_DIRTY(24),
+  R_LIST_GENRES(25),
+  R_EDIT_USER(26),
   ;
   //@fo   turns on back formating
 
@@ -50,7 +55,18 @@ public enum API {
     for (API api : allEnums) {
       if (api.getValue() == number) return api;
     }
-    return null;
+    return API.NOT_VALID;
+  }
+
+  public static API getEnum(Object obj) {
+  	int number;
+  	try {
+  	 number = Integer.parseInt(obj.toString());
+  	} catch (NumberFormatException e) {
+  		//if can't be converted into number return non valid enum
+  		return API.NOT_VALID;
+  	}
+  	return getEnum(number);
   }
 
   private final int value;
