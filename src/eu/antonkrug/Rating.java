@@ -9,9 +9,16 @@ package eu.antonkrug;
  */
 
 public enum Rating {
-	TERRIBLE((byte) (-5), "Terrible!"), DIDNT_LIKED((byte) (-3), "Didn't like it"), NOT_SEEN(
-			(byte) (0), "Haven't seent it"), OK((byte) (1), "OK"), LIKED((byte) (3), "Liked it!"), REALLY_LIKED(
-			(byte) (5), "Really liked it!");
+	//@ff  to turn off formating
+	
+	TERRIBLE((byte) (-5), "Terrible!"),
+	DIDNT_LIKED((byte) (-3), "Didn't like it"),
+	NOT_SEEN((byte) (0), "Haven't seent it"),
+	OK((byte) (1), "OK"), 
+	LIKED((byte) (3), "Liked it!"), 
+	REALLY_LIKED((byte) (5), "Really liked it!"),
+	;	
+	//@fo turns on back formating
 
 	private final byte						score;
 	private final String					text;

@@ -84,6 +84,8 @@ public class User implements Comparable<User>, Serializable {
 	public void addRating(int movie, byte rating) {
 		this.ratingMovie.add(movie);
 		this.ratingRating.add(rating);
+		
+		DB.obj().getMovie(movie).addRating(rating);
 
 		this.ratingDirty++;
 	}
@@ -113,6 +115,7 @@ public class User implements Comparable<User>, Serializable {
 		}
 	}
 
+	//TODO adjust score by the size
 	/**
 	 * Calculate compability for given user
 	 * 

@@ -47,6 +47,7 @@ public class DB implements Serializable {
 
 	private ArrayList<MovieGenre>		genres;
 	private Boolean									genresDirty;
+	private Boolean									loaded;
 	private HashMap<Integer, Movie>	movies;
 	private ArrayList<User>					users;
 
@@ -55,6 +56,35 @@ public class DB implements Serializable {
 		this.genres = new ArrayList<MovieGenre>();
 		this.genresDirty = false;
 		this.users = new ArrayList<User>();
+		this.loaded = false;
+	}
+
+	
+	public void addMovie(int key, String name, int year, String genreName) {
+		// Find genre already created or create new one
+
+		MovieGenre genre = this.findGenreByName(genreName);
+
+		if (genre == null) {
+			genre = new MovieGenre(genreName);
+			this.genres.add(genre);
+			this.genresDirty = true;
+		}
+		genre.incTimesUsed();
+
+		movies.put(key, new Movie(name, year, genre));
+	}
+
+	public User addUser(String userName, String firstName, String lastName, String password) {
+		User user = new User(userName, firstName, lastName, password);
+		this.users.add(user);
+		return user;
+	}
+
+	public void compatibilityForEachUser() {
+		for (User user : this.users) {
+			user.calculateAll();
+		}
 	}
 
 	/**
@@ -88,69 +118,60 @@ public class DB implements Serializable {
 		return null;
 	}
 
-	public void addMovie(int key, String name, int year, String genreName) {
-		// Find genre already created or create new one
-
-		MovieGenre genre = this.findGenreByName(genreName);
-
-		if (genre == null) {
-			genre = new MovieGenre(genreName);
-			this.genres.add(genre);
-			this.genresDirty = true;
-		}
-		genre.incTimesUsed();
-
-		movies.put(key, new Movie(name, year, genre));
-	}
-
-	public User addUser(String userName, String firstName, String lastName, String password) {
-		User user = new User(userName, firstName, lastName, password);
-		this.users.add(user);
-		return user;
-	}
-
 	public ArrayList<MovieGenre> getGenres() {
 		return genres;
-	}
-
-	public void setGenres(ArrayList<MovieGenre> genres) {
-		this.genres = genres;
 	}
 
 	public Boolean getGenresDirty() {
 		return genresDirty;
 	}
 
-	public void setGenresDirty(Boolean genresDirty) {
-		this.genresDirty = genresDirty;
+	/**
+	 * @return the loaded
+	 */
+	public Boolean getLoaded() {
+		return loaded;
 	}
 
+	public Movie getMovie(int index) {
+		return this.movies.get(index);
+	}
+	
 	public HashMap<Integer, Movie> getMovies() {
 		return movies;
-	}
-
-	public void setMovies(HashMap<Integer, Movie> movies) {
-		this.movies = movies;
 	}
 
 	public ArrayList<User> getUsers() {
 		return users;
 	}
 
+	public void purgeCacheForEachUser() {
+		for (User user : this.users) {
+			user.purgeCache();
+		}
+	}
+
+	public void setGenres(ArrayList<MovieGenre> genres) {
+		this.genres = genres;
+	}
+
+	public void setGenresDirty(Boolean genresDirty) {
+		this.genresDirty = genresDirty;
+	}
+
+	/**
+	 * @param loaded the loaded to set
+	 */
+	public void setLoaded(Boolean loaded) {
+		this.loaded = loaded;
+	}
+
+	public void setMovies(HashMap<Integer, Movie> movies) {
+		this.movies = movies;
+	}
+
 	public void setUsers(ArrayList<User> users) {
 		this.users = users;
 	}
 
-	public void compatibilityForEachUser() {
-		for (User user:this.users) {
-			user.calculateAll();
-		}
-	}
-
-	public void purgeCacheForEachUser() {
-		for (User user:this.users) {
-			user.purgeCache();
-		}
-	}
-	
 }

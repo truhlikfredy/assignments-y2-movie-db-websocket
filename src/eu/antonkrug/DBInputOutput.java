@@ -19,6 +19,8 @@ import java.util.HashMap;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
+//TODO ak nahram nejakym sposobom nastav loaded
+
 /**
  * DB Input Output class is focused on loading and saving data from/to files in
  * three different formats: CVS, XML and bytestreams (DAT extension).

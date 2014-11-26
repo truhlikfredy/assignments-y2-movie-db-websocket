@@ -1,0 +1,55 @@
+
+Because of the fact that usually you see more pages than give ratings. And often
+on these pages are reccomendations. This means that more often you will read
+the reccomendation than you will write. So I decided to calculated recomendations
+when change the data on write (giving rating) and keep stored results in cache.
+
+Ratings are kept in special format. Basicaly it's simple array of primitive types.
+
+Instead of Integer would int be used. But in reallity insted of int, just byte 
+is used for score (because int is 4x bigger and not needed). Plus not objects 
+overhead saves performance & memorry as well.
+
+Using libary meant for smaller footprint and
+faster accessing. Ratings are kept as 2d vector format in almost empty matrix. So 
+even if database is containing milion movies. If user rated just 10 movies, just 10 entries
+are kept in memorry. Some arrayList implementations resize to contain much more 
+reserved entries for future adds. This one still is still between  the smallest
+ones, but the speed is the fastest. Benchmark with HashMaps is here:
+
+http://cern.antonkrug.eu
+
+Becuase I kept 2 separate lists as form of 2d vector and they have to be kept 
+aligned. This means that I had to write my custom quick sort method. But then I 
+could use cerns binary search methods. These classes support of multiple levels 
+of dirtines. For little bit dirty list a merge sort could be used, for worst case
+scenario quick sort is there.
+
+As practice there is findGenreByName in DB class which is own binary search. 
+
+I implemented cache which will stop after some threshold (so enough high marked 
+matched users were found). So in case the database would be huge this would stop
+and woudn't process everything. Then results are ordered and just the cache is 
+populated with the best ones (again it's possible to change and tweek these thersholds).
+Even this cache is keept for each user it's limited in number, but populated with
+good matches. This cache could be set dirty and purge it by admin. So you could
+force to repopulate it from scratch maybe with new matches. Or just force existing
+matches to update their matching score.
+
+For future it's possible to be extended to contain very bad matches (negative 
+ones, if there is user which has exactly oposite taste in movies, this can be used
+and recomend exactly the movies he hates.
+
+Some classes like Cache or MovieGenre have comparators, so you can sort them
+by natural order, by usage or other factors.
+
+Some classes have serialVersionUID. Generate new ID if you will change
+anything in this class, if you change stuff often then comment it out and let
+the compiler generate one for you which will change automaticly if you will do
+any modifications to the class.
+
+CSV, XML, bytestream and JSON are used for data. CSV is meant for import, could be
+database storage so it can do load/save. But the object references can make it big
+so bytestream is prefered and setup as default. JSON is used for API and supports 
+API calls where it returns data in JSON, so other aplications can use this as data 
+export as well.

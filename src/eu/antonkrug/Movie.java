@@ -8,7 +8,7 @@ import java.io.Serializable;
  * @author Anton Krug
  * 
  */
-public class Movie implements Serializable{
+public class Movie implements Serializable {
 
 	/**
 	 * Generate new ID if you will change anything in this class, if you change
@@ -16,39 +16,91 @@ public class Movie implements Serializable{
 	 * which will change automaticly if you will do any modifications to the class
 	 */
 	private static final long	serialVersionUID	= -2527051303955958396L;
-	
-	private String			name;
-	private Integer			year;
-	private MovieGenre	category;
+
+	private MovieGenre				category;
+	private String						name;
+	private int								ratingCount;
+	private int								ratingSum;
+	private Integer						year;
 
 	public Movie(String name, Integer year, MovieGenre category) {
 		this.name = name;
 		this.year = year;
 		this.category = category;
+		this.ratingSum = 0;
+		this.ratingCount = 0;
 	}
 
-	public String getName() {
-		return name;
+	/**
+	 * Adds new rating to the sum and increments counter as well
+	 * 
+	 * @param value
+	 */
+	public void addRating(byte value) {
+		this.ratingSum += value;
+		this.ratingCount++;
 	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public Integer getYear() {
-		return year;
-	}
-
-	public void setYear(Integer year) {
-		this.year = year;
+	/**
+	 * Calculates and returns the average rating for this movie
+	 * @return
+	 */
+	public double getAverageRating() {
+		return (double) this.ratingSum / this.ratingCount;
 	}
 
 	public MovieGenre getCategory() {
 		return category;
 	}
 
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * @return the ratingCount
+	 */
+	public int getRatingCount() {
+		return ratingCount;
+	}
+
+	/**
+	 * @return the ratingSum
+	 */
+	public int getRatingSum() {
+		return ratingSum;
+	}
+
+	public Integer getYear() {
+		return year;
+	}
+
 	public void setCategory(MovieGenre category) {
 		this.category = category;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	/**
+	 * @param ratingCount
+	 *          the ratingCount to set
+	 */
+	public void setRatingCount(int ratingCount) {
+		this.ratingCount = ratingCount;
+	}
+
+	/**
+	 * @param ratingSum
+	 *          the ratingSum to set
+	 */
+	public void setRatingSum(int ratingSum) {
+		this.ratingSum = ratingSum;
+	}
+
+	public void setYear(Integer year) {
+		this.year = year;
 	}
 
 	@Override

@@ -32,6 +32,11 @@ public enum API {
   R_LIST_RATINGS(17),
   A_LIST_RATINGS(18),
   R_RATE(19),
+  R_LOAD(20),
+  R_SAVE(21),
+  R_SHUTDOWN(22),
+  R_RECOMEND(23),
+  A_RECOMEND(24),
   ;
   //@fo   turns on back formating
 

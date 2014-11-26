@@ -1,6 +1,8 @@
 package eu.antonkrug;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
@@ -23,6 +25,13 @@ public class Server extends WebSocketServer {
 
 	public final static Boolean	VERBOSE	= true;
 
+	/**
+	 * Outputs logging message on the console, will print out web socket
+	 * connection and time as well.
+	 * 
+	 * @param ws
+	 * @param txt
+	 */
 	private void log(WebSocket ws, String txt) {
 		System.out.println(new SimpleDateFormat("HH:mm:ss").format(new Date()) + " : "
 				+ ws.getRemoteSocketAddress() + " " + txt);
@@ -30,6 +39,7 @@ public class Server extends WebSocketServer {
 
 	/**
 	 * Checking if the port is open and not used
+	 * 
 	 * @param port
 	 * @return
 	 */
@@ -59,16 +69,46 @@ public class Server extends WebSocketServer {
 
 		return false;
 	}
+	
+  static class Message extends Thread {
 
-	public static void main(String[] args) {
+    public void run() {
+       System.out.println("Bye.");
+    }
+ }	
 
-		System.out.println(API.getEnum(100));
-		System.out.println(API.getEnum(2));
-		System.out.println(API.getEnum(1));
+	/**
+	 * The main method to kick off the server
+	 * @param args
+	 */
+	public static void main(String[] args) throws InterruptedException {
+		
+		Runtime runtime = Runtime.getRuntime();
+    runtime.addShutdownHook(new Message());
+    
+		// The port number. It's over 9000!! But let's check if it's free first.
+		int port = 9001;
+		if (Server.available(port)) {
+			Server svr = new Server(port);
+			svr.start();
 
-		// The port number. It's over 9000!!
-		Server svr = new Server(9001);
-		svr.start();
+			BufferedReader sysin = new BufferedReader( new InputStreamReader( System.in ) );
+      while ( true ) {      	
+              String in;
+							try {
+								in = sysin.readLine();
+								if( in.equals( "exit" ) ) {
+									svr.stop();
+									break;
+								}
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+      }
+
+		} else {
+			System.out.println("ERROR: Port " + port + " taken!");
+		}
 	}
 
 	private DB	db;
@@ -77,7 +117,8 @@ public class Server extends WebSocketServer {
 		super(new InetSocketAddress(port));
 
 		db = DB.getInstance();
-		System.out.println("WS on port " + port + " listening ");
+		System.out.println("WS on port " + port + " listening ... ");
+		System.out.println("To shutdown the server type: exit and press return. ");
 	}
 
 	public void importData() {
