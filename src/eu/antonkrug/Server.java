@@ -136,6 +136,10 @@ public class Server extends WebSocketServer {
 		System.out.println("To shutdown the server type: exit and press return. ");
 	}
 
+	private Boolean RLogIn(String name, String pass) {
+
+	}
+
 	public void importData() {
 		// FileCSV importer = new FileCSV("films_fx.csv","ratings_fx.csv");
 		// importer.loadMovies();
@@ -164,13 +168,10 @@ public class Server extends WebSocketServer {
 	@Override
 	public void onOpen(WebSocket ws, ClientHandshake ch) {
 		this.log(ws, "connected");
-		System.out.println("" + ws.getClass());
-		System.out.println("" + ws.getUserID());
 	}
 
 	@Override
 	public void onClose(WebSocket ws, int i, String string, boolean bln) {
-		System.out.println("" + ws.getUserID());
 		this.log(ws, "disconnected");
 	}
 
@@ -179,19 +180,9 @@ public class Server extends WebSocketServer {
 	public void onMessage(WebSocket ws, String string) {
 		this.log(ws, "got " + string);
 
-		// String s="[0,{\"1\":{\"2\":{\"3\":{\"4\":[5,{\"6\":7}]}}}}]";
-		JSONObject obj = (JSONObject) JSONValue.parse(string);
+		JSONObject json = (JSONObject) JSONValue.parse(string);
 
-		System.out.println(obj.getClass());
-		System.out.println(obj.containsKey("name"));
-		System.out.println(obj.get("t").toString());
-		System.out.println(obj.get("cislo"));
-		// JSONArray array = (JSONArray) (obj);
-
-		/*
-		 * switch (obj.get("t")) { case R_ }
-		 */
-		API request = API.getEnum(obj.get("t"));
+		API request = API.getEnum(json.get("t"));
 		System.out.println(request);
 
 		switch (request) {
@@ -229,10 +220,31 @@ public class Server extends WebSocketServer {
 				break;
 			case R_LIST_USERS:
 				break;
+
 			case R_LOAD:
+				if (ws.isAdmin()) {
+					DBInputOutputEnum data = DBInputOutputEnum.getInstance(json.get("file").toString());
+					data.load();
+				}
 				break;
+
 			case R_LOGIN:
+				if (VERBOSE)
+					this.log(ws, "Tries to log in:" + json.get("name") + " password " + json.get("pass"));
+
+				JSONObject jsonR = new JSONObject();
+				jsonR.put("t", API.A_PASS_FAIL);
+
+				if (this.RLogIn(json.get("name").toString(), json.get("pass").toString())) {
+					jsonR.put("val", true);				
+				} else {
+					jsonR.put("val", false);
+				}
+				
+				ws.send(jsonR.toString());
+
 				break;
+
 			case R_LOGOUT:
 				break;
 			case R_PURGE_CACHE:
@@ -245,41 +257,15 @@ public class Server extends WebSocketServer {
 				break;
 			case R_SAVE:
 				break;
-			case R_SHUTDOWN:
-				this.runServer=false;
-				ws.close();
-				break;
 			default:
 				break;
 
 		}
-		/*
-		 * switch (request) { case R_LOGIN: JSONObject obj = new JSONObject();
-		 * obj.put("t", API.A_PASS_FAIL); ws.send(obj.toString()); break;
-		 * 
-		 * case R_SHUTDOWN: int userID = ws.getUserID();
-		 * 
-		 * break;
-		 * 
-		 * 
-		 * }
-		 */
-		// because it extends hashmap but it doesn't have type paramter in class
-		// definition, if we could do this: JSONObject<String,Object> obj=new
-		// JSONObject<String,Object>(); it would fix the warrning but we can't so we
-		// have to just supress it
-		JSONObject objR = new JSONObject();
-		objR.put("name", "foo");
-		objR.put("text", string.toUpperCase());
-		objR.put("nickname", null);
-		ws.setUserID(100);
-
-		ws.send(objR.toString());
 	}
 
 	@Override
 	public void onError(WebSocket ws, Exception excptn) {
-		this.log(ws, " ERROR!");
+		this.log(ws, " ERROR! " + excptn.toString());
 	}
 
 }

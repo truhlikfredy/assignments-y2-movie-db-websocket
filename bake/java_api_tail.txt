@@ -16,6 +16,18 @@
     return API.NOT_VALID;
   }
 
+  public static API getEnum(Object obj) {
+    int number;
+    try {
+      number = Integer.parseInt(obj.toString());
+    } catch (NumberFormatException e) {
+      //if can't be converted into number return non valid enum
+      return API.NOT_VALID;
+    }
+    return getEnum(number);
+  }
+
+
   private final int value;
 
   /**
