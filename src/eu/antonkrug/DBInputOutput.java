@@ -23,7 +23,10 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
  * DB Input Output class is focused on loading and saving data from/to files in
  * three different formats: CVS, XML and bytestreams (DAT extension).
  * 
- * To-do: CVS export, JSON import/export
+ * CVS export is not implemented, CVS is easy to break, use XML to export to
+ * other applications. Or use JSON API. JSON is supported but not for files,
+ * just for the API, still you can do JSON requests to get all data you need in
+ * JSON format through the API.
  * 
  * @author Anton Krug
  * 
@@ -46,6 +49,7 @@ public class DBInputOutput implements Serializable {
 
 	/**
 	 * Will detect filenames for CSV and call calls on both of them.
+	 * 
 	 * @param fileName
 	 */
 	public Boolean loadCVS(String fileName) {
@@ -65,11 +69,11 @@ public class DBInputOutput implements Serializable {
 		}
 
 		if (extension.toLowerCase().equals("csv")) {
-			
+
 			// load both CVS's
 			this.loadCVSfile(base + "." + extension);
 			this.loadCVSfile(base + "-users." + extension);
-			
+
 		} else {
 			if (VERBOSE) System.out.println("Not CSV extension. Not loading the file");
 			return false;
@@ -166,6 +170,11 @@ public class DBInputOutput implements Serializable {
 				}
 
 			}
+			
+			if (!movies) {
+				lastUser = DB.obj().addUser("admin", "Anton", "Krug", "admin");				
+			}
+			
 
 		} catch (FileNotFoundException e) {
 			System.out.println("File is missing!");
@@ -186,7 +195,7 @@ public class DBInputOutput implements Serializable {
 			}
 		}
 		if (VERBOSE) System.out.println("File loaded.");
-		return true;		
+		return true;
 	}
 
 	public Boolean loadDAT(String fileName) {
@@ -204,12 +213,12 @@ public class DBInputOutput implements Serializable {
 
 					tmp = (DBInputOutput) ois.readObject();
 					this.returnFields(tmp);
-				
+
 				} catch (ClassNotFoundException e) {
 					System.out.println("Class not found!");
 					e.printStackTrace();
 					return false;
-					
+
 				}
 			} catch (IOException e) {
 				System.out.println("Not able to serialize");
@@ -222,14 +231,14 @@ public class DBInputOutput implements Serializable {
 					System.out.println("Can't close the file!");
 					e.printStackTrace();
 					return false;
-				}				
+				}
 			}
 		} catch (FileNotFoundException e) {
 			System.out.println("Not able to write to file: " + fileName);
 			e.printStackTrace();
 			return false;
 		}
-		
+
 		return true;
 	}
 
@@ -295,20 +304,20 @@ public class DBInputOutput implements Serializable {
 				System.out.println("Not able to serialize");
 				e.printStackTrace();
 			}
-			
+
 			try {
 				fos.close();
 			} catch (IOException e) {
 				System.out.println("Can't close the file!");
 				e.printStackTrace();
-				return false;				
+				return false;
 			}
 
 		} catch (FileNotFoundException e) {
 			System.out.println("Not able to write to file: " + fileName);
 			e.printStackTrace();
 			return false;
-		} 
+		}
 		return true;
 	}
 

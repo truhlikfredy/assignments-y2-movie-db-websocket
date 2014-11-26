@@ -1,0 +1,38 @@
+  ;
+  //@fo   turns on back formating
+
+  private static final API[]	allEnums	= values();
+
+  /**
+   * Helper to get back enum object if we know just a value
+   * 
+   * @param number
+   * @return
+   */
+  public static API getEnum(int number) {
+    for (API api : allEnums) {
+      if (api.getValue() == number) return api;
+    }
+    return null;
+  }
+
+  private final int value;
+
+  /**
+   * Constructor for this enum
+   * 
+   * @param value
+   */
+  API(int value) {
+    this.value = value;
+  }
+
+  /**
+   * Getting the value for enum
+   * 
+   * @return
+   */
+  public int getValue() {
+    return value;
+  }
+}
