@@ -6,20 +6,16 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Formatter;
 
+//high performance scientific libaries https://dst.lbl.gov/ACSSoftware/colt/
+import cern.colt.list.ByteArrayList;
+import cern.colt.list.IntArrayList;
 // Benchmark: http://cern.antonkrug.eu/
-
 // low memory footprint and high performance libaries http://trove.starlight-systems.com/
 //import gnu.trove.list.array.TByteArrayList;
 //import gnu.trove.list.array.TIntArrayList;
-
-
-import org.apache.commons.collections4.Predicate;
-
-//high performance scientific libaries https://dst.lbl.gov/ACSSoftware/colt/
-import cern.colt.list.IntArrayList;
-import cern.colt.list.ByteArrayList;
+import java.util.Formatter;
+import java.util.HashMap;
 
 /**
  * User class, contains sha-1 hashing mechanism for better password security.
@@ -235,6 +231,17 @@ public class User implements Comparable<User>, Serializable {
 		sortRating();
 
 		return this.ratingRating.getQuick(this.ratingMovie.binarySearch(movie));
+	}
+	
+	public HashMap<Movie, Byte> getRatings() {
+		HashMap<Movie, Byte> tmp = new HashMap<Movie, Byte>();
+		
+		DB db = DB.getInstance();
+		
+		for (int i=0;i<this.ratingMovie.size();i++) {
+			tmp.put(db.getMovie(this.ratingMovie.get(i)), this.ratingRating.get(i));
+		}
+		return tmp;
 	}
 
 	public IntArrayList getRatingMovie() {

@@ -21,6 +21,14 @@ import org.json.simple.JSONValue;
  * 
  * @author Anton Krug
  * 
+ * API request examples:
+ * {"t":1,"name":"Cust1","pass":"god"}    //log in
+ * {"t":4}  															//LOG OUT
+ * {"t":1,"name":"admin","pass":"admin"}  //log as admin
+ * {"t":17}														   	//see ratings
+ * {"t":25}															  //see genres
+ * {"t":15}															  //see movies
+ *  
  */
 public class Server extends WebSocketServer {
 
@@ -137,31 +145,6 @@ public class Server extends WebSocketServer {
 		System.out.println("To shutdown the server type: exit and press return. ");
 	}
 
-	public void importData() {
-		// FileCSV importer = new FileCSV("films_fx.csv","ratings_fx.csv");
-		// importer.loadMovies();
-		// importer.loadRatings();
-
-		// DBInputOutput xml = new DBInputOutput();
-		// xml.saveXML("sasa");
-		// xml.loadXML("sasa");
-		// xml.loadDat("test.dat");
-		// DB.obj().compatibilityForEachUser();
-		// DB.obj().purgeCacheForEachUser();
-		// xml.saveXML("sasa2");
-		// xml.saveDat("test.dat");
-
-		DBInputOutputEnum data = DBInputOutputEnum.getInstance("movies.csv");
-		data.load();
-
-		// System.out.println(DB.obj().users.get(0).ratingMovie.get(0));
-		// User usr = DB.obj().getUsers().get(0);
-		User usr = DB.obj().getUsers().get(0);
-		usr.calculateAll();
-		System.out.println("Done.");
-
-	}
-
 	@Override
 	public void onOpen(WebSocket ws, ClientHandshake ch) {
 		this.log(ws, "connected");
@@ -202,13 +185,23 @@ public class Server extends WebSocketServer {
 				break;
 			case R_ADD_USER:
 				break;
+				
 			case R_CACHE_DIRTY:
 				break;
+				
 			case R_EDIT_USER:
 				break;
+				
 			case R_GET_MOVIE:
+				if (ws.isLogged()) {
+					ws.send(JSONValue.toJSONString(db.getMovie(Integer.parseInt(json.get("id").toString()))));
+				}
 				break;
+				
 			case R_GET_USER:
+				if (ws.isLogged()) {
+					ws.send(JSONValue.toJSONString(db.getUsers().get(ws.getUserID())));
+				}
 				break;
 
 			case R_LIST_GENRES:
@@ -220,14 +213,15 @@ public class Server extends WebSocketServer {
 
 			case R_LIST_MOVIES:
 				if (ws.isLogged()) {
-					System.out.println(db.getMovies().values());
-					System.out.println(JSONObject.toJSONString(db.getMovies()));
-					String ret = JSONValue.toJSONString(db.getMovies());
-					ws.send(ret);
+					ws.send(JSONValue.toJSONString(db.getMovies()));
 				}
 				break;
 
 			case R_LIST_RATINGS:
+				if (ws.isLogged()) {
+					User user = db.getUsers().get(ws.getUserID());
+					ws.send(JSONValue.toJSONString(user.getRatings()));
+				}
 				break;
 				
 			case R_LIST_USERS:
