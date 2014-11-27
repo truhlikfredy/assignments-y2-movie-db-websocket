@@ -14,6 +14,9 @@ import java.util.Formatter;
 //import gnu.trove.list.array.TByteArrayList;
 //import gnu.trove.list.array.TIntArrayList;
 
+
+import org.apache.commons.collections4.Predicate;
+
 //high performance scientific libaries https://dst.lbl.gov/ACSSoftware/colt/
 import cern.colt.list.IntArrayList;
 import cern.colt.list.ByteArrayList;
@@ -41,7 +44,7 @@ public class User implements Comparable<User>, Serializable {
 	private String						lastName;
 	private String						password;
 	private int								ratingDirty;
-	private Boolean 					loggedIn;
+	private boolean 					loggedIn;
 
 	// sparse matrix using primitive types as vectors and minimal object overhead
 
@@ -108,14 +111,14 @@ public class User implements Comparable<User>, Serializable {
 	/**
 	 * @return the loggedIn
 	 */
-	public Boolean getLoggedIn() {
+	public boolean getLoggedIn() {
 		return loggedIn;
 	}
 
 	/**
 	 * @param loggedIn the loggedIn to set
 	 */
-	public void setLoggedIn(Boolean loggedIn) {
+	public void setLoggedIn(boolean loggedIn) {
 		this.loggedIn = loggedIn;
 	}
 
@@ -253,7 +256,7 @@ public class User implements Comparable<User>, Serializable {
 	 *          plain text version of the password
 	 * @return
 	 */
-	public Boolean matchPassword(String passString) {
+	public boolean matchPassword(String passString) {
 		return this.password.equals(this.toHash(passString));
 	}
 
@@ -264,7 +267,7 @@ public class User implements Comparable<User>, Serializable {
 	 *          SHA-1 version of the password
 	 * @return
 	 */
-	public Boolean matchPasswordHash(String passHash) {
+	public boolean matchPasswordHash(String passHash) {
 		return this.password.equals(passHash);
 	}
 

@@ -56,7 +56,7 @@ public class Cache implements Serializable {
 		}
 	}
 
-	private Boolean	dirty;
+	private boolean	dirty;
 	private int			sum;
 	private User		user;
 
@@ -75,7 +75,7 @@ public class Cache implements Serializable {
 	/**
 	 * @return the dirty
 	 */
-	public Boolean getDirty() {
+	public boolean getDirty() {
 		return dirty;
 	}
 
@@ -97,7 +97,7 @@ public class Cache implements Serializable {
 	 * @param dirty
 	 *          the dirty to set
 	 */
-	public void setDirty(Boolean dirty) {
+	public void setDirty(boolean dirty) {
 		this.dirty = dirty;
 	}
 

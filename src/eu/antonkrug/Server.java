@@ -13,10 +13,8 @@ import mws.WebSocket;
 import mws.handshake.ClientHandshake;
 import mws.server.WebSocketServer;
 
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
-import org.json.simple.parser.ParseException;
 
 /**
  * Main Class which is running server instance of the application
@@ -26,9 +24,10 @@ import org.json.simple.parser.ParseException;
  */
 public class Server extends WebSocketServer {
 
-	public final static Boolean	VERBOSE		= true;
+	public final static boolean	VERBOSE			= true;
+	public final static String	DEFAULT_DB	= "movies.csv";
 
-	public Boolean							runServer	= true;
+	private DB									db;
 
 	/**
 	 * Outputs logging message on the console, will print out web socket
@@ -104,6 +103,10 @@ public class Server extends WebSocketServer {
 		// The port number. It's over 9000!! But let's check if it's free first.
 		int port = 9001;
 		if (Server.available(port)) {
+
+			DBInputOutputEnum data = DBInputOutputEnum.getInstance(Server.DEFAULT_DB);
+			data.load();
+
 			Server svr = new Server(port);
 			svr.start();
 
@@ -112,7 +115,7 @@ public class Server extends WebSocketServer {
 				String in;
 				try {
 					in = sysin.readLine();
-					if (in.equals("exit") || !svr.runServer) {
+					if (in.equals("exit")) {
 						svr.stop();
 						break;
 					}
@@ -126,18 +129,12 @@ public class Server extends WebSocketServer {
 		}
 	}
 
-	private DB	db;
-
 	public Server(int port) {
 		super(new InetSocketAddress(port));
 
 		db = DB.getInstance();
 		System.out.println("WS on port " + port + " listening ... ");
 		System.out.println("To shutdown the server type: exit and press return. ");
-	}
-
-	private Boolean RLogIn(String name, String pass) {
-
 	}
 
 	public void importData() {
@@ -173,10 +170,11 @@ public class Server extends WebSocketServer {
 	@Override
 	public void onClose(WebSocket ws, int i, String string, boolean bln) {
 		this.log(ws, "disconnected");
+		db.RLogOut(ws.getUserID());
+		ws.setLogged(false);
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public void onMessage(WebSocket ws, String string) {
 		this.log(ws, "got " + string);
 
@@ -212,13 +210,30 @@ public class Server extends WebSocketServer {
 				break;
 			case R_GET_USER:
 				break;
+
 			case R_LIST_GENRES:
+				if (ws.isLogged()) {
+					String ret = JSONValue.toJSONString(db.getGenres());
+					ws.send(ret);
+				}
 				break;
+
 			case R_LIST_MOVIES:
+				if (ws.isLogged()) {
+					System.out.println(db.getMovies().values());
+					System.out.println(JSONObject.toJSONString(db.getMovies()));
+					String ret = JSONValue.toJSONString(db.getMovies());
+					ws.send(ret);
+				}
 				break;
+
 			case R_LIST_RATINGS:
 				break;
+				
 			case R_LIST_USERS:
+				if (ws.isLogged()) {
+					ws.send(JSONValue.toJSONString(db.getUsers()));
+				}
 				break;
 
 			case R_LOAD:
@@ -232,31 +247,54 @@ public class Server extends WebSocketServer {
 				if (VERBOSE)
 					this.log(ws, "Tries to log in:" + json.get("name") + " password " + json.get("pass"));
 
-				JSONObject jsonR = new JSONObject();
-				jsonR.put("t", API.A_PASS_FAIL);
+				int ret = db.RLogIn(json.get("name").toString(), json.get("pass").toString());
 
-				if (this.RLogIn(json.get("name").toString(), json.get("pass").toString())) {
-					jsonR.put("val", true);				
-				} else {
-					jsonR.put("val", false);
+				System.out.println(ret);
+
+				// if looged in setup some variables
+				if (ret != -1) {
+					ws.setLogged(true);
+					ws.setUserID(ret);
+					if (json.get("name").toString().equals("admin")) {
+						ws.setAdmin(true);
+					}
 				}
-				
-				ws.send(jsonR.toString());
-
+				ws.send("{\"t\":" + API.A_PASS_FAIL + ",\"val\":" + ((ret != -1) ? true : false) + "}");
 				break;
 
 			case R_LOGOUT:
+				db.RLogOut(ws.getUserID());
+				ws.setLogged(false);
 				break;
+
 			case R_PURGE_CACHE:
+				if (ws.isAdmin()) {
+					db.purgeCacheForEachUser();
+				}
 				break;
+
 			case R_RATE:
 				break;
+
 			case R_REMOVE_MOVIE:
+				if (ws.isAdmin()) {
+					db.getMovies().remove(Integer.parseInt(json.get("val").toString()));
+				}
 				break;
+
 			case R_REMOVE_USER:
+				if (ws.isAdmin()) {
+					db.getUsers().remove(Integer.parseInt(json.get("val").toString()));
+				}
 				break;
+
 			case R_SAVE:
+				if (ws.isAdmin()) {
+					DBInputOutputEnum data = DBInputOutputEnum.getInstance(json.get("name").toString());
+					data.save();
+				}
 				break;
+
 			default:
 				break;
 

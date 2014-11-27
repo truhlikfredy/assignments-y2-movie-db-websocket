@@ -40,10 +40,10 @@ public class DBInputOutput implements Serializable {
 	 */
 	private static final long				serialVersionUID	= -923545324660029399L;
 
-	public final static Boolean			VERBOSE						= true;
+	public final static boolean			VERBOSE						= true;
 
 	public ArrayList<MovieGenre>		genres;
-	public Boolean									genresDirty;
+	public boolean									genresDirty;
 	public HashMap<Integer, Movie>	movies;
 	public ArrayList<User>					users;
 
@@ -52,7 +52,7 @@ public class DBInputOutput implements Serializable {
 	 * 
 	 * @param fileName
 	 */
-	public Boolean loadCVS(String fileName) {
+	public boolean loadCVS(String fileName) {
 
 		// detect base and extension of filename
 		String base = "";
@@ -84,7 +84,7 @@ public class DBInputOutput implements Serializable {
 		return true;
 	}
 
-	private Boolean loadCVSfile(String fileName) {
+	private boolean loadCVSfile(String fileName) {
 
 		BufferedReader br = null;
 		String line = "";
@@ -93,10 +93,10 @@ public class DBInputOutput implements Serializable {
 
 			br = new BufferedReader(new FileReader(fileName));
 
-			Boolean userLine = true;
+			boolean userLine = true;
 			User lastUser = null;
-			Boolean detectFile = true;
-			Boolean movies = false;
+			boolean detectFile = true;
+			boolean movies = false;
 
 			while ((line = br.readLine()) != null) {
 				String[] data = line.split(",");
@@ -106,7 +106,10 @@ public class DBInputOutput implements Serializable {
 
 				// detect what type of file we are opening by the number of cols
 				if (detectFile) {
-					if (data.length > 4)
+					//find how many commas are inside the line
+					int count = line.length() - line.replace(",", "").length();
+
+					if (count > 3)
 						movies = false;
 					else movies = true;
 
@@ -201,7 +204,7 @@ public class DBInputOutput implements Serializable {
 		return true;
 	}
 
-	public Boolean loadDAT(String fileName) {
+	public boolean loadDAT(String fileName) {
 		File file = new File(fileName);
 		FileInputStream fis;
 
@@ -249,7 +252,7 @@ public class DBInputOutput implements Serializable {
 		return true;
 	}
 
-	public Boolean loadXML(String fileName) {
+	public boolean loadXML(String fileName) {
 		byte[] encoded;
 
 		try {
@@ -289,6 +292,11 @@ public class DBInputOutput implements Serializable {
 	 * accessed and used.
 	 */
 	private void returnFields(DBInputOutput loaded) {
+		
+		for (User user:loaded.users) {
+			user.setLoggedIn(false);
+		}
+		
 		DB db = DB.obj();
 		db.setGenres(loaded.genres);
 		db.setGenresDirty(loaded.genresDirty);
@@ -296,7 +304,7 @@ public class DBInputOutput implements Serializable {
 		db.setUsers(loaded.users);
 	}
 
-	public Boolean saveDAT(String fileName) {
+	public boolean saveDAT(String fileName) {
 		this.populateFields();
 
 		File file = new File(fileName);
@@ -328,10 +336,12 @@ public class DBInputOutput implements Serializable {
 			e.printStackTrace();
 			return false;
 		}
+		DB.obj().setLoadedFileName(fileName);
+		
 		return true;
 	}
 
-	public Boolean saveXML(String fileName) {
+	public boolean saveXML(String fileName) {
 		this.populateFields();
 
 		XStream xstream = new XStream(new DomDriver());
@@ -347,6 +357,8 @@ public class DBInputOutput implements Serializable {
 			e.printStackTrace();
 			return false;
 		}
+		DB.obj().setLoadedFileName(fileName);
+	
 		return true;
 	}
 

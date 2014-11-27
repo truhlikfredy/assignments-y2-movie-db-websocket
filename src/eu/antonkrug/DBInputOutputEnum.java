@@ -3,48 +3,48 @@ package eu.antonkrug;
 public enum DBInputOutputEnum {
 
 	CSV(1) {
-		public Boolean load() {
+		public boolean load() {
 			if (!this.isDbioOK()) return false;
 			return this.getDbio().loadCVS(this.getFileName());
 		}
 
-		public Boolean save() {
+		public boolean save() {
 			System.out.println("Save to CVS not supported");
 			return false;
 		}
 	},
 	
 	DAT(3) {
-		public Boolean load() {
+		public boolean load() {
 			if (!this.isDbioOK()) return false;
 			return this.getDbio().loadDAT(this.getFileName());
 		}
 		
-		public Boolean save() {
+		public boolean save() {
 			if (!this.isDbioOK()) return false;
 			return this.getDbio().loadDAT(this.getFileName());
 		}
 	},
 	
 	NULL(0) {
-		public Boolean load() {
+		public boolean load() {
 			System.out.println("ERROR: Tried to load unknow file!");
 			return false;
 		}
 
-		public Boolean save() {
+		public boolean save() {
 			System.out.println("ERROR: Tried to load unknow file!");
 			return false;
 		}
 	},
 	
 	XML(2) {
-		public Boolean load() {
+		public boolean load() {
 			if (!this.isDbioOK()) return false;
 			return this.getDbio().loadXML(this.getFileName());
 		}
 
-		public Boolean save() {
+		public boolean save() {
 			if (!this.isDbioOK()) return false;
 			return this.getDbio().saveXML(this.getFileName());
 		}
@@ -69,8 +69,9 @@ public enum DBInputOutputEnum {
 
 		// by extensions return correct ENUM
 		DBInputOutputEnum ret = DBInputOutputEnum.NULL;
+		
 
-		if (extension.equals("cvs")) ret = DBInputOutputEnum.CSV;
+		if (extension.equals("csv")) ret = DBInputOutputEnum.CSV;
 		if (extension.equals("xml")) ret = DBInputOutputEnum.XML;
 		if (extension.equals("dat")) ret = DBInputOutputEnum.DAT;
 
@@ -124,13 +125,13 @@ public enum DBInputOutputEnum {
 	 * Abstract method for load, depedning on enum it will be doing something else
 	 * @return 
 	 */
-	public abstract Boolean load();
+	public abstract boolean load();
 
 	/**
 	 * Abstract method for save, depedning on enum it will be doing something else
 	 * @return 
 	 */
-	public abstract Boolean save();
+	public abstract boolean save();
 
 	/**
 	 * @param dbio
@@ -160,7 +161,7 @@ public enum DBInputOutputEnum {
 	 * Check if dbio is set, to be sure it enum was called from getIntance
 	 * @return
 	 */
-	public Boolean isDbioOK() {
+	public boolean isDbioOK() {
 		if (this.getDbio()==null) {
 			System.out.println("Tried used enum without getInstance!");
 			return false;

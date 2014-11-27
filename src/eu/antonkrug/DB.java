@@ -2,8 +2,12 @@ package eu.antonkrug;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.Predicate;
 
 /**
  * Main database class, it will contain all data.
@@ -46,8 +50,8 @@ public class DB implements Serializable {
 	}
 
 	private ArrayList<MovieGenre>		genres;
-	private Boolean									genresDirty;
-	private Boolean									loaded;
+	private boolean									genresDirty;
+	private boolean									loaded;
 	private String									loadedFileName;
 	private HashMap<Integer, Movie>	movies;
 	private ArrayList<User>					users;
@@ -69,7 +73,8 @@ public class DB implements Serializable {
 	}
 
 	/**
-	 * @param loadedFile the loadedFile to set
+	 * @param loadedFile
+	 *          the loadedFile to set
 	 */
 	public void setLoadedFileName(String loadedFileName) {
 		this.loadedFileName = loadedFileName;
@@ -137,14 +142,14 @@ public class DB implements Serializable {
 		return genres;
 	}
 
-	public Boolean getGenresDirty() {
+	public boolean getGenresDirty() {
 		return genresDirty;
 	}
 
 	/**
 	 * @return the loaded
 	 */
-	public Boolean isLoaded() {
+	public boolean isLoaded() {
 		return loaded;
 	}
 
@@ -170,7 +175,7 @@ public class DB implements Serializable {
 		this.genres = genres;
 	}
 
-	public void setGenresDirty(Boolean genresDirty) {
+	public void setGenresDirty(boolean genresDirty) {
 		this.genresDirty = genresDirty;
 	}
 
@@ -178,7 +183,7 @@ public class DB implements Serializable {
 	 * @param loaded
 	 *          the loaded to set
 	 */
-	public void setLoaded(Boolean loaded) {
+	public void setLoaded(boolean loaded) {
 		this.loaded = loaded;
 	}
 
@@ -188,6 +193,30 @@ public class DB implements Serializable {
 
 	public void setUsers(ArrayList<User> users) {
 		this.users = users;
+	}
+
+	public int RLogIn(final String name, String pass) {
+
+		User user = CollectionUtils.find(this.users, new Predicate<User>() {
+			public boolean evaluate(User arg) {
+				return arg.getUserName().equals(name);
+			}
+		});
+		
+		if (user != null && !user.getLoggedIn()) {
+			if (user.matchPassword(pass)) {
+				user.setLoggedIn(true);
+				return users.indexOf(user);
+			}
+		}
+		return -1;
+	}
+
+	public void RLogOut(int userID) {
+		if (userID != -1) {
+			User user = users.get(userID);
+			user.setLoggedIn(false);
+		}
 	}
 
 }
