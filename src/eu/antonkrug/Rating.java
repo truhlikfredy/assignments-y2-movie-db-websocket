@@ -104,7 +104,11 @@ public enum Rating {
 	 * @return
 	 */
 	public static Rating getRating(String value) {
-		return getRating(Integer.parseInt(value));
+    try {
+  		return getRating(Integer.parseInt(value));
+    } catch (NumberFormatException e) {
+      return getRating(0);
+    }
 	}
 
 }

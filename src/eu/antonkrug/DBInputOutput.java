@@ -51,7 +51,7 @@ public class DBInputOutput implements Serializable {
 	public boolean									genresDirty;
 	public HashMap<Integer, Movie>	movies;
 	public ArrayList<User>					users;
-	
+
 	/**
 	 * Constructor inicialising fields
 	 */
@@ -59,7 +59,7 @@ public class DBInputOutput implements Serializable {
 		this.movies = new HashMap<Integer, Movie>();
 		this.genres = new ArrayList<MovieGenre>();
 		this.genresDirty = false;
-		this.users = new ArrayList<User>();	
+		this.users = new ArrayList<User>();
 	}
 
 	/**
@@ -116,7 +116,7 @@ public class DBInputOutput implements Serializable {
 		if (extension.toLowerCase().equals("csv")) {
 
 			DB.obj().purgeDB();
-			
+
 			// load both CVS's
 			if (!this.loadCSVfile(base + "." + extension)) return false;
 			if (!this.loadCSVfile(base + "-users." + extension)) return false;
@@ -433,8 +433,8 @@ public class DBInputOutput implements Serializable {
 	public boolean saveCSVMovies(String fileName) {
 		try {
 			File file = new File(fileName);
-			if (file.exists()) file.delete();		
-			
+			if (file.exists()) file.delete();
+
 			FileWriter writer = new FileWriter(fileName);
 
 			for (Map.Entry<Integer, Movie> entry : DB.obj().getMovies().entrySet()) {
@@ -470,41 +470,43 @@ public class DBInputOutput implements Serializable {
 	public boolean saveCSVUsers(String fileName) {
 		try {
 			File file = new File(fileName);
-			if (file.exists()) file.delete();		
-			
+			if (file.exists()) file.delete();
+
 			FileWriter writer = new FileWriter(fileName);
 
 			for (User user : DB.obj().getUsers()) {
-				writer.append(user.getUserName());
-				writer.append(',');
-				writer.append(user.getFirstName());
-				writer.append(',');
-				writer.append(user.getLastName());
-				writer.append(',');
-				writer.append(user.getPassword());
-				writer.append(",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,");
-				writer.append("\n");
+				//save everything admin, admin will be added manuall when loading anyway 
+				if (!user.getUserName().equals("admin")) {
+					writer.append(user.getUserName());
+					writer.append(',');
+					writer.append(user.getFirstName());
+					writer.append(',');
+					writer.append(user.getLastName());
+					writer.append(',');
+					writer.append(user.getPassword());
+					writer.append(",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,");
+					writer.append("\n");
 
-				int movieLast = 0;
-				boolean first = true;
-				for (int i = 0; i < user.getRatingMovie().size(); i++) {
-					int movie = user.getRatingMovie().get(i);
+					int movieLast = 0;
+					boolean first = true;
+					for (int i = 0; i < user.getRatingMovie().size(); i++) {
+						int movie = user.getRatingMovie().get(i);
 
-					// just fill space between the ratings
-					for (int j = movieLast; j < (movie - 1); j++) {
+						// just fill space between the ratings
+						for (int j = movieLast; j < (movie - 1); j++) {
+							if (!first) writer.append(',');
+							writer.append('0');
+							first = false;
+						}
+
 						if (!first) writer.append(',');
-						writer.append('0');
+						writer.append(((Integer) (int) (user.getRatingRating().get(i))).toString());
+
+						movieLast = movie;
 						first = false;
 					}
-
-					if (!first) writer.append(',');
-					writer.append(((Integer) (int) (user.getRatingRating().get(i))).toString());
-
-					movieLast = movie;
-					first = false;
+					writer.append("\n");
 				}
-				writer.append("\n");
-
 			}
 			writer.flush();
 			writer.close();

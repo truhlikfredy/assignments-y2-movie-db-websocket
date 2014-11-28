@@ -1,6 +1,7 @@
 #!/bin/bash
 
 #copyright Anton Krug 2014
+#requires inotify tools
 
 #watch changes of input files and trigger pre-bake proccess only when change are detected
 
