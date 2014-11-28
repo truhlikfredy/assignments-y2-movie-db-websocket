@@ -84,12 +84,15 @@ public class DBInputOutputTest {
 
 	@Test
 	public void testSaveDAT() {
+		//first convert it into teste format
 		DBInputOutputEnum.getInstance("JUnitTestData/movies.csv").load();
 		DBInputOutputEnum.getInstance("JUnitTestData/JUnitSave.dat").save();
 		
+		//empty database and check if it's really empty
 		DB.getInstance().purgeDB();
 		assertEquals(0,DB.getInstance().getUsers().size());
 		
+		//then load the converted format and check if everything is as it should
 		DBInputOutputEnum.getInstance("JUnitTestData/JUnitSave.dat").load();
 		this.checkDB();
 		this.checkDBPassowrds();
@@ -97,12 +100,15 @@ public class DBInputOutputTest {
 
 	@Test
 	public void testSaveCSV() {
+		//first convert it into teste format
 		DBInputOutputEnum.getInstance("JUnitTestData/movies.csv").load();
 		DBInputOutputEnum.getInstance("JUnitTestData/JUnitSave.csv").save();
 		
+		//empty database and check if it's really empty
 		DB.getInstance().purgeDB();
 		assertEquals(0,DB.getInstance().getUsers().size());
 		
+		//then load the converted format and check if everything is as it should
 		DBInputOutputEnum.getInstance("JUnitTestData/JUnitSave.csv").load();
 		this.checkDB();
 		
@@ -117,9 +123,11 @@ public class DBInputOutputTest {
 		DBInputOutputEnum.getInstance("JUnitTestData/movies.csv").load();
 		DBInputOutputEnum.getInstance("JUnitTestData/JUnitSave.xml").save();
 		
+		//empty database and check if it's really empty
 		DB.getInstance().purgeDB();
 		assertEquals(0,DB.getInstance().getUsers().size());
 		
+		//then load the converted format and check if everything is as it should
 		DBInputOutputEnum.getInstance("JUnitTestData/JUnitSave.xml").load();
 		this.checkDB();
 		this.checkDBPassowrds();
