@@ -41,6 +41,7 @@ public enum API {
   R_EDIT_USER(26),
   R_LIST_FILES(27),
   R_SEARCH(28),
+  A_LIST_GENRES(29),
   ;
   //@fo   turns on back formating
 

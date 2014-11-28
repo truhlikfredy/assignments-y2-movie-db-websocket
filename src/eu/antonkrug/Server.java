@@ -139,6 +139,15 @@ public class Server extends WebSocketServer {
 
 			DBInputOutputEnum data = DBInputOutputEnum.getInstance(Server.DEFAULT_DB);
 			data.load();
+			
+//			System.out.println(JSONValue.toJSONString(DB.obj().getGenres()));
+			
+//			JSONObject obj = new JSONObject();
+//			obj.put("v",DB.obj().getGenres());
+//			obj.put("t", API.A_LIST_GENRES.getValue());
+//			System.out.println(obj.toJSONString());
+			
+			
 
 //			data = DBInputOutputEnum.getInstance("data/movies.csv");
 //			data.convertTo("data/test.dat");
@@ -254,8 +263,11 @@ public class Server extends WebSocketServer {
 
 			case R_LIST_GENRES:
 				if (ws.isLogged()) {
-					String ret = JSONValue.toJSONString(db.getGenres());
-					ws.send(ret);
+					JSONObject obj = new JSONObject();
+					obj.put("v",db.getGenres());
+					obj.put("t", API.A_LIST_GENRES.getValue());
+					System.out.println(obj.toJSONString());
+					ws.send(obj.toJSONString());
 				}
 				break;
 

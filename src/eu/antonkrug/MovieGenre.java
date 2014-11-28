@@ -3,6 +3,9 @@ package eu.antonkrug;
 import java.io.Serializable;
 import java.util.Comparator;
 
+import org.json.simple.JSONAware;
+import org.json.simple.JSONObject;
+
 /**
  * Movie genre category class. It keeps tracks how many each category was used.
  * Renaming of a Category can be done from one place and will affect all Movies
@@ -12,7 +15,7 @@ import java.util.Comparator;
  * 
  */
 
-public class MovieGenre implements Serializable {
+public class MovieGenre implements Serializable, JSONAware {
 
 	public static final Comparator<MovieGenre>	BY_NAME						= new ByName();
 	public static final Comparator<MovieGenre>	BY_USAGE					= new ByUsage();
@@ -67,6 +70,21 @@ public class MovieGenre implements Serializable {
 	@Override
 	public String toString() {
 		return "MovieCategory [name=" + name + ", timesUsed=" + timesUsed + "]";
+	}
+
+	@Override
+	public String toJSONString() {
+    StringBuffer sb = new StringBuffer();
+    
+    sb.append("{");
+    sb.append("\"name\":");
+    sb.append("\"" + JSONObject.escape(name) + "\"");
+    sb.append(",");
+    sb.append("\"timesUsed\":");
+    sb.append(timesUsed);
+    sb.append("}");
+    
+    return sb.toString();		
 	}
 
 }
