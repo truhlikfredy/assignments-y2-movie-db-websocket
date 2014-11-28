@@ -2,7 +2,6 @@ package eu.antonkrug.test;
 
 import static org.junit.Assert.*;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import eu.antonkrug.DB;
@@ -11,13 +10,6 @@ import eu.antonkrug.DBInputOutputEnum;
 
 public class DBInputOutputTest {
 	
-	private DBInputOutput io;
-	
-	@Before
-	public void setUp() throws Exception {
-		this.io = new DBInputOutput();
-	}	
-
 	private void checkDB() {
 		DB db = DB.getInstance();
 
@@ -49,6 +41,7 @@ public class DBInputOutputTest {
 		// empty passwords are setup to secret when loaded in by CSV and other
 		// loading methods should have it already specified what password is 
 		assertTrue(db.getUsers().get(10).matchPassword("secret"));		
+		
 		assertTrue(db.getUsers().get(3).matchPassword("god"));
 	}
 
