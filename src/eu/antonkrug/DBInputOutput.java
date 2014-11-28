@@ -25,7 +25,9 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
  * DB Input Output class is focused on loading and saving data from/to files in
  * three different formats: CVS, XML and bytestreams (DAT extension).
  * 
- * CVS is easy to break, maybe use XML instead to export toother applications,
+ * CVS is easy to break, plus lost passwords, because we are keeping them encrypted
+ * so we can save them only encrypted, but load is made more for plain excel export
+ * so it's expecting unecrypted passwords, maybe use XML instead to export toother applications,
  * but it can get big. Or use bytestream save/load or JSON API. JSON is
  * supported but not for files, just for the API, still you can do JSON requests
  * to get or set all data you need in JSON format through the API.
@@ -105,7 +107,7 @@ public class DBInputOutput implements Serializable {
 			// load both CVS's
 			if (!this.loadCSVfile(base + "." + extension)) return false;
 			if (!this.loadCSVfile(base + "-users." + extension)) return false;
-
+		
 			DB.obj().setLoaded(true);
 			DB.obj().setLoadedFileName(fileName);
 
@@ -399,7 +401,7 @@ public class DBInputOutput implements Serializable {
 	public boolean saveCSV(String fileName) {
 		String base = DBInputOutput.fileBase(fileName);
 		String ext = DBInputOutput.fileExtension(fileName);
-
+		
 		// save both files at once
 		if (!saveCSVMovies(fileName)) return false;
 		if (!saveCSVUsers(base + "-users." + ext)) return false;
@@ -445,6 +447,7 @@ public class DBInputOutput implements Serializable {
 			return false;
 		}
 
+		if (VERBOSE) System.out.println("Saved movies to: " + fileName);
 		return true;
 	}
 
@@ -452,23 +455,31 @@ public class DBInputOutput implements Serializable {
 		try {
 			FileWriter writer = new FileWriter(fileName);
 
-			for (Map.Entry<Integer, Movie> entry : DB.obj().getMovies().entrySet()) {
-				Integer key = entry.getKey();
-				Movie movie = entry.getValue();
-
-				writer.append(key.toString());
+			for (User user : DB.obj().getUsers()) {
+				writer.append(user.getUserName());
 				writer.append(',');
-				writer.append(movie.getName());
+				writer.append(user.getFirstName());
 				writer.append(',');
-				writer.append(movie.getYear().toString());
+				writer.append(user.getLastName());
 				writer.append(',');
-
-				String genre = movie.getCategory().getName();
-				if (genre.equals("Not categorized")) genre = "";
-				writer.append(genre);
-
-				// writer.append("\r\n");
+				writer.append(user.getPassword());
+				writer.append(",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,");
 				writer.append("\n");
+
+				int movieLast = 1;
+				for (int i = 0; i < user.getRatingMovie().size(); i++) {
+					int movie = user.getRatingMovie().get(i);
+
+					for (int j = movieLast; j < (movie-1); j++)
+						writer.append(",0");
+
+					if (i>0) writer.append(',');
+					writer.append(((Integer) (int) (user.getRatingRating().get(i))).toString());
+					
+					movieLast=movie;
+				}
+				writer.append("\n");
+				
 			}
 			writer.flush();
 			writer.close();
@@ -477,6 +488,8 @@ public class DBInputOutput implements Serializable {
 			e.printStackTrace();
 			return false;
 		}
+		
+		if (VERBOSE) System.out.println("Saved user to: " + fileName);
 
 		return true;
 	}

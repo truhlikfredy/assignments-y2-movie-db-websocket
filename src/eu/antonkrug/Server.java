@@ -37,7 +37,7 @@ import org.json.simple.JSONValue;
 public class Server extends WebSocketServer {
 
 	public final static boolean	VERBOSE			= true;
-	public final static String	DEFAULT_DB	= "movies.csv";
+	public final static String	DEFAULT_DB	= "data/movies.csv";
 
 	private DB									db;
 
@@ -140,7 +140,7 @@ public class Server extends WebSocketServer {
 			DBInputOutputEnum data = DBInputOutputEnum.getInstance(Server.DEFAULT_DB);
 			data.load();
 
-			DBInputOutputEnum datas = DBInputOutputEnum.getInstance("test.csv");
+			DBInputOutputEnum datas = DBInputOutputEnum.getInstance("data/test.csv");
 			datas.save();
 
 			Server svr = new Server(port);

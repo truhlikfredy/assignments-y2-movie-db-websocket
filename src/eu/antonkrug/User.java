@@ -40,7 +40,7 @@ public class User implements Comparable<User>, Serializable {
 	private String						lastName;
 	private String						password;
 	private int								ratingDirty;
-	private boolean 					loggedIn;
+	private boolean						loggedIn;
 
 	// sparse matrix using primitive types as vectors and minimal object overhead
 
@@ -50,7 +50,7 @@ public class User implements Comparable<User>, Serializable {
 	private ByteArrayList			ratingRating;
 	private String						userName;
 	private ArrayList<Cache>	topCache;
-	private ArrayList<Movie>  reccomended;
+	private ArrayList<Movie>	reccomended;
 
 	// Dirty is not Boolean but int, so I could support different algorithms,
 	// merge sort for little bit dirty arrays and quick sort for very dirty
@@ -84,7 +84,8 @@ public class User implements Comparable<User>, Serializable {
 	}
 
 	/**
-	 * @param reccomended the reccomended to set
+	 * @param reccomended
+	 *          the reccomended to set
 	 */
 	public void setReccomended(ArrayList<Movie> reccomended) {
 		this.reccomended = reccomended;
@@ -98,7 +99,8 @@ public class User implements Comparable<User>, Serializable {
 	}
 
 	/**
-	 * @param ratingDirty the ratingDirty to set
+	 * @param ratingDirty
+	 *          the ratingDirty to set
 	 */
 	public void setRatingDirty(int ratingDirty) {
 		this.ratingDirty = ratingDirty;
@@ -112,7 +114,8 @@ public class User implements Comparable<User>, Serializable {
 	}
 
 	/**
-	 * @param loggedIn the loggedIn to set
+	 * @param loggedIn
+	 *          the loggedIn to set
 	 */
 	public void setLoggedIn(boolean loggedIn) {
 		this.loggedIn = loggedIn;
@@ -127,7 +130,7 @@ public class User implements Comparable<User>, Serializable {
 	public void addRating(int movie, byte rating) {
 		this.ratingMovie.add(movie);
 		this.ratingRating.add(rating);
-		
+
 		DB.obj().getMovie(movie).addRating(rating);
 
 		this.ratingDirty++;
@@ -148,17 +151,17 @@ public class User implements Comparable<User>, Serializable {
 		this.purgeCache();
 		ArrayList<Cache> tmp = new ArrayList<Cache>();
 
-		int bucket=0;
+		int bucket = 0;
 		for (User user : DB.obj().getUsers()) {
 			int scoreSum = this.calculateCompability(user);
-			
-			//if there is enough good matches stop
-			if (scoreSum>Cache.CACHE_THRESHOLD) bucket+=scoreSum;
-			if (bucket>Cache.CACHE_BUCKET) break;
-			
+
+			// if there is enough good matches stop
+			if (scoreSum > Cache.CACHE_THRESHOLD) bucket += scoreSum;
+			if (bucket > Cache.CACHE_BUCKET) break;
+
 			tmp.add(new Cache(user, scoreSum));
 		}
-		
+
 		Collections.sort(tmp, Cache.BY_SUM_DESC);
 
 		for (int i = 0; i < CACHE_ENTRIES && i < tmp.size(); i++) {
@@ -166,7 +169,9 @@ public class User implements Comparable<User>, Serializable {
 		}
 	}
 
-	//TODO adjust score by the size
+	// TODO adjust score by the number of ratings given user got, so it's better
+	// chance yeld recomendation
+	
 	/**
 	 * Calculate compability for given user
 	 * 
@@ -201,9 +206,9 @@ public class User implements Comparable<User>, Serializable {
 				sum += leftScores[left] * rightScores[right];
 			}
 		}
-		
+
 		return sum;
-		
+
 	}
 
 	// *********** GETTERs ********************
@@ -232,13 +237,13 @@ public class User implements Comparable<User>, Serializable {
 
 		return this.ratingRating.getQuick(this.ratingMovie.binarySearch(movie));
 	}
-	
+
 	public HashMap<Movie, Byte> getRatings() {
 		HashMap<Movie, Byte> tmp = new HashMap<Movie, Byte>();
-		
+
 		DB db = DB.getInstance();
-		
-		for (int i=0;i<this.ratingMovie.size();i++) {
+
+		for (int i = 0; i < this.ratingMovie.size(); i++) {
 			tmp.put(db.getMovie(this.ratingMovie.get(i)), this.ratingRating.get(i));
 		}
 		return tmp;
