@@ -1,6 +1,7 @@
 package eu.antonkrug;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.DatagramSocket;
@@ -21,14 +22,17 @@ import org.json.simple.JSONValue;
  * 
  * @author Anton Krug
  * 
- * API request examples:
- * {"t":1,"name":"Cust1","pass":"god"}    //log in
- * {"t":4}  															//LOG OUT
- * {"t":1,"name":"admin","pass":"admin"}  //log as admin
- * {"t":17}														   	//see ratings
- * {"t":25}															  //see genres
- * {"t":15}															  //see movies
- *  
+ * @ff
+ *   API request examples:
+ *    
+ *   {"t":1,"name":"Cust1","pass":"god"} 			//log in
+ *   {"t":4} 																	//LOG OUT 
+ *   {"t":1,"name":"admin","pass":"admin"} 		//log as admin 
+ *   {"t":17} 																//see ratings 
+ *   {"t":25} 																//see genres 
+ *   {"t":15} 																//see movies
+ * @fo
+ * 
  */
 public class Server extends WebSocketServer {
 
@@ -82,15 +86,36 @@ public class Server extends WebSocketServer {
 		return false;
 	}
 
+	/**
+	 * On Shutdown / QUIT do exiting procedure
+	 */
 	static class Message extends Thread {
 
 		public void run() {
 			System.out.println("Exiting...");
 			if (DB.obj().isLoaded()) {
-				// data was loaded, saving it
-
-				// TODO do rotation of files
+				// data was loaded / saved to some file, let's save it to the same file
+				// before exiting
 				String fileName = DB.obj().getLoadedFileName();
+
+				// do rotation of files
+				for (int i = 9; i >= 0; i--) {
+					File file = new File(fileName + "-" + i);
+					if (file.exists()) {
+						File fileTo = new File(fileName + "-" + (i + 1));
+						file.renameTo(fileTo);
+					}
+				}
+				// delete last
+				File file = new File(fileName + "-10");
+				if (file.exists()) file.delete();
+
+				// backup actual file
+				file = new File(fileName);
+				if (file.exists()) {
+					file.renameTo(new File(fileName + "-0"));
+				}
+
 				DBInputOutputEnum data = DBInputOutputEnum.getInstance(fileName);
 				data.save();
 			}
@@ -115,6 +140,9 @@ public class Server extends WebSocketServer {
 			DBInputOutputEnum data = DBInputOutputEnum.getInstance(Server.DEFAULT_DB);
 			data.load();
 
+			DBInputOutputEnum datas = DBInputOutputEnum.getInstance("test.csv");
+			datas.save();
+
 			Server svr = new Server(port);
 			svr.start();
 
@@ -137,6 +165,11 @@ public class Server extends WebSocketServer {
 		}
 	}
 
+	/**
+	 * Prepare server to start
+	 * 
+	 * @param port
+	 */
 	public Server(int port) {
 		super(new InetSocketAddress(port));
 
@@ -145,11 +178,17 @@ public class Server extends WebSocketServer {
 		System.out.println("To shutdown the server type: exit and press return. ");
 	}
 
+	/**
+	 * When client connects
+	 */
 	@Override
 	public void onOpen(WebSocket ws, ClientHandshake ch) {
 		this.log(ws, "connected");
 	}
 
+	/**
+	 * On client disconect
+	 */
 	@Override
 	public void onClose(WebSocket ws, int i, String string, boolean bln) {
 		this.log(ws, "disconnected");
@@ -157,6 +196,9 @@ public class Server extends WebSocketServer {
 		ws.setLogged(false);
 	}
 
+	/**
+	 * Respond to all request client sends.
+	 */
 	@Override
 	public void onMessage(WebSocket ws, String string) {
 		this.log(ws, "got " + string);
@@ -185,19 +227,19 @@ public class Server extends WebSocketServer {
 				break;
 			case R_ADD_USER:
 				break;
-				
+
 			case R_CACHE_DIRTY:
 				break;
-				
+
 			case R_EDIT_USER:
 				break;
-				
+
 			case R_GET_MOVIE:
 				if (ws.isLogged()) {
 					ws.send(JSONValue.toJSONString(db.getMovie(Integer.parseInt(json.get("id").toString()))));
 				}
 				break;
-				
+
 			case R_GET_USER:
 				if (ws.isLogged()) {
 					ws.send(JSONValue.toJSONString(db.getUsers().get(ws.getUserID())));
@@ -223,7 +265,7 @@ public class Server extends WebSocketServer {
 					ws.send(JSONValue.toJSONString(user.getRatings()));
 				}
 				break;
-				
+
 			case R_LIST_USERS:
 				if (ws.isLogged()) {
 					ws.send(JSONValue.toJSONString(db.getUsers()));
@@ -295,6 +337,10 @@ public class Server extends WebSocketServer {
 		}
 	}
 
+	/**
+	 * When error happens inside some methods while serving in this thread with
+	 * this worker.
+	 */
 	@Override
 	public void onError(WebSocket ws, Exception excptn) {
 		this.log(ws, " ERROR! " + excptn.toString());

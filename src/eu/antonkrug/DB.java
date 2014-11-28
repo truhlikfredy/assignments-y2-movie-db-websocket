@@ -55,6 +55,9 @@ public class DB implements Serializable {
 	private HashMap<Integer, Movie>	movies;
 	private ArrayList<User>					users;
 
+	/**
+	 * Contructor inicialising empty collections
+	 */
 	public DB() {
 		this.movies = new HashMap<Integer, Movie>();
 		this.genres = new ArrayList<MovieGenre>();
@@ -78,7 +81,15 @@ public class DB implements Serializable {
 	public void setLoadedFileName(String loadedFileName) {
 		this.loadedFileName = loadedFileName;
 	}
-
+	
+	/**
+	 * Add new movie into the collection
+	 * 
+	 * @param key
+	 * @param name
+	 * @param year
+	 * @param genreName
+	 */
 	public void addMovie(int key, String name, int year, String genreName) {
 		// Find genre already created or create new one
 
@@ -94,12 +105,24 @@ public class DB implements Serializable {
 		movies.put(key, new Movie(name, year, genre));
 	}
 
+	/**
+	 * Add new user into the collection
+	 * 
+	 * @param userName
+	 * @param firstName
+	 * @param lastName
+	 * @param password
+	 * @return
+	 */
 	public User addUser(String userName, String firstName, String lastName, String password) {
 		User user = new User(userName, firstName, lastName, password);
 		this.users.add(user);
 		return user;
 	}
 
+	/**
+	 * Calculate compability of each user
+	 */
 	public void compatibilityForEachUser() {
 		for (User user : this.users) {
 			user.calculateAll();
@@ -194,6 +217,13 @@ public class DB implements Serializable {
 		this.users = users;
 	}
 
+	/**
+	 * Request to log in, check if users exists and the password matches
+	 * 
+	 * @param name
+	 * @param pass
+	 * @return
+	 */
 	public int RLogIn(final String name, String pass) {
 
 		User user = CollectionUtils.find(this.users, new Predicate<User>() {
@@ -211,6 +241,11 @@ public class DB implements Serializable {
 		return -1;
 	}
 
+	/**
+	 * Request to log out user
+	 * 
+	 * @param userID
+	 */
 	public void RLogOut(int userID) {
 		if (userID != -1) {
 			User user = users.get(userID);

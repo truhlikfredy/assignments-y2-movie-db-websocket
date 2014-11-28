@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -15,6 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
@@ -23,10 +25,10 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
  * DB Input Output class is focused on loading and saving data from/to files in
  * three different formats: CVS, XML and bytestreams (DAT extension).
  * 
- * CVS export is not implemented, CVS is easy to break, use XML to export to
- * other applications. Or use JSON API. JSON is supported but not for files,
- * just for the API, still you can do JSON requests to get all data you need in
- * JSON format through the API.
+ * CVS is easy to break, maybe use XML instead to export toother applications,
+ * but it can get big. Or use bytestream save/load or JSON API. JSON is
+ * supported but not for files, just for the API, still you can do JSON requests
+ * to get or set all data you need in JSON format through the API.
  * 
  * @author Anton Krug
  * 
@@ -48,32 +50,62 @@ public class DBInputOutput implements Serializable {
 	public ArrayList<User>					users;
 
 	/**
-	 * Will detect filenames for CSV and call calls on both of them.
+	 * Get file extension from file name.
 	 * 
 	 * @param fileName
+	 * @return
 	 */
-	public boolean loadCVS(String fileName) {
-
-		// detect base and extension of filename
-		String base = "";
+	public static String fileExtension(String fileName) {
 		String extension = "";
 
 		int i = fileName.lastIndexOf('.');
 		int p = Math.max(fileName.lastIndexOf('/'), fileName.lastIndexOf('\\'));
 
 		if (i > p) {
-			base = fileName.substring(0, i);
 			extension = fileName.substring(i + 1);
+		}
+		return extension;
+	}
+
+	/**
+	 * Gets the base filename without extension from the file name
+	 * 
+	 * @param fileName
+	 * @return
+	 */
+	public static String fileBase(String fileName) {
+		String base = "";
+
+		int i = fileName.lastIndexOf('.');
+		int p = Math.max(fileName.lastIndexOf('/'), fileName.lastIndexOf('\\'));
+
+		if (i > p) {
+			base = fileName.substring(0, i);
 		} else {
 			base = fileName;
 		}
 
+		return base;
+	}
+
+	/**
+	 * Loading bundle will detect filenames for CSV and call calls on both of
+	 * them.
+	 * 
+	 * @param fileName
+	 */
+	public boolean loadCSV(String fileName) {
+
+		// detect base and extension of filename
+		String extension = DBInputOutput.fileExtension(fileName);
+		String base = DBInputOutput.fileBase(fileName);
+
 		if (extension.toLowerCase().equals("csv")) {
 
 			// load both CVS's
-			if (!this.loadCVSfile(base + "." + extension)) return false;
-			if (!this.loadCVSfile(base + "-users." + extension)) return false;
-			
+			if (!this.loadCSVfile(base + "." + extension)) return false;
+			if (!this.loadCSVfile(base + "-users." + extension)) return false;
+
 			DB.obj().setLoaded(true);
 			DB.obj().setLoadedFileName(fileName);
 
@@ -84,7 +116,13 @@ public class DBInputOutput implements Serializable {
 		return true;
 	}
 
-	private boolean loadCVSfile(String fileName) {
+	/**
+	 * Loading one specific CVS file. Will detect by content which one it is.
+	 * 
+	 * @param fileName
+	 * @return
+	 */
+	private boolean loadCSVfile(String fileName) {
 
 		BufferedReader br = null;
 		String line = "";
@@ -106,7 +144,7 @@ public class DBInputOutput implements Serializable {
 
 				// detect what type of file we are opening by the number of cols
 				if (detectFile) {
-					//find how many commas are inside the line
+					// find how many commas are inside the line
 					int count = line.length() - line.replace(",", "").length();
 
 					if (count > 3)
@@ -176,11 +214,10 @@ public class DBInputOutput implements Serializable {
 				}
 
 			}
-			
+
 			if (!movies) {
-				lastUser = DB.obj().addUser("admin", "Anton", "Krug", "admin");				
+				lastUser = DB.obj().addUser("admin", "Anton", "Krug", "admin");
 			}
-			
 
 		} catch (FileNotFoundException e) {
 			System.out.println("File is missing!");
@@ -204,6 +241,12 @@ public class DBInputOutput implements Serializable {
 		return true;
 	}
 
+	/**
+	 * Load bytestream data
+	 * 
+	 * @param fileName
+	 * @return
+	 */
 	public boolean loadDAT(String fileName) {
 		File file = new File(fileName);
 		FileInputStream fis;
@@ -217,10 +260,10 @@ public class DBInputOutput implements Serializable {
 				DBInputOutput tmp;
 				try {
 
-					//actual reading
+					// actual reading
 					tmp = (DBInputOutput) ois.readObject();
 					this.returnFields(tmp);
-					
+
 					DB.obj().setLoaded(true);
 					DB.obj().setLoadedFileName(fileName);
 
@@ -252,6 +295,12 @@ public class DBInputOutput implements Serializable {
 		return true;
 	}
 
+	/**
+	 * Load XML file
+	 * 
+	 * @param fileName
+	 * @return
+	 */
 	public boolean loadXML(String fileName) {
 		byte[] encoded;
 
@@ -263,7 +312,7 @@ public class DBInputOutput implements Serializable {
 			DBInputOutput tmp = (DBInputOutput) xstream.fromXML(new String(encoded, "UTF-8"));
 
 			this.returnFields(tmp);
-			
+
 			DB.obj().setLoaded(true);
 			DB.obj().setLoadedFileName(fileName);
 
@@ -292,11 +341,11 @@ public class DBInputOutput implements Serializable {
 	 * accessed and used.
 	 */
 	private void returnFields(DBInputOutput loaded) {
-		
-		for (User user:loaded.users) {
+
+		for (User user : loaded.users) {
 			user.setLoggedIn(false);
 		}
-		
+
 		DB db = DB.obj();
 		db.setGenres(loaded.genres);
 		db.setGenresDirty(loaded.genresDirty);
@@ -304,6 +353,12 @@ public class DBInputOutput implements Serializable {
 		db.setUsers(loaded.users);
 	}
 
+	/**
+	 * Save bytestream data
+	 * 
+	 * @param fileName
+	 * @return
+	 */
 	public boolean saveDAT(String fileName) {
 		this.populateFields();
 
@@ -337,10 +392,101 @@ public class DBInputOutput implements Serializable {
 			return false;
 		}
 		DB.obj().setLoadedFileName(fileName);
-		
+
 		return true;
 	}
 
+	public boolean saveCSV(String fileName) {
+		String base = DBInputOutput.fileBase(fileName);
+		String ext = DBInputOutput.fileExtension(fileName);
+
+		// save both files at once
+		if (!saveCSVMovies(fileName)) return false;
+		if (!saveCSVUsers(base + "-users." + ext)) return false;
+
+		DB.obj().setLoadedFileName(fileName);
+
+		return true;
+	}
+
+	/**
+	 * Saving CSV movies
+	 * 
+	 * @param fileName
+	 * @return
+	 */
+	public boolean saveCSVMovies(String fileName) {
+		try {
+			FileWriter writer = new FileWriter(fileName);
+
+			for (Map.Entry<Integer, Movie> entry : DB.obj().getMovies().entrySet()) {
+				Integer key = entry.getKey();
+				Movie movie = entry.getValue();
+
+				writer.append(key.toString());
+				writer.append(',');
+				writer.append(movie.getName());
+				writer.append(',');
+				writer.append(movie.getYear().toString());
+				writer.append(',');
+
+				String genre = movie.getCategory().getName();
+				if (genre.equals("Not categorized")) genre = "";
+				writer.append(genre);
+
+				// writer.append("\r\n");
+				writer.append("\n");
+			}
+			writer.flush();
+			writer.close();
+		} catch (IOException e) {
+			System.out.println("Can't write to file: " + fileName);
+			e.printStackTrace();
+			return false;
+		}
+
+		return true;
+	}
+
+	public boolean saveCSVUsers(String fileName) {
+		try {
+			FileWriter writer = new FileWriter(fileName);
+
+			for (Map.Entry<Integer, Movie> entry : DB.obj().getMovies().entrySet()) {
+				Integer key = entry.getKey();
+				Movie movie = entry.getValue();
+
+				writer.append(key.toString());
+				writer.append(',');
+				writer.append(movie.getName());
+				writer.append(',');
+				writer.append(movie.getYear().toString());
+				writer.append(',');
+
+				String genre = movie.getCategory().getName();
+				if (genre.equals("Not categorized")) genre = "";
+				writer.append(genre);
+
+				// writer.append("\r\n");
+				writer.append("\n");
+			}
+			writer.flush();
+			writer.close();
+		} catch (IOException e) {
+			System.out.println("Can't write to file: " + fileName);
+			e.printStackTrace();
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Save to XML file
+	 * 
+	 * @param fileName
+	 * @return
+	 */
 	public boolean saveXML(String fileName) {
 		this.populateFields();
 
@@ -358,7 +504,7 @@ public class DBInputOutput implements Serializable {
 			return false;
 		}
 		DB.obj().setLoadedFileName(fileName);
-	
+
 		return true;
 	}
 

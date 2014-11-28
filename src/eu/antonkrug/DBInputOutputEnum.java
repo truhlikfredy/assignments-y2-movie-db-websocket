@@ -5,12 +5,12 @@ public enum DBInputOutputEnum {
 	CSV(1) {
 		public boolean load() {
 			if (!this.isDbioOK()) return false;
-			return this.getDbio().loadCVS(this.getFileName());
+			return this.getDbio().loadCSV(this.getFileName());
 		}
 
 		public boolean save() {
-			System.out.println("Save to CVS not supported");
-			return false;
+			if (!this.isDbioOK()) return false;
+			return this.getDbio().saveCSV(this.getFileName());
 		}
 	},
 	
@@ -58,14 +58,7 @@ public enum DBInputOutputEnum {
 	 */
 	public static DBInputOutputEnum getInstance(String fileName) {
 		// detect extension of file
-		String extension = "";
-
-		int i = fileName.lastIndexOf('.');
-		int p = Math.max(fileName.lastIndexOf('/'), fileName.lastIndexOf('\\'));
-
-		if (i > p) {
-			extension = fileName.substring(i + 1).toLowerCase();
-		}
+		String extension = DBInputOutput.fileExtension(fileName);
 
 		// by extensions return correct ENUM
 		DBInputOutputEnum ret = DBInputOutputEnum.NULL;
