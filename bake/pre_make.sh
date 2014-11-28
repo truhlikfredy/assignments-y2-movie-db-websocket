@@ -16,4 +16,5 @@ done
 cat java_api_tail.txt >> java_api.java
 
 cp java_api.java ../src/eu/antonkrug/API.java
+cp bundle.js ../web-client/js/bundle.js
 

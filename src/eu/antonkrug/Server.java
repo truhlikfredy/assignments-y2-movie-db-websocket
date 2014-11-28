@@ -22,15 +22,11 @@ import org.json.simple.JSONValue;
  * 
  * @author Anton Krug
  * 
- * @ff
- *   API request examples:
- *    
- *   {"t":1,"name":"Cust1","pass":"god"} 			//log in
- *   {"t":4} 																	//LOG OUT 
- *   {"t":1,"name":"admin","pass":"admin"} 		//log as admin 
- *   {"t":17} 																//see ratings 
- *   {"t":25} 																//see genres 
- *   {"t":15} 																//see movies
+ * @ff API request examples:
+ * 
+ *     {"t":1,"name":"Cust1","pass":"god"} //log in {"t":4} //LOG OUT
+ *     {"t":1,"name":"admin","pass":"admin"} //log as admin {"t":17} //see
+ *     ratings {"t":25} //see genres {"t":15} //see movies
  * @fo
  * 
  */
@@ -140,8 +136,8 @@ public class Server extends WebSocketServer {
 			DBInputOutputEnum data = DBInputOutputEnum.getInstance(Server.DEFAULT_DB);
 			data.load();
 
-			DBInputOutputEnum datas = DBInputOutputEnum.getInstance("data/test.csv");
-			datas.save();
+//			DBInputOutputEnum datas = DBInputOutputEnum.getInstance("data/test.csv");
+//			datas.save();
 
 			Server svr = new Server(port);
 			svr.start();
@@ -285,7 +281,7 @@ public class Server extends WebSocketServer {
 
 				int ret = db.RLogIn(json.get("name").toString(), json.get("pass").toString());
 
-				System.out.println(ret);
+				// System.out.println(ret);
 
 				// if looged in setup some variables
 				if (ret != -1) {
@@ -295,7 +291,8 @@ public class Server extends WebSocketServer {
 						ws.setAdmin(true);
 					}
 				}
-				ws.send("{\"t\":" + API.A_PASS_FAIL + ",\"val\":" + ((ret != -1) ? true : false) + "}");
+				ws.send("{\"t\":" + API.A_PASS_FAIL.getValue() + ",\"v\":" + ((ret != -1) ? true : false)
+						+ ",\"admin\":" + ws.isAdmin() + "}");
 				break;
 
 			case R_LOGOUT:
