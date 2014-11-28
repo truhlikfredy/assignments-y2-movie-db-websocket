@@ -25,12 +25,13 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
  * DB Input Output class is focused on loading and saving data from/to files in
  * three different formats: CVS, XML and bytestreams (DAT extension).
  * 
- * CVS is easy to break, plus lost passwords, because we are keeping them encrypted
- * so we can save them only encrypted, but load is made more for plain excel export
- * so it's expecting unecrypted passwords, maybe use XML instead to export toother applications,
- * but it can get big. Or use bytestream save/load or JSON API. JSON is
- * supported but not for files, just for the API, still you can do JSON requests
- * to get or set all data you need in JSON format through the API.
+ * CVS is easy to break, plus lost passwords, because we are keeping them
+ * encrypted so we can save them only encrypted, but load is made more for plain
+ * excel export so it's expecting unecrypted passwords, maybe use XML instead to
+ * export toother applications, but it can get big. Or use bytestream save/load
+ * or JSON API. JSON is supported but not for files, just for the API, still you
+ * can do JSON requests to get or set all data you need in JSON format through
+ * the API.
  * 
  * @author Anton Krug
  * 
@@ -50,6 +51,16 @@ public class DBInputOutput implements Serializable {
 	public boolean									genresDirty;
 	public HashMap<Integer, Movie>	movies;
 	public ArrayList<User>					users;
+	
+	/**
+	 * Constructor inicialising fields
+	 */
+	public DBInputOutput() {
+		this.movies = new HashMap<Integer, Movie>();
+		this.genres = new ArrayList<MovieGenre>();
+		this.genresDirty = false;
+		this.users = new ArrayList<User>();	
+	}
 
 	/**
 	 * Get file extension from file name.
@@ -104,10 +115,12 @@ public class DBInputOutput implements Serializable {
 
 		if (extension.toLowerCase().equals("csv")) {
 
+			DB.obj().purgeDB();
+			
 			// load both CVS's
 			if (!this.loadCSVfile(base + "." + extension)) return false;
 			if (!this.loadCSVfile(base + "-users." + extension)) return false;
-		
+
 			DB.obj().setLoaded(true);
 			DB.obj().setLoadedFileName(fileName);
 
@@ -401,7 +414,7 @@ public class DBInputOutput implements Serializable {
 	public boolean saveCSV(String fileName) {
 		String base = DBInputOutput.fileBase(fileName);
 		String ext = DBInputOutput.fileExtension(fileName);
-		
+
 		// save both files at once
 		if (!saveCSVMovies(fileName)) return false;
 		if (!saveCSVUsers(base + "-users." + ext)) return false;
@@ -419,6 +432,9 @@ public class DBInputOutput implements Serializable {
 	 */
 	public boolean saveCSVMovies(String fileName) {
 		try {
+			File file = new File(fileName);
+			if (file.exists()) file.delete();		
+			
 			FileWriter writer = new FileWriter(fileName);
 
 			for (Map.Entry<Integer, Movie> entry : DB.obj().getMovies().entrySet()) {
@@ -453,6 +469,9 @@ public class DBInputOutput implements Serializable {
 
 	public boolean saveCSVUsers(String fileName) {
 		try {
+			File file = new File(fileName);
+			if (file.exists()) file.delete();		
+			
 			FileWriter writer = new FileWriter(fileName);
 
 			for (User user : DB.obj().getUsers()) {
@@ -466,20 +485,26 @@ public class DBInputOutput implements Serializable {
 				writer.append(",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,");
 				writer.append("\n");
 
-				int movieLast = 1;
+				int movieLast = 0;
+				boolean first = true;
 				for (int i = 0; i < user.getRatingMovie().size(); i++) {
 					int movie = user.getRatingMovie().get(i);
 
-					for (int j = movieLast; j < (movie-1); j++)
-						writer.append(",0");
+					// just fill space between the ratings
+					for (int j = movieLast; j < (movie - 1); j++) {
+						if (!first) writer.append(',');
+						writer.append('0');
+						first = false;
+					}
 
-					if (i>0) writer.append(',');
+					if (!first) writer.append(',');
 					writer.append(((Integer) (int) (user.getRatingRating().get(i))).toString());
-					
-					movieLast=movie;
+
+					movieLast = movie;
+					first = false;
 				}
 				writer.append("\n");
-				
+
 			}
 			writer.flush();
 			writer.close();
@@ -488,7 +513,7 @@ public class DBInputOutput implements Serializable {
 			e.printStackTrace();
 			return false;
 		}
-		
+
 		if (VERBOSE) System.out.println("Saved user to: " + fileName);
 
 		return true;

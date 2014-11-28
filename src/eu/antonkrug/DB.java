@@ -59,12 +59,16 @@ public class DB implements Serializable {
 	 * Contructor inicialising empty collections
 	 */
 	public DB() {
+		this.loaded = false;
+		this.loadedFileName = "";
+		this.purgeDB();
+	}
+	
+	public void purgeDB() {
 		this.movies = new HashMap<Integer, Movie>();
 		this.genres = new ArrayList<MovieGenre>();
 		this.genresDirty = false;
-		this.users = new ArrayList<User>();
-		this.loaded = false;
-		this.loadedFileName = "";
+		this.users = new ArrayList<User>();		
 	}
 
 	/**

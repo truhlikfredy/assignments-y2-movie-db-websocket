@@ -150,7 +150,8 @@ public class Server extends WebSocketServer {
 			
 
 //			data = DBInputOutputEnum.getInstance("data/movies.csv");
-//			data.convertTo("data/test.dat");
+//			DB.obj().purgeCacheForEachUser();
+//			data.convertTo("data/test.xml");
 			
 			// data = DBInputOutputEnum.getInstance("data/test.csv");
 			// data.save();
@@ -214,6 +215,7 @@ public class Server extends WebSocketServer {
 	/**
 	 * Respond to all request client sends.
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void onMessage(WebSocket ws, String string) {
 		this.log(ws, "got " + string);
