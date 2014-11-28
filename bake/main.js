@@ -12,23 +12,8 @@ $(document).ready(function() {
 	
 	$("#login_button").click(function() {
 	    ws.send(JSON.stringify({'t':%R_LOGIN%,'name':$("#login_username").val(),'pass':$("#login_password").val()}));		
-	})
+	});
 });
-
-function change_name() {
-	var r = {'r':%R_LOGIN%,'v':
-	document.getElementById('user_name').value
-};
-ws.send(JSON.stringify(r));
-}
-
-function do_damage() {
-	var r={'r':%R_LOGIN%
-}
-
-//	alert(r);
-ws.send(JSON.stringify(r));
-}
 
 function send_chat() {
 	ws.send(JSON.stringify({'r':%R_LOGIN%,'v':
@@ -49,6 +34,7 @@ ws.onmessage = function(evt) {
 	//	document.getElementById('result').innerHTML=document.getElementById('result').innerHTML+ping+'ms ';
 	//	ws.send((new Date()).getTime());
 	e = JSON.parse(evt.data);
+	
 	if (e['t']==%A_PASS_FAIL%) {
 		if (e['v']) {
 			$("#welcome").hide();
@@ -61,6 +47,7 @@ ws.onmessage = function(evt) {
 			$("#user").show();			
 		}
 	}
+	
 	if (e['r']==%R_LOGIN%) {
 		var tmp = '';
 		for (var i = 0; i < e['v'].length; i++) {

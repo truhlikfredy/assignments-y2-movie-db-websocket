@@ -17,23 +17,27 @@ import mws.server.WebSocketServer;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
+//@ff
 /**
  * Main Class which is running server instance of the application
  * 
  * @author Anton Krug
  * 
- * @ff API request examples:
  * 
- *     {"t":1,"name":"Cust1","pass":"god"} //log in {"t":4} //LOG OUT
- *     {"t":1,"name":"admin","pass":"admin"} //log as admin {"t":17} //see
- *     ratings {"t":25} //see genres {"t":15} //see movies
- * @fo
+ * API request examples:
+ * {"t":1,"name":"Cust1","pass":"god"}    //log in
+ * {"t":4}  															//LOG OUT
+ * {"t":1,"name":"admin","pass":"admin"}  //log as admin
+ * {"t":17}														   	//see ratings
+ * {"t":25}															  //see genres
+ * {"t":15}															  //see movies
  * 
  */
+//@fo
 public class Server extends WebSocketServer {
 
 	public final static boolean	VERBOSE			= true;
-	public final static String	DEFAULT_DB	= "data/movies.csv";
+	public final static String	DEFAULT_DB	= "data/database.dat";
 
 	private DB									db;
 
@@ -136,8 +140,14 @@ public class Server extends WebSocketServer {
 			DBInputOutputEnum data = DBInputOutputEnum.getInstance(Server.DEFAULT_DB);
 			data.load();
 
-//			DBInputOutputEnum datas = DBInputOutputEnum.getInstance("data/test.csv");
-//			datas.save();
+//			data = DBInputOutputEnum.getInstance("data/movies.csv");
+//			data.convertTo("data/test.dat");
+			
+			// data = DBInputOutputEnum.getInstance("data/test.csv");
+			// data.save();
+
+//			data=DBInputOutputEnum.getInstance("data/test.dat");
+//			data.save();
 
 			Server svr = new Server(port);
 			svr.start();

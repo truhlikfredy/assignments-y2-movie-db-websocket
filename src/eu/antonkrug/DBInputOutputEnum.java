@@ -22,7 +22,7 @@ public enum DBInputOutputEnum {
 		
 		public boolean save() {
 			if (!this.isDbioOK()) return false;
-			return this.getDbio().loadDAT(this.getFileName());
+			return this.getDbio().saveDAT(this.getFileName());
 		}
 	},
 	
@@ -125,6 +125,20 @@ public enum DBInputOutputEnum {
 	 * @return 
 	 */
 	public abstract boolean save();
+	
+	/**
+	 * Load as this type, but save as different.
+	 * @param fileName
+	 * @return
+	 */
+	public boolean convertTo(String fileName) {
+		if (!this.load()) return false;
+		
+		DBInputOutputEnum data = DBInputOutputEnum.getInstance(fileName);
+		if (!data.save()) return false;
+		
+		return true;
+	}
 
 	/**
 	 * @param dbio
