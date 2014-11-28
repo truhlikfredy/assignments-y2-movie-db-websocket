@@ -6,28 +6,47 @@
 var ws = new WebSocket("ws://localhost:9001/");
 
 $(document).ready(function() {
+
+	$('.dropdown').dropdown();
+	$('.sidebar').sidebar('show');
+
+	$('.ui .item').on('click', function() {
+		$('.ui .item').removeClass('active');
+		$(this).addClass('active');
+	});
+	
+	$('#ubtn_home').click(function() {
+		$('#user_home_tab').show();
+		$('#user_movies_tab').hide();
+	});
+
+	$('#ubtn_movies').click(function() {
+		$('#user_home_tab').hide();
+		$('#user_movies_tab').show();
+	});
+
 	$("#admin").hide();
 	$("#user").hide();
-	
-// var obj = jQuery.parseJSON( '[{"name":"Action","timesUsed":57},{"name":"Adventure","timesUsed":3},{"name":"Biography","timesUsed":6},{"name":"Comedy","timesUsed":30},{"name":"Crime","timesUsed":36},{"name":"Drama","timesUsed":24},{"name":"Not categorized","timesUsed":9}]');
-//	console.log(obj);
-	
+
+	// var obj = jQuery.parseJSON( '[{"name":"Action","timesUsed":57},{"name":"Adventure","timesUsed":3},{"name":"Biography","timesUsed":6},{"name":"Comedy","timesUsed":30},{"name":"Crime","timesUsed":36},{"name":"Drama","timesUsed":24},{"name":"Not categorized","timesUsed":9}]');
+	//	console.log(obj);
+
 	$("#login_button").click(function() {
-	    ws.send(JSON.stringify({'t':1,'name':$("#login_username").val(),'pass':$("#login_password").val()}));		
-	});
+	ws.send(JSON.stringify({'t':1,'name':$("#login_username").val(),'pass':$("#login_password").val()}))
+});
 
-	$("#w_user").click(function() {
-	    ws.send(JSON.stringify({'t':1,'name':'user','pass':'user'}));		
-	});
+$("#w_user").click(function() {
+	ws.send(JSON.stringify({'t':1,'name':'user','pass':'user'}));
+});
 
-	$("#w_admin").click(function() {
-	    ws.send(JSON.stringify({'t':1,'name':'admin','pass':'admin'}));		
-	});
-	
-	$("#u_list_genres").click(function() {
-	    ws.send(JSON.stringify({'t':25}));		
-	});
-	
+$("#w_admin").click(function() {
+	ws.send(JSON.stringify({'t':1,'name':'admin','pass':'admin'}));
+});
+
+$("#u_list_genres").click(function() {
+	ws.send(JSON.stringify({'t':25}));
+});
+
 });
 
 function send_chat() {
@@ -50,7 +69,7 @@ ws.onmessage = function(evt) {
 	//	ws.send((new Date()).getTime());
 	console.log(evt.data);
 	e = JSON.parse(evt.data);
-	
+
 	if (e['t']==2) {
 		if (e['v']) {
 			$("#welcome").hide();
@@ -60,30 +79,29 @@ ws.onmessage = function(evt) {
 		if (e['admin']) {
 			$("#admin").show();
 		} else {
-			$("#user").show();			
+			$("#user").show();
 		}
 	}
-	
+
 	if (e['t']==29) {
 		console.log(e['v']);
-		
-		var tmp='';
+
+		var tmp = '';
 
 		for (var i = 0; i < e['v'].length; i++) {
-			tmp += '<div class="ui green basic button">'+e['v'][i]['name']+'</div>';
+			tmp += '<div class="ui green basic button">' + e['v'][i]['name'] + '</div>';
 		}
-//		document.getElementById('list_genres').innerHTML = tmp;
+		//		document.getElementById('list_genres').innerHTML = tmp;
 		$('#list_genres').html(tmp);
-		
-		
+
 		/*
-		var tmp = '';
-		for (var i = 0; i < e['v'].length; i++) {
-			tmp += e['v'][i] + '<br>';
-		}
-		//		alert(tmp);
-		document.getElementById('users').innerHTML = tmp;
-		*/
+		 var tmp = '';
+		 for (var i = 0; i < e['v'].length; i++) {
+		 tmp += e['v'][i] + '<br>';
+		 }
+		 //		alert(tmp);
+		 document.getElementById('users').innerHTML = tmp;
+		 */
 	}
 	if (e['r']==1) {
 		document.getElementById('chat').innerHTML = document.getElementById('chat').innerHTML + e['v'] + '\n';

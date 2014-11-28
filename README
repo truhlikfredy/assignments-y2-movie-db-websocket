@@ -53,3 +53,5 @@ is implemented. XML works as well, but the object references can make it big
 so bytestream is prefered and setup as default. JSON is used for API and supports 
 API calls where it returns data in JSON, so other aplications can use this as data 
 inport and export as well.
+
+Read the README file in ./bake folder for all shell script tools lincense.

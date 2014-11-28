@@ -5,7 +5,7 @@
 
 #watch changes of input files and trigger pre-bake proccess only when change are detected
 
-while inotifywait common_values.py; do
+while inotifywait common_values.py main.js; do
 
     cp java_api_begin.txt java_api.java
     cp main.js bundle.js

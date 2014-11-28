@@ -142,11 +142,13 @@ public class Server extends WebSocketServer {
 			
 //			System.out.println(JSONValue.toJSONString(DB.obj().getGenres()));
 			
-//			JSONObject obj = new JSONObject();
-//			obj.put("v",DB.obj().getGenres());
-//			obj.put("t", API.A_LIST_GENRES.getValue());
-//			System.out.println(obj.toJSONString());
+/*			System.out.println(DB.obj().getMovies().get(1).toJSONString());
+			System.out.println(JSONValue.toJSONString(DB.obj().getMovies()));*/
 			
+//			JSONObject obj = new JSONObject();
+//			obj.put("v",DB.obj().getMovies());
+//			obj.put("t", API.A_LIST_GENRES.getValue());
+//			System.out.println(obj.toString());
 			
 
 //			data = DBInputOutputEnum.getInstance("data/movies.csv");
@@ -270,6 +272,7 @@ public class Server extends WebSocketServer {
 					obj.put("t", API.A_LIST_GENRES.getValue());
 					System.out.println(obj.toJSONString());
 					ws.send(obj.toJSONString());
+										
 				}
 				break;
 

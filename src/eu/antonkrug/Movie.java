@@ -2,6 +2,9 @@ package eu.antonkrug;
 
 import java.io.Serializable;
 
+import org.json.simple.JSONAware;
+import org.json.simple.JSONObject;
+
 //TODO description
 /**
  * Movie class containg name, year and genre
@@ -9,7 +12,7 @@ import java.io.Serializable;
  * @author Anton Krug
  * 
  */
-public class Movie implements Serializable {
+public class Movie implements Serializable, JSONAware {
 
 	/**
 	 * Generate new ID if you will change anything in this class, if you change
@@ -47,7 +50,11 @@ public class Movie implements Serializable {
 	 * @return
 	 */
 	public double getAverageRating() {
-		return (double) this.ratingSum / this.ratingCount;
+		if (this.ratingCount>0) {
+			return (double) this.ratingSum / this.ratingCount;
+		} else {
+			return 0.0;
+		}
 	}
 
 	public MovieGenre getCategory() {
@@ -106,7 +113,28 @@ public class Movie implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Movie [name=" + name + ", year=" + year + ", category=" + category + "]";
+		return "Movie [category=" + category + ", name=" + name + ", year=" + year
+				+ ", averageRating=" + getAverageRating() + "]";
 	}
+	
+	
 
+	@Override
+	public String toJSONString() {
+    StringBuffer sb = new StringBuffer();
+    
+    sb.append("{");
+    sb.append("\"name\":");
+    sb.append("\"" + JSONObject.escape(this.name) + "\"");
+    sb.append(",\"year\":");
+    sb.append(this.year);
+    sb.append(",\"genre\":");
+    sb.append(this.getCategory().toJSONString());
+    sb.append(",\"averageRating\":");
+    sb.append(this.getAverageRating());
+    sb.append("}");
+    
+    return sb.toString();		
+	}
+	
 }
