@@ -8,12 +8,18 @@ import eu.antonkrug.DB;
 import eu.antonkrug.DBInputOutput;
 import eu.antonkrug.DBInputOutputEnum;
 
+/**
+ * This JUnit tests DBInputOutput, DB class and DBInputOutputEnum class as well
+ * 
+ * @author Anton Krug
+ *
+ */
 public class DBInputOutputTest {
 	
 	private void checkDB() {
 		DB db = DB.getInstance();
 
-		// check size
+		// check sizes
 		assertEquals(55, db.getMovies().size());
 		assertEquals(87, db.getUsers().size());
 
@@ -22,7 +28,17 @@ public class DBInputOutputTest {
 		assertEquals((Integer) 1999, db.getMovies().get(10).getYear());
 		assertEquals("Crime", db.getMovies().get(10).getCategory().getName());
 
-		// check user cust5
+		// another movie
+		assertEquals("War", db.getMovies().get(36).getName());
+		assertEquals((Integer) 2007, db.getMovies().get(36).getYear());
+		assertEquals("Action", db.getMovies().get(36).getCategory().getName());
+
+		// movie without genre
+		assertEquals("Brüno", db.getMovies().get(43).getName());
+		assertEquals((Integer) 2009, db.getMovies().get(43).getYear());
+		assertEquals("Not categorized", db.getMovies().get(43).getCategory().getName());
+		
+		// check user cust5 and his ratings
 		assertEquals("Cust5", db.getUsers().get(10).getUserName());
 		assertEquals("Henry", db.getUsers().get(10).getFirstName());
 		assertEquals("Shefflin", db.getUsers().get(10).getLastName());
@@ -38,10 +54,13 @@ public class DBInputOutputTest {
 	private void checkDBPassowrds() {
 		DB db = DB.getInstance();
 		
-		// empty passwords are setup to secret when loaded in by CSV and other
+		// empty passwords are setup to "secret" when loaded in by CSV and other
 		// loading methods should have it already specified what password is 
+
+		// check user cust5's password
 		assertTrue(db.getUsers().get(10).matchPassword("secret"));		
 		
+		// check user cust1's password
 		assertTrue(db.getUsers().get(3).matchPassword("god"));
 	}
 
