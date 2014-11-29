@@ -23,14 +23,14 @@ $(document).ready(function() {
 	$('#ubtn_movies').click(function() {
 		$('#user_home_tab').hide();
 		$('#user_movies_tab').show();
-		ws.send(JSON.stringify({'t':%R_LIST_MOVIES%}));
+		ws.send(JSON.stringify({'t':15}));
 	});
 
 	$('#ubtn_logout').click(function() {
 		$("#admin").hide();
 		$("#user").hide();
 		$("#welcome").show();
-		ws.send(JSON.stringify({'t':%R_LOGOUT%}));
+		ws.send(JSON.stringify({'t':4}));
 	});
 
 	$("#admin").hide();
@@ -52,7 +52,7 @@ $("#w_admin").click(function() {
 });
 
 $("#u_list_genres").click(function() {
-	ws.send(JSON.stringify({'t':%R_LIST_GENRES%}));
+	ws.send(JSON.stringify({'t':25}));
 });
 
 });
@@ -78,7 +78,7 @@ ws.onmessage = function(evt) {
 	//console.log(evt.data);
 	e = JSON.parse(evt.data);
 
-	if (e['t']==%A_PASS_FAIL%) {
+	if (e['t']==2) {
 		if (e['v']) {
 			$("#welcome").hide();
 			if (e['admin']) {
@@ -91,7 +91,7 @@ ws.onmessage = function(evt) {
 		}
 	}
 
-	if (e['t']==%A_LIST_GENRES%) {
+	if (e['t']==29) {
 		console.log(e['v']);
 
 		var tmp = '';
@@ -112,7 +112,7 @@ ws.onmessage = function(evt) {
 		 */
 	}
 
-	if (e['t']==%A_LIST_MOVIES%) {
+	if (e['t']==16) {
 		// console.log(e['v']);
 
 		var tmp = '<div class="ui list">';
