@@ -20,92 +20,83 @@
 
     <script type="text/javascript"></script>
 
-<!-- ***********************************  WELCOME part of webpage ********************************* -->
+    <!-- ***********************************  WELCOME part of webpage ********************************* -->
 
     <div id="welcome">
       <div class="ui segment">
-      <div class="ui primary button" id="w_user">
-        User
-      </div>
-      <div class="ui primary button" id="w_admin">
-        Admin
-      </div>
-
-      <center>
-        <img src="img/welcome.jpg"><br>
-        <div class="ui green tag label">
-          Welcome
+        <div class="ui primary button" id="w_user">
+          User
+        </div>
+        <div class="ui primary button" id="w_admin">
+          Admin
         </div>
 
-        <div class="ui blue inverted form segment">
+        <center>
+          <img src="img/welcome.jpg">
           <br>
-          <div class="two fields">
-            <div class="field">
-              <label>Login</label>
-              <input placeholder="Your username" type="text" id="login_username">
+          <div class="ui green tag label">
+            Welcome
+          </div>
+
+          <div class="ui blue inverted form segment">
+            <br>
+            <div class="two fields">
+              <div class="field">
+                <label>Login</label>
+                <input placeholder="Your username" type="text" id="login_username">
+              </div>
+              <div class="field">
+                <label>Password</label>
+                <input placeholder="Your password" type="text" id="login_password">
+              </div>
             </div>
-            <div class="field">
-              <label>Password</label>
-              <input placeholder="Your password" type="text" id="login_password">
+            <div class="ui teal submit button" id="login_button">
+              Login
             </div>
           </div>
-          <div class="ui teal submit button" id="login_button">
-            Login
-          </div>
-        </div>
-      </center>
+        </center>
       </div>
     </div>
 
-
-<!-- ***********************************  ADMIN part of webpage ********************************* -->
+    <!-- ***********************************  ADMIN part of webpage ********************************* -->
     <div id="admin">
 
     </div>
 
-<!-- ***********************************  USER part of webpage ********************************* -->
+    <!-- ***********************************  USER part of webpage ********************************* -->
     <div id="user">
       <div class="ui segment">
-        
-<div class="ui menu">
-  <a class="active item" id="ubtn_home">
-    <i class="home icon"></i> Home
-  </a>
-  <a class="item" id="ubtn_movies">
-    <i class="announcement icon"></i> Movies
-  </a>
-  <a class="item" id="ubtn_genres">
-    <i class="folder outline icon"></i> Genres
-  </a>
-  
-  
-  
-  <div class="right menu">
-    <div class="item">
-      <div class="ui transparent icon input">
-        <input type="text" placeholder="Search...">
-        <i class="search link icon"></i>
-      </div>
-    </div>
-  </div>
-</div>        
-        
-        <div class="ui primary button" id="u_list_genres">
-          List Genres
-        </div>
-        <div class="ui primary button" id="u_list_movies">
-          List Movies
-        </div>
-        <hr>
-        
-        
-        <div class="ui fluid action input">
-          <input type="text" placeholder="Search...">
-          <div class="ui button">
-            <i class="search icon"></i> Search
+
+        <div class="ui tertiary purple menu">
+          <a class="active item" id="ubtn_home"> <i class="home icon"></i> Home </a>
+          <a class="item" id="ubtn_movies"> <i class="announcement icon"></i> Movies </a>
+          <a class="item" id="ubtn_genres"> <i class="folder outline icon"></i> Genres </a>
+          <a class="item" id="ubtn_profile"> <i class="edit outline icon"></i> Edit profile </a>
+          <a class="item" id="ubtn_reccomendations"> <i class="flag outline icon"></i> Reccomendations </a>
+
+          <div class="right menu">
+          <a class="item" id="ubtn_logout"> <i class="sign out icon"></i> Logout </a>
+            <div class="item">
+              <div class="ui transparent icon input">
+                <input type="text" placeholder="Search...">
+                <i class="search link icon"></i>
+              </div>
+            </div>
           </div>
         </div>
-  
+
+        <div id="user_home_tab">
+          <div class="ui raised segment">
+            <a class="ui red ribbon label">Welcome</a>
+            <p>
+              Welcome registered user, click on the menu options or type into search bar and click search icon.
+            </p>
+            <p align="center">
+              <img src="img/db.jpg">
+            </p>
+          </div>
+        </div>
+
         <div id="list_genres"></div>
         <div id="list_movies"></div>
       </div>

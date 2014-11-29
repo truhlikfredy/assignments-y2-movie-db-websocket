@@ -23,7 +23,17 @@ $(document).ready(function() {
 	$('#ubtn_movies').click(function() {
 		$('#user_home_tab').hide();
 		$('#user_movies_tab').show();
+		ws.send(JSON.stringify({'t':%R_LIST_MOVIES%}));
 	});
+
+	$('#ubtn_logout').click(function() {
+		$("#admin").hide();
+		$("#user").hide();
+		$("#welcome").show();
+		ws.send(JSON.stringify({'t':%R_LOGOUT%}));
+	});
+	
+	
 
 	$("#admin").hide();
 	$("#user").hide();
@@ -44,7 +54,7 @@ $("#w_admin").click(function() {
 });
 
 $("#u_list_genres").click(function() {
-	ws.send(JSON.stringify({'t':25}));
+	ws.send(JSON.stringify({'t':%R_LIST_GENRES%}));
 });
 
 });
@@ -67,10 +77,10 @@ ws.onmessage = function(evt) {
 	//	var ping=(new Date()).getTime()-parseInt(evt.data);
 	//	document.getElementById('result').innerHTML=document.getElementById('result').innerHTML+ping+'ms ';
 	//	ws.send((new Date()).getTime());
-	console.log(evt.data);
+	//console.log(evt.data);
 	e = JSON.parse(evt.data);
 
-	if (e['t']==2) {
+	if (e['t']==%A_PASS_FAIL%) {
 		if (e['v']) {
 			$("#welcome").hide();
 		} else {
@@ -83,7 +93,7 @@ ws.onmessage = function(evt) {
 		}
 	}
 
-	if (e['t']==29) {
+	if (e['t']==%A_LIST_GENRES%) {
 		console.log(e['v']);
 
 		var tmp = '';
@@ -103,6 +113,11 @@ ws.onmessage = function(evt) {
 		 document.getElementById('users').innerHTML = tmp;
 		 */
 	}
+
+	if (e['t']==%A_LIST_MOVIES%) {
+		console.log(e['v']);
+	}
+
 	if (e['r']==1) {
 		document.getElementById('chat').innerHTML = document.getElementById('chat').innerHTML + e['v'] + '\n';
 	}

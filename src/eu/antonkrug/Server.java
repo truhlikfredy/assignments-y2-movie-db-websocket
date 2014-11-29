@@ -37,7 +37,7 @@ import org.json.simple.JSONValue;
 public class Server extends WebSocketServer {
 
 	public final static boolean	VERBOSE			= true;
-	public final static String	DEFAULT_DB	= "data/database.dat";
+	public final static String	DEFAULT_DB	= "data/movies.csv";
 
 	private DB									db;
 
@@ -139,6 +139,8 @@ public class Server extends WebSocketServer {
 
 			DBInputOutputEnum data = DBInputOutputEnum.getInstance(Server.DEFAULT_DB);
 			data.load();
+			
+			DB.obj().getMovies().get(2).populateIMDBmeta();
 			
 //			System.out.println(JSONValue.toJSONString(DB.obj().getGenres()));
 			
@@ -270,7 +272,7 @@ public class Server extends WebSocketServer {
 					JSONObject obj = new JSONObject();
 					obj.put("v",db.getGenres());
 					obj.put("t", API.A_LIST_GENRES.getValue());
-					System.out.println(obj.toJSONString());
+//					System.out.println(obj.toJSONString());
 					ws.send(obj.toJSONString());
 										
 				}
@@ -278,7 +280,10 @@ public class Server extends WebSocketServer {
 
 			case R_LIST_MOVIES:
 				if (ws.isLogged()) {
-					ws.send(JSONValue.toJSONString(db.getMovies()));
+					JSONObject obj = new JSONObject();
+					obj.put("v",db.getMovies());
+					obj.put("t", API.A_LIST_MOVIES.getValue());
+					ws.send(obj.toJSONString());
 				}
 				break;
 

@@ -23,7 +23,17 @@ $(document).ready(function() {
 	$('#ubtn_movies').click(function() {
 		$('#user_home_tab').hide();
 		$('#user_movies_tab').show();
+		ws.send(JSON.stringify({'t':15}));
 	});
+
+	$('#ubtn_logout').click(function() {
+		$("#admin").hide();
+		$("#user").hide();
+		$("#welcome").show();
+		ws.send(JSON.stringify({'t':4}));
+	});
+	
+	
 
 	$("#admin").hide();
 	$("#user").hide();
@@ -67,7 +77,7 @@ ws.onmessage = function(evt) {
 	//	var ping=(new Date()).getTime()-parseInt(evt.data);
 	//	document.getElementById('result').innerHTML=document.getElementById('result').innerHTML+ping+'ms ';
 	//	ws.send((new Date()).getTime());
-	console.log(evt.data);
+	//console.log(evt.data);
 	e = JSON.parse(evt.data);
 
 	if (e['t']==2) {
@@ -103,6 +113,11 @@ ws.onmessage = function(evt) {
 		 document.getElementById('users').innerHTML = tmp;
 		 */
 	}
+
+	if (e['t']==16) {
+		console.log(e['v']);
+	}
+
 	if (e['r']==1) {
 		document.getElementById('chat').innerHTML = document.getElementById('chat').innerHTML + e['v'] + '\n';
 	}

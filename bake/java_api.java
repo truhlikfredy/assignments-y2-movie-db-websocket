@@ -12,3 +12,5 @@ package eu.antonkrug;
 public enum API {
   //@ff  to turn off formating
 
+  NOT_VALID(0),
+  R_LOGIN(1),
