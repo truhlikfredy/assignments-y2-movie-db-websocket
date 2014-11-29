@@ -14,7 +14,7 @@ $(document).ready(function() {
 		$('.ui .item').removeClass('active');
 		$(this).addClass('active');
 	});
-	
+
 	$('#ubtn_home').click(function() {
 		$('#user_home_tab').show();
 		$('#user_movies_tab').hide();
@@ -32,8 +32,6 @@ $(document).ready(function() {
 		$("#welcome").show();
 		ws.send(JSON.stringify({'t':%R_LOGOUT%}));
 	});
-	
-	
 
 	$("#admin").hide();
 	$("#user").hide();
@@ -83,13 +81,13 @@ ws.onmessage = function(evt) {
 	if (e['t']==%A_PASS_FAIL%) {
 		if (e['v']) {
 			$("#welcome").hide();
+			if (e['admin']) {
+				$("#admin").show();
+			} else {
+				$("#user").show();
+			}
 		} else {
 			alert('Failed to login.');
-		}
-		if (e['admin']) {
-			$("#admin").show();
-		} else {
-			$("#user").show();
 		}
 	}
 
@@ -115,7 +113,46 @@ ws.onmessage = function(evt) {
 	}
 
 	if (e['t']==%A_LIST_MOVIES%) {
-		console.log(e['v']);
+		// console.log(e['v']);
+
+		var tmp = '<div class="ui list">';
+
+		for (var i = 0; i < e['v'].length; i++) {
+			console.log(e['v'][i]);
+			// <div class="item">
+			// <img class="ui top aligned avatar image" src="/images/avatar/small/daniel.jpg">
+			// <div class="content">
+			// <div class="header">Daniel Louise</div>
+			// Friends since 1992
+			// <div class="list">
+			// <div class="item">
+			// <i class="top aligned right triangle icon"></i>
+			// <div class="content">
+			// <a class="header">Hey man</a>
+			// <div class="description">Hey man so I forgot to send you an invite to my party, but it's this saturday...</div>
+			// </div>
+			// </div>
+			// <div class="item">
+			// <i class="top aligned right triangle icon"></i>
+			// <div class="content">
+			// <a class="header">What a day</a>
+			// <div class="description">Man i am so tired that walk today really was too far...</div>
+			// </div>
+			// </div>
+			// <div class="item">
+			// <i class="top aligned right triangle icon"></i>
+			// <div class="content">
+			// <a class="header">How does polar bear</a>
+			// <div class="description">Have you ever wondered? How polar bear know what apple is...</div>
+			// </div>
+			// </div>
+			// </div>
+			// </div>
+			// </div>
+		}
+
+		tmp += '</div>';
+
 	}
 
 	if (e['r']==%R_LOGIN%) {

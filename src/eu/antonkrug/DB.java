@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.Predicate;
@@ -220,6 +221,11 @@ public class DB implements Serializable {
 	public void setUsers(ArrayList<User> users) {
 		this.users = users;
 	}
+	
+	public void populateIMDBmetaForEach() {
+		for(Entry<Integer, Movie> entry : movies.entrySet())
+	    entry.getValue().populateIMDBmeta();;
+	}
 
 	/**
 	 * Request to log in, check if users exists and the password matches
@@ -237,7 +243,9 @@ public class DB implements Serializable {
 		});
 		
 		if (user != null && !user.getLoggedIn()) {
+			System.out.println("Found and not logged in");
 			if (user.matchPassword(pass)) {
+				System.out.println("Password match");
 				user.setLoggedIn(true);
 				return users.indexOf(user);
 			}

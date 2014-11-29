@@ -4,10 +4,12 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 
 import org.apache.commons.io.IOUtils;
 import org.json.simple.JSONAware;
 import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 
 //TODO description
 /**
@@ -161,31 +163,26 @@ public class Movie implements Serializable, JSONAware {
 		this.coverImageURL = coverImageURL;
 	}
 	
+	/**
+	 * Get meta informations from IMDB and store some into our database
+	 */
 	public void populateIMDBmeta() {
-//		URL web = new URL("http://www.imdbapi.com/?i=&t="+this.getName());
-//		ReadableByteChannel rbc = Channels.newChannel(web.openStream());
-		
-//		InputStream in = new URL("http://www.imdbapi.com/?i=&t="+this.getName()).openStream();
-//		URL web = new URL("http://www.imdbapi.com/?i=&t="+this.getName());
-//		web.get
-/*		
-		Scanner scan;
 		try {
-			scan = new Scanner(new URL("http://www.imdbapi.com/?i=&t="+this.getName()).openStream(), "UTF-8");
-			String out = scan.useDelimiter("\\A").next();
-			System.out.println(out);
-			scan.close();
-		} catch (MalformedURLException e) {			
-		System.out.println("Bad URL ");
-			e.printStackTrace();
-		} catch (IOException e) {
-			System.out.println("Can't load the URL ");
-			e.printStackTrace();
-		}
-	*/	
-		try {
-			String result=IOUtils.toString(new URL("http://www.imdbapi.com/?i=&t="+name+"&y="+year));
-			System.out.println(result);
+			String result=IOUtils.toString(new URL("http://www.imdbapi.com/?i=&t="+URLEncoder.encode(name,"UTF-8")+"&y="+year));
+			
+			JSONObject json = (JSONObject) JSONValue.parse(result);
+			if (json.get("Response").equals("True")) {
+				plot=json.get("Plot").toString();
+				actors=json.get("Actors").toString();
+				coverImageURL=json.get("Poster").toString();
+//				System.out.println(result);
+//				System.out.println(json.get("Poster"));
+//				System.out.println(json.get("Actors"));
+//				System.out.println(json.get("Plot"));
+				
+			}
+			
+			
 		} catch (MalformedURLException e) {
 			System.out.println("Bad URL ");
 			e.printStackTrace();

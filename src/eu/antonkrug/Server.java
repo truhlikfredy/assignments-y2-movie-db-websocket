@@ -37,7 +37,7 @@ import org.json.simple.JSONValue;
 public class Server extends WebSocketServer {
 
 	public final static boolean	VERBOSE			= true;
-	public final static String	DEFAULT_DB	= "data/movies.csv";
+	public final static String	DEFAULT_DB	= "data/database.dat";
 
 	private DB									db;
 
@@ -98,6 +98,7 @@ public class Server extends WebSocketServer {
 				// before exiting
 				String fileName = DB.obj().getLoadedFileName();
 
+				System.out.println("Rotating files.");
 				// do rotation of files
 				for (int i = 9; i >= 0; i--) {
 					File file = new File(fileName + "-" + i);
@@ -116,6 +117,7 @@ public class Server extends WebSocketServer {
 					file.renameTo(new File(fileName + "-0"));
 				}
 
+				System.out.println("Saving database.");
 				DBInputOutputEnum data = DBInputOutputEnum.getInstance(fileName);
 				data.save();
 			}
@@ -140,7 +142,8 @@ public class Server extends WebSocketServer {
 			DBInputOutputEnum data = DBInputOutputEnum.getInstance(Server.DEFAULT_DB);
 			data.load();
 			
-			DB.obj().getMovies().get(2).populateIMDBmeta();
+//			DB.obj().populateIMDBmetaForEach();
+			
 			
 //			System.out.println(JSONValue.toJSONString(DB.obj().getGenres()));
 			
@@ -160,7 +163,7 @@ public class Server extends WebSocketServer {
 			// data = DBInputOutputEnum.getInstance("data/test.csv");
 			// data.save();
 
-//			data=DBInputOutputEnum.getInstance("data/test.dat");
+//			data=DBInputOutputEnum.getInstance("data/database.dat");
 //			data.save();
 
 			Server svr = new Server(port);
