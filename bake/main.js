@@ -134,6 +134,8 @@ ws.onmessage = function(evt) {
 			tmp+='<div class="item"><img class="ui top aligned avatar image" src="'+val['coverImageURL']+'">';
 			tmp+='<div class="content"><div class="header">'+val['name']+'</div>';
 			tmp+=val['genre']['name']+' - '+val['year'];
+			// tmp+='<div style="width:200px">'+val['plot']+'</div';
+			
 			tmp+='<div class="list">';
 
 			tmp+='<div class="item"><i class="top aligned right triangle icon"></i><div class="content"><b>Rating</b>';
