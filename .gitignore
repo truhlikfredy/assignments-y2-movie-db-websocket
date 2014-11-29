@@ -1,3 +1,6 @@
 bin/*
 /akrug.zip
 /20062210.zip
+bake/bundle.js
+bake/java_api.java
+web-client/js/bundle.js
