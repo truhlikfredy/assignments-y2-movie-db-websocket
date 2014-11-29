@@ -9,6 +9,7 @@ $(document).ready(function() {
 
 	$('.dropdown').dropdown();
 	$('.sidebar').sidebar('show');
+	// $('.rating').rating('enable');
 
 	$('.ui .item').on('click', function() {
 		$('.ui .item').removeClass('active');
@@ -115,7 +116,7 @@ ws.onmessage = function(evt) {
 	if (e['t']==%A_LIST_MOVIES%) {
 		// console.log(e['v']);
 
-		var tmp = '<div class="ui segment"><div class="ui list">';
+		var tmp = '<div class="ui list">';
 
         var key,val;
 		for (key in e['v']) {
@@ -127,23 +128,37 @@ ws.onmessage = function(evt) {
 			// console.log(val['plot']);
 			// console.log(val['coverImageURL']);
 			// console.log(val['actors']);
+			
+			var rating=5+Math.round(val['averageRating']+0.5);
+			
 			tmp+='<div class="item"><img class="ui top aligned avatar image" src="'+val['coverImageURL']+'">';
 			tmp+='<div class="content"><div class="header">'+val['name']+'</div>';
-			tmp+=val['plot'];
 			tmp+=val['genre']['name']+' - '+val['year'];
 			tmp+='<div class="list">';
-			tmp+='<div class="item"><i class="top aligned right triangle icon"></i><div class="content"><a class="header">Plot</a>';
-			tmp+='<div class="description">'+val['plot']+'</div></div></div>';
-			tmp+='<div class="item"><i class="top aligned right triangle icon"></i><div class="content"><a class="header">Rating</a>';
-			tmp+='<div class="description">'+val['averageRating']+'</div></div></div>';
-			tmp+='<div class="item"><i class="top aligned right triangle icon"></i><div class="content"><a class="header">Actors</a>';
-			tmp+='<div class="description">'+val['actors']+'</div></div></div>';
+
+			tmp+='<div class="item"><i class="top aligned right triangle icon"></i><div class="content"><b>Rating</b>';
+			tmp+='<div class="description">';
+			tmp+='<div class="ui mini star rating readonly" data-rating="'+rating+'" data-max-rating="10"></div>';
+			// tmp+=val['averageRating'];
 			tmp+='</div></div></div>';
+
+			tmp+='<div class="item"><i class="top aligned right triangle icon"></i><div class="content"><b>Actors</b>';
+			tmp+='<div class="description">'+val['actors']+'</div></div></div>';
+
+			tmp+='<div class="item"><i class="top aligned right triangle icon"></i><div class="content"><b>Rate</b>';
+			tmp+='<div class="description">';
+			tmp+='<div class="ui large heart rating" data-rating="0" data-max-rating="5"></div>';
+			tmp+='</div></div></div>';
+			
+			tmp+='</div></div></div><br><br>';
 		}
 
-		tmp += '</div></div>';
+		tmp += '</div>';
 
 		$('#list_movies').html(tmp);
+			$('.ui.rating').rating();
+			$('.ui.rating.readonly').rating('disable');
+
 
 	}
 

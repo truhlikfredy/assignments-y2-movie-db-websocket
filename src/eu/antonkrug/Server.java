@@ -227,12 +227,12 @@ public class Server extends WebSocketServer {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void onMessage(WebSocket ws, String string) {
-		this.log(ws, "got " + string);
-
+		this.log(ws, "Got this string: " + string);
+ 
 		JSONObject json = (JSONObject) JSONValue.parse(string);
 
 		API request = API.getEnum(json.get("t"));
-		System.out.println(request);
+		this.log(ws, "Request: "+request);
 
 		switch (request) {
 
