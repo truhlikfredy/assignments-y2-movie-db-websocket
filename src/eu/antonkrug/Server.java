@@ -165,6 +165,8 @@ public class Server extends WebSocketServer {
 
 //			data=DBInputOutputEnum.getInstance("data/database.dat");
 //			data.save();
+			
+//			System.exit(0);
 
 			Server svr = new Server(port);
 			svr.start();

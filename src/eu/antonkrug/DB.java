@@ -222,9 +222,14 @@ public class DB implements Serializable {
 		this.users = users;
 	}
 	
+	/**
+	 * Calls IMDB meta getter for each movie
+	 */
 	public void populateIMDBmetaForEach() {
-		for(Entry<Integer, Movie> entry : movies.entrySet())
+		for(Entry<Integer, Movie> entry : movies.entrySet()) {
+//			System.out.println("Getting info for "+entry.getValue().getName());
 	    entry.getValue().populateIMDBmeta();;
+		}
 	}
 
 	/**

@@ -216,11 +216,11 @@ public class Movie implements Serializable, JSONAware {
     sb.append(",\"averageRating\":");
     sb.append(this.getAverageRating());
     sb.append(",\"plot\":");
-    sb.append(this.getPlot());
+    sb.append("\""+JSONObject.escape(this.getPlot())+"\"");
     sb.append(",\"coverImageURL\":");
-    sb.append(this.getCoverImageURL());
-    sb.append(",\"coverImageURL\":");
-    sb.append(this.getActors());
+    sb.append("\""+JSONObject.escape(this.getCoverImageURL())+"\"");
+    sb.append(",\"actors\":");
+    sb.append("\""+JSONObject.escape(this.getActors())+"\"");
     sb.append("}");
     
     return sb.toString();		

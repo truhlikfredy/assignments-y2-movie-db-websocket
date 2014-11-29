@@ -23,14 +23,14 @@ $(document).ready(function() {
 	$('#ubtn_movies').click(function() {
 		$('#user_home_tab').hide();
 		$('#user_movies_tab').show();
-		ws.send(JSON.stringify({'t':15}));
+		ws.send(JSON.stringify({'t':%R_LIST_MOVIES%}));
 	});
 
 	$('#ubtn_logout').click(function() {
 		$("#admin").hide();
 		$("#user").hide();
 		$("#welcome").show();
-		ws.send(JSON.stringify({'t':4}));
+		ws.send(JSON.stringify({'t':%R_LOGOUT%}));
 	});
 
 	$("#admin").hide();
@@ -40,25 +40,25 @@ $(document).ready(function() {
 	//	console.log(obj);
 
 	$("#login_button").click(function() {
-	ws.send(JSON.stringify({'t':1,'name':$("#login_username").val(),'pass':$("#login_password").val()}))
+	ws.send(JSON.stringify({'t':%R_LOGIN%,'name':$("#login_username").val(),'pass':$("#login_password").val()}))
 });
 
 $("#w_user").click(function() {
-	ws.send(JSON.stringify({'t':1,'name':'user','pass':'user'}));
+	ws.send(JSON.stringify({'t':%R_LOGIN%,'name':'user','pass':'user'}));
 });
 
 $("#w_admin").click(function() {
-	ws.send(JSON.stringify({'t':1,'name':'admin','pass':'admin'}));
+	ws.send(JSON.stringify({'t':%R_LOGIN%,'name':'admin','pass':'admin'}));
 });
 
 $("#u_list_genres").click(function() {
-	ws.send(JSON.stringify({'t':25}));
+	ws.send(JSON.stringify({'t':%R_LIST_GENRES%}));
 });
 
 });
 
 function send_chat() {
-	ws.send(JSON.stringify({'r':1,'v':
+	ws.send(JSON.stringify({'r':%R_LOGIN%,'v':
 	document.getElementById('chat_message').value
 }));
 
@@ -78,7 +78,7 @@ ws.onmessage = function(evt) {
 	//console.log(evt.data);
 	e = JSON.parse(evt.data);
 
-	if (e['t']==2) {
+	if (e['t']==%A_PASS_FAIL%) {
 		if (e['v']) {
 			$("#welcome").hide();
 			if (e['admin']) {
@@ -91,7 +91,7 @@ ws.onmessage = function(evt) {
 		}
 	}
 
-	if (e['t']==29) {
+	if (e['t']==%A_LIST_GENRES%) {
 		console.log(e['v']);
 
 		var tmp = '';
@@ -112,50 +112,42 @@ ws.onmessage = function(evt) {
 		 */
 	}
 
-	if (e['t']==16) {
+	if (e['t']==%A_LIST_MOVIES%) {
 		// console.log(e['v']);
 
-		var tmp = '<div class="ui list">';
+		var tmp = '<div class="ui segment"><div class="ui list">';
 
-		for (var i = 0; i < e['v'].length; i++) {
-			console.log(e['v'][i]);
-			// <div class="item">
-			// <img class="ui top aligned avatar image" src="/images/avatar/small/daniel.jpg">
-			// <div class="content">
-			// <div class="header">Daniel Louise</div>
-			// Friends since 1992
-			// <div class="list">
-			// <div class="item">
-			// <i class="top aligned right triangle icon"></i>
-			// <div class="content">
-			// <a class="header">Hey man</a>
-			// <div class="description">Hey man so I forgot to send you an invite to my party, but it's this saturday...</div>
-			// </div>
-			// </div>
-			// <div class="item">
-			// <i class="top aligned right triangle icon"></i>
-			// <div class="content">
-			// <a class="header">What a day</a>
-			// <div class="description">Man i am so tired that walk today really was too far...</div>
-			// </div>
-			// </div>
-			// <div class="item">
-			// <i class="top aligned right triangle icon"></i>
-			// <div class="content">
-			// <a class="header">How does polar bear</a>
-			// <div class="description">Have you ever wondered? How polar bear know what apple is...</div>
-			// </div>
-			// </div>
-			// </div>
-			// </div>
-			// </div>
+        var key,val;
+		for (key in e['v']) {
+			val=e['v'][key];
+			// console.log(val);
+			// console.log(val['name']);
+			// console.log(val['year']);
+			// console.log(val['genre']['name']);
+			// console.log(val['plot']);
+			// console.log(val['coverImageURL']);
+			// console.log(val['actors']);
+			tmp+='<div class="item"><img class="ui top aligned avatar image" src="'+val['coverImageURL']+'">';
+			tmp+='<div class="content"><div class="header">'+val['name']+'</div>';
+			tmp+=val['plot'];
+			tmp+=val['genre']['name']+' - '+val['year'];
+			tmp+='<div class="list">';
+			tmp+='<div class="item"><i class="top aligned right triangle icon"></i><div class="content"><a class="header">Plot</a>';
+			tmp+='<div class="description">'+val['plot']+'</div></div></div>';
+			tmp+='<div class="item"><i class="top aligned right triangle icon"></i><div class="content"><a class="header">Rating</a>';
+			tmp+='<div class="description">'+val['averageRating']+'</div></div></div>';
+			tmp+='<div class="item"><i class="top aligned right triangle icon"></i><div class="content"><a class="header">Actors</a>';
+			tmp+='<div class="description">'+val['actors']+'</div></div></div>';
+			tmp+='</div></div></div>';
 		}
 
-		tmp += '</div>';
+		tmp += '</div></div>';
+
+		$('#list_movies').html(tmp);
 
 	}
 
-	if (e['r']==1) {
+	if (e['r']==%R_LOGIN%) {
 		document.getElementById('chat').innerHTML = document.getElementById('chat').innerHTML + e['v'] + '\n';
 	}
 }
