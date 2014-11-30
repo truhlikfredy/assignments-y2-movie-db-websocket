@@ -128,6 +128,11 @@ public class User implements Comparable<User>, Serializable {
 	 * @param rating
 	 */
 	public void addRating(int movie, byte rating) {
+		// allow to rate just once!
+		for (int i=0;i<ratingMovie.size();i++) {
+			if (this.ratingMovie.get(i)==movie) return;
+		}
+		
 		this.ratingMovie.add(movie);
 		this.ratingRating.add(rating);
 

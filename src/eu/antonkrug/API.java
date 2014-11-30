@@ -43,6 +43,7 @@ public enum API {
   R_SEARCH(28),
   A_LIST_GENRES(29),
   A_SEARCH(30),
+  R_LIST_REC(31),
   ;
   //@fo   turns on back formating
 

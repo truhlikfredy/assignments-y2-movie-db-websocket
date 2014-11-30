@@ -19,6 +19,7 @@ public class MovieGenre implements Serializable, JSONAware {
 
 	public static final Comparator<MovieGenre>	BY_NAME						= new ByName();
 	public static final Comparator<MovieGenre>	BY_USAGE					= new ByUsage();
+	public static final Comparator<MovieGenre>	BY_USAGE_DESC			= new ByUsageDesc();
 
 	/**
 	 * Generate new ID if you will change anything in this class, if you change
@@ -44,6 +45,12 @@ public class MovieGenre implements Serializable, JSONAware {
 	private static class ByUsage implements Comparator<MovieGenre> {
 		public int compare(MovieGenre left, MovieGenre right) {
 			return left.timesUsed - right.timesUsed;
+		}
+	}
+
+	private static class ByUsageDesc implements Comparator<MovieGenre> {
+		public int compare(MovieGenre left, MovieGenre right) {
+			return right.timesUsed - left.timesUsed;
 		}
 	}
 
@@ -74,17 +81,17 @@ public class MovieGenre implements Serializable, JSONAware {
 
 	@Override
 	public String toJSONString() {
-    StringBuffer sb = new StringBuffer();
-    
-    sb.append("{");
-    sb.append("\"name\":");
-    sb.append("\"" + JSONObject.escape(name) + "\"");
-    sb.append(",");
-    sb.append("\"timesUsed\":");
-    sb.append(timesUsed);
-    sb.append("}");
-    
-    return sb.toString();		
+		StringBuffer sb = new StringBuffer();
+
+		sb.append("{");
+		sb.append("\"name\":");
+		sb.append("\"" + JSONObject.escape(name) + "\"");
+		sb.append(",");
+		sb.append("\"timesUsed\":");
+		sb.append(timesUsed);
+		sb.append("}");
+
+		return sb.toString();
 	}
 
 }

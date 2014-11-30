@@ -84,8 +84,19 @@ $(document).ready(function() {
 		ws.send(JSON.stringify({'t':%R_LIST_GENRES%,'v':0}));
 	});
 
+	$('#ubtn_reccomendations').click(function() {
+		$('.defhid').hide();
+		$('#user_movies_tab').show();
+		$('#list_genres').hide();
+		
+		ws.send(JSON.stringify({'t':%R_LIST_REC%}));
+	});
+	
+	
+
 	$('#ubtn_logout').click(function() {
 		$('.defhid').hide();
+		$('.defhidmain').hide();
 		$("#welcome").show();
 		ws.send(JSON.stringify({'t':%R_LOGOUT%}));
 	});
@@ -116,7 +127,6 @@ $(document).ready(function() {
 //few common fuctions
 function populateMovies(input) {
 	var tmp = "";
-
 	var key, val;
 	for (key in input) {
 		val = input[key];
@@ -129,7 +139,6 @@ function populateMovies(input) {
 		// console.log(val['actors']);
 
 		var rating = val['averageRating'];
-		console.log(rating);
 
 		tmp += '<div><img src="' + val['coverImageURL'] + '" width=100 height=150 style="float:left;clear:both;">';
 		tmp += '<b>' + val['name'] + '</b><br>';
@@ -145,13 +154,20 @@ function populateMovies(input) {
 
 		tmp += '<i class="top aligned right triangle icon"></i>&nbsp;<b>Your rating</b>&nbsp;';
 
-		tmp += '<div class="ui large heart rating" data-rating="' + val['rated'] + '" data-max-rating="5"></div>';
+		tmp += '<div class="ui large heart rating yourrating '+ ((val['rated']>0)?'readonly':'') + '" data-id="' + val['id'] + '" data-rating="' + val['rated'] + '" data-max-rating="5"></div>';
 		tmp += '<br>';
 		tmp += val['plot'];
-
+		
 		tmp += '</div><br><br>';
 	}
 	return tmp;
+}
+
+function populateMoviesEvents() {
+		$('.yourrating').rating('setting', 'onRate', function(value) {
+			var id= $(this).data('id');
+      		ws.send(JSON.stringify({'t':%R_RATE%,'id':id,'v':value}));
+  		});	
 }
 
 //webscoket listeners
@@ -211,6 +227,8 @@ ws.onmessage = function(evt) {
 
 		$('.ui.rating').rating();
 		$('.ui.rating.readonly').rating('disable');
+		
+		populateMoviesEvents();
 
 	}
 
@@ -224,6 +242,8 @@ ws.onmessage = function(evt) {
 
 		$('.ui.rating').rating();
 		$('.ui.rating.readonly').rating('disable');
+		
+		populateMoviesEvents();
 
 	}
 

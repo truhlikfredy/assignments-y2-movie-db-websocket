@@ -108,7 +108,7 @@ public class DB implements Serializable {
 		}
 		genre.incTimesUsed();
 
-		movies.put(key, new Movie(name, year, genre));
+		movies.put(key, new Movie(key, name, year, genre));
 	}
 
 	/**
@@ -283,28 +283,28 @@ public class DB implements Serializable {
 		query = query.toLowerCase();
 		MovieGenre category = null;
 
-		//find if it's matching a genre
+		// find if it's matching a genre
 		int genre = searchGenreContains(query);
-		System.out.println(genre);
+		// System.out.println(genre);
 		if (genre != -1) {
 			category = genres.get(genre);
 		}
 
-		//compare categories & genres
+		// compare categories & genres
 		for (Entry<Integer, Movie> entry : movies.entrySet()) {
 			Movie movie = entry.getValue();
 			if (movie.getName().toLowerCase().contains(query) || movie.getCategory().equals(category)) {
-				tmp.put(entry.getKey(), movie); 
+				tmp.put(entry.getKey(), movie);
 			}
 		}
-		System.out.println(tmp.size());
+		// System.out.println(tmp.size());
 
 		this.userRatingsPopulate(tmp, user);
-		
+
 		List<Movie> ret = new ArrayList<Movie>(tmp.values());
-		System.out.println(ret.size());
-		Collections.sort(ret,Movie.BY_RATING);
-		
+		//		System.out.println(ret.size());
+		Collections.sort(ret, Movie.BY_RATING);
+
 		return ret;
 	}
 
@@ -318,8 +318,8 @@ public class DB implements Serializable {
 	public List<Movie> getMoviesRated(User user, boolean onlyRated) {
 
 		List<Movie> tmp;
-		
-		//populate movie list by the rules
+
+		// populate movie list by the rules
 		if (onlyRated) {
 			tmp = new ArrayList<Movie>();
 
@@ -332,16 +332,16 @@ public class DB implements Serializable {
 				tmp.add(movies.get(index));
 			}
 		} else {
-			// return all movies regardles if user rated them or not 
+			// return all movies regardles if user rated them or not
 
 			this.userRatingsFlush(movies);
 			this.userRatingsPopulate(movies, user);
 
 			tmp = new ArrayList<Movie>(movies.values());
 		}
-		
-		//sort list
-		Collections.sort(tmp,Movie.BY_RATING);
+
+		// sort list
+		Collections.sort(tmp, Movie.BY_RATING);
 		return tmp;
 	}
 

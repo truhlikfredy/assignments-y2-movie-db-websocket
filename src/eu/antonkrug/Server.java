@@ -8,6 +8,8 @@ import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 
 import mws.WebSocket;
@@ -136,6 +138,7 @@ public class Server extends WebSocketServer {
 	 * 
 	 * @param args
 	 */
+	@SuppressWarnings("unused")
 	public static void main(String[] args) throws InterruptedException {
 
 		Runtime runtime = Runtime.getRuntime();
@@ -148,7 +151,17 @@ public class Server extends WebSocketServer {
 			DBInputOutputEnum data = DBInputOutputEnum.getInstance(Server.DEFAULT_DB);
 			data.load();
 
-			// DB.obj().populateIMDBmetaForEach();
+			//set true to reload from CSV get IMDB meta and save to bytestream
+			if (false) {
+				data = DBInputOutputEnum.getInstance("data/movies.csv");
+				data.load();
+				
+				DB.obj().populateIMDBmetaForEach();
+
+				data=DBInputOutputEnum.getInstance("data/database.dat");
+				data.save();
+			}
+
 
 			// System.out.println(JSONValue.toJSONString(DB.obj().getGenres()));
 
@@ -163,11 +176,14 @@ public class Server extends WebSocketServer {
 			// System.out.println(obj.toString());
 
 			// data = DBInputOutputEnum.getInstance("data/movies.csv");
+			// data.load();
 			// DB.obj().purgeCacheForEachUser();
 			// data.convertTo("data/test.xml");
 
 			// data = DBInputOutputEnum.getInstance("data/test.csv");
 			// data.save();
+
+			// DB.obj().populateIMDBmetaForEach();
 
 			// data=DBInputOutputEnum.getInstance("data/database.dat");
 			// data.save();
@@ -286,8 +302,11 @@ public class Server extends WebSocketServer {
 
 			case R_LIST_GENRES:
 				if (ws.isLogged()) {
+					ArrayList<MovieGenre> genres = (ArrayList<MovieGenre>) db.getGenres().clone();
+					Collections.sort(genres, MovieGenre.BY_USAGE_DESC);
+					
 					JSONObject obj = new JSONObject();
-					obj.put("v", db.getGenres());
+					obj.put("v", genres);
 					obj.put("t", API.A_LIST_GENRES.getValue());
 					// System.out.println(obj.toJSONString());
 					ws.send(obj.toJSONString());
@@ -301,6 +320,7 @@ public class Server extends WebSocketServer {
 					obj.put("v", db.getMoviesRated(loggedUser,
 							Boolean.parseBoolean(json.get("only_rated").toString())));
 					obj.put("t", API.A_LIST_MOVIES.getValue());
+					// System.out.println(obj.toJSONString());
 					ws.send(obj.toJSONString());
 				}
 				break;
@@ -358,6 +378,13 @@ public class Server extends WebSocketServer {
 				break;
 
 			case R_RATE:
+				if (ws.isLogged()) {
+					Rating rating = Rating.getFromOneToFiveRating((byte) Integer.parseInt(json.get("v")
+							.toString()));
+//					System.out.println(rating);
+//					System.out.println(rating.getValue());
+					loggedUser.addRating(Integer.parseInt(json.get("id").toString()), rating.getValue());
+				}
 				break;
 
 			case R_REMOVE_MOVIE:
@@ -388,6 +415,12 @@ public class Server extends WebSocketServer {
 					obj.put("t", API.A_SEARCH.getValue());
 					ws.send(obj.toJSONString());
 
+				}
+				break;
+				
+			case R_LIST_REC: 
+				if (ws.isLogged()) {
+					
 				}
 				break;
 
