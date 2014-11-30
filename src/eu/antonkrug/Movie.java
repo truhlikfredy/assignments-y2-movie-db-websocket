@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.Comparator;
 
 import org.apache.commons.io.IOUtils;
 import org.json.simple.JSONAware;
@@ -18,7 +19,7 @@ import org.json.simple.JSONValue;
  * @author Anton Krug
  * 
  */
-public class Movie implements Serializable, JSONAware {
+public class Movie implements Serializable, JSONAware, Comparator<Movie> {
 
 	/**
 	 * Generate new ID if you will change anything in this class, if you change
@@ -242,6 +243,11 @@ public class Movie implements Serializable, JSONAware {
     sb.append("}");
     
     return sb.toString();		
+	}
+
+	@Override
+	public int compare(Movie o1, Movie o2) {
+		return (int) (o1.getAverageRating() - o2.getAverageRating());
 	}
 	
 }
