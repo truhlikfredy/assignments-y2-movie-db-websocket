@@ -9,11 +9,11 @@
 
 while true
 do
-#    inotifywait -e modify -e create -e delete -e attrib ./bin
-    inotifywait -e modify -e create -e delete -r -q ./bin
     pid=`ps -eo pid,comm,args | grep java | grep antonkrug | cut -dj -f1`
     kill -9 $pid
     echo killing $pid
+#    inotifywait -e modify -e create -e delete -e attrib ./bin
+    inotifywait -e modify -e create -e delete -r -q ./bin
 done
 
 

@@ -4,11 +4,16 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.Predicate;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Ordering;
 
 /**
  * Main database class, it will contain all data.
@@ -277,7 +282,7 @@ public class DB implements Serializable {
 	 * @param query
 	 * @return
 	 */
-	public HashMap<Integer, Movie> searchMovie(String query, User user) {
+	public List<Map.Entry<Integer, Movie>> searchMovie(String query, User user) {
 		HashMap<Integer, Movie> tmp = new HashMap<Integer, Movie>();
 
 		query = query.toLowerCase();
@@ -302,13 +307,19 @@ public class DB implements Serializable {
 
 		this.userRatingsPopulate(tmp, user);
 		
-		RatingComparator byRating =  new RatingComparator(tmp);
+		//sort by rating
+		Ordering<Map.Entry<Integer, Movie>> byRating = new Ordering<Map.Entry<Integer, Movie>>() {
+		   @Override
+		   public int compare(Map.Entry<Integer, Movie> left, Map.Entry<Integer, Movie> right) {
+		        return (int) (left.getValue().getAverageRating()-right.getValue().getAverageRating());
+		   }
+		};
 		
-		TreeMap<Integer,Movie> sorterd_map = new TreeMap<Integer,Movie>(byRating);
-		
-		//TODO sort
+		List<Map.Entry<Integer, Movie>> ret = Lists.newArrayList(tmp.entrySet());
 
-		return tmp;
+		Collections.sort(ret, byRating );
+		
+		return ret;
 	}
 
 	/**
