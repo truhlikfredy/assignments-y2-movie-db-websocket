@@ -141,32 +141,32 @@ public class Server extends WebSocketServer {
 
 			DBInputOutputEnum data = DBInputOutputEnum.getInstance(Server.DEFAULT_DB);
 			data.load();
-			
-//			DB.obj().populateIMDBmetaForEach();
-			
-			
-//			System.out.println(JSONValue.toJSONString(DB.obj().getGenres()));
-			
-/*			System.out.println(DB.obj().getMovies().get(1).toJSONString());
-			System.out.println(JSONValue.toJSONString(DB.obj().getMovies()));*/
-			
-//			JSONObject obj = new JSONObject();
-//			obj.put("v",DB.obj().getMovies());
-//			obj.put("t", API.A_LIST_GENRES.getValue());
-//			System.out.println(obj.toString());
-			
 
-//			data = DBInputOutputEnum.getInstance("data/movies.csv");
-//			DB.obj().purgeCacheForEachUser();
-//			data.convertTo("data/test.xml");
-			
+			// DB.obj().populateIMDBmetaForEach();
+
+			// System.out.println(JSONValue.toJSONString(DB.obj().getGenres()));
+
+			/*
+			 * System.out.println(DB.obj().getMovies().get(1).toJSONString());
+			 * System.out.println(JSONValue.toJSONString(DB.obj().getMovies()));
+			 */
+
+			// JSONObject obj = new JSONObject();
+			// obj.put("v",DB.obj().getMovies());
+			// obj.put("t", API.A_LIST_GENRES.getValue());
+			// System.out.println(obj.toString());
+
+			// data = DBInputOutputEnum.getInstance("data/movies.csv");
+			// DB.obj().purgeCacheForEachUser();
+			// data.convertTo("data/test.xml");
+
 			// data = DBInputOutputEnum.getInstance("data/test.csv");
 			// data.save();
 
-//			data=DBInputOutputEnum.getInstance("data/database.dat");
-//			data.save();
-			
-//			System.exit(0);
+			// data=DBInputOutputEnum.getInstance("data/database.dat");
+			// data.save();
+
+			// System.exit(0);
 
 			Server svr = new Server(port);
 			svr.start();
@@ -228,11 +228,17 @@ public class Server extends WebSocketServer {
 	@Override
 	public void onMessage(WebSocket ws, String string) {
 		this.log(ws, "Got this string: " + string);
- 
+
 		JSONObject json = (JSONObject) JSONValue.parse(string);
 
 		API request = API.getEnum(json.get("t"));
-		this.log(ws, "Request: "+request);
+		this.log(ws, "Request: " + request);
+
+		User loggedUser = null;
+
+		if (ws.isLogged()) {
+			loggedUser = db.getUsers().get(ws.getUserID());
+		}
 
 		switch (request) {
 
@@ -275,18 +281,19 @@ public class Server extends WebSocketServer {
 			case R_LIST_GENRES:
 				if (ws.isLogged()) {
 					JSONObject obj = new JSONObject();
-					obj.put("v",db.getGenres());
+					obj.put("v", db.getGenres());
 					obj.put("t", API.A_LIST_GENRES.getValue());
-//					System.out.println(obj.toJSONString());
+					// System.out.println(obj.toJSONString());
 					ws.send(obj.toJSONString());
-										
+
 				}
 				break;
 
 			case R_LIST_MOVIES:
 				if (ws.isLogged()) {
 					JSONObject obj = new JSONObject();
-					obj.put("v",db.getMovies());
+					obj.put("v", db.getMoviesRated(loggedUser,
+							Boolean.parseBoolean(json.get("only_rated").toString())));
 					obj.put("t", API.A_LIST_MOVIES.getValue());
 					ws.send(obj.toJSONString());
 				}
@@ -329,7 +336,8 @@ public class Server extends WebSocketServer {
 					}
 				}
 				ws.send("{\"t\":" + API.A_PASS_FAIL.getValue() + ",\"v\":" + ((ret != -1) ? true : false)
-						+ ",\"admin\":" + ws.isAdmin() + "}");
+						+ ",\"admin\":" + ws.isAdmin() + ", \"name\":\""
+						+ db.getUsers().get(ws.getUserID()).getFullName() + "\"}");
 				break;
 
 			case R_LOGOUT:

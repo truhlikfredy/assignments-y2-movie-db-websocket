@@ -64,12 +64,12 @@ public class DB implements Serializable {
 		this.loadedFileName = "";
 		this.purgeDB();
 	}
-	
+
 	public void purgeDB() {
 		this.movies = new HashMap<Integer, Movie>();
 		this.genres = new ArrayList<MovieGenre>();
 		this.genresDirty = false;
-		this.users = new ArrayList<User>();		
+		this.users = new ArrayList<User>();
 	}
 
 	/**
@@ -86,7 +86,7 @@ public class DB implements Serializable {
 	public void setLoadedFileName(String loadedFileName) {
 		this.loadedFileName = loadedFileName;
 	}
-	
+
 	/**
 	 * Add new movie into the collection
 	 * 
@@ -221,14 +221,54 @@ public class DB implements Serializable {
 	public void setUsers(ArrayList<User> users) {
 		this.users = users;
 	}
-	
+
 	/**
 	 * Calls IMDB meta getter for each movie
 	 */
 	public void populateIMDBmetaForEach() {
-		for(Entry<Integer, Movie> entry : movies.entrySet()) {
-//			System.out.println("Getting info for "+entry.getValue().getName());
-	    entry.getValue().populateIMDBmeta();;
+		for (Entry<Integer, Movie> entry : movies.entrySet()) {
+			// System.out.println("Getting info for "+entry.getValue().getName());
+			entry.getValue().populateIMDBmeta();
+			;
+		}
+	}
+
+	public void getMoviesRatedFlush() {
+		for (Entry<Integer, Movie> entry : movies.entrySet()) {
+			entry.getValue().setRated((byte) 0);
+		}
+	}
+
+	public HashMap<Integer, Movie> getMoviesRated(User user, boolean onlyRated) {
+		
+		if (onlyRated) {
+			
+			//return only movies I rated 
+			
+			HashMap<Integer, Movie> tmp = new HashMap<Integer, Movie>();
+			
+			for (int i = 0; i < user.getRatingMovie().size(); i++) {
+				int index = user.getRatingMovie().get(i);
+				byte rating = Rating.toZeroToFive(user.getRatingRating().get(i));
+
+				movies.get(index).setRated(rating);
+				tmp.put(index,movies.get(index));
+			}
+			return tmp;
+
+		} else {
+			
+			// return all movies regardles if I rated them
+
+			this.getMoviesRatedFlush();
+
+			for (int i = 0; i < user.getRatingMovie().size(); i++) {
+				int index = user.getRatingMovie().get(i);
+				byte rating = Rating.toZeroToFive(user.getRatingRating().get(i));
+
+				movies.get(index).setRated(rating);
+			}
+			return movies;
 		}
 	}
 
@@ -246,7 +286,7 @@ public class DB implements Serializable {
 				return arg.getUserName().equals(name);
 			}
 		});
-		
+
 		if (user != null && !user.getLoggedIn()) {
 			System.out.println("Found and not logged in");
 			if (user.matchPassword(pass)) {

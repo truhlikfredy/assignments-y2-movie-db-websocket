@@ -24,6 +24,21 @@ public enum Rating {
 	private final String					text;
 
 	private static final Rating[]	allEnums	= values();
+	
+	public static byte toZeroToFive(byte rating) {
+		switch (rating) {
+			case (-5): return 1;
+			case (-3): return 2;
+			case (1): return 3;
+			case (3): return 4;
+			case (5): return 5;
+			
+			case (0):
+			default:
+				return 0;
+		}
+		
+	}
 
 	Rating(byte scoreInit, String textInit) {
 		score = scoreInit;

@@ -168,6 +168,14 @@ public class User implements Comparable<User>, Serializable {
 			this.topCache.add(tmp.get(i));
 		}
 	}
+	
+	/**
+	 * Combine first and last name
+	 * @return
+	 */
+	public String getFullName() {
+		return firstName+" "+lastName;
+	}
 
 	// TODO adjust score by the number of ratings given user got, so it's better
 	// chance yeld recomendation

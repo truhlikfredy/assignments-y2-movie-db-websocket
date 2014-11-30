@@ -35,6 +35,8 @@ public class Movie implements Serializable, JSONAware {
 	private String						plot;
 	private String						coverImageURL;
 	private String						actors;
+	//helper field for sending data over JSON, not to be stored in datafile
+	private transient byte		rated;
 
 	public Movie(String name, Integer year, MovieGenre category) {
 		this.name = name;
@@ -92,6 +94,20 @@ public class Movie implements Serializable, JSONAware {
 		return year;
 	}
 
+	/**
+	 * @return the rated
+	 */
+	public byte getRated() {
+		return rated;
+	}
+
+	/**
+	 * @param rated the rated to set
+	 */
+	public void setRated(byte rated) {
+		this.rated = rated;
+	}
+	
 	public void setCategory(MovieGenre category) {
 		this.category = category;
 	}
@@ -221,6 +237,8 @@ public class Movie implements Serializable, JSONAware {
     sb.append("\""+JSONObject.escape(this.getCoverImageURL())+"\"");
     sb.append(",\"actors\":");
     sb.append("\""+JSONObject.escape(this.getActors())+"\"");
+    sb.append(",\"rated\":");
+    sb.append(this.getRated());
     sb.append("}");
     
     return sb.toString();		
