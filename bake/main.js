@@ -7,6 +7,25 @@
 
 var ws = new WebSocket("ws://localhost:9001/");
 
+// delay function helper
+$.fn.delayKeyup = function(callback, ms){
+    var timer = 0;
+    var el = $(this);
+    $(this).keyup(function(){                   
+    clearTimeout (timer);
+    timer = setTimeout(function(){
+        callback(el)
+        }, ms);
+    });
+    return $(this);
+};
+
+//search function
+function search() {
+	var id = $('#search_text').val();
+	ws.send(JSON.stringify({'t':%R_SEARCH%,'v':id}));	
+}
+
 //attach all event listeners
 $(document).ready(function() {
 
@@ -20,9 +39,22 @@ $(document).ready(function() {
 		$(this).addClass('active');
 	});
 
+	//search on timeout
+	$('#search_text').delayKeyup(function(el){
+	    search();
+	},500);
+	
+	//search on enter
+	$('#search_text').keypress(function (e) {
+  		if (e.which == 13) {
+    		search();
+    		return false;
+  		}
+	});	
+
+	//search on click
 	$('#search').click(function() {
-		var id = $('#search_text').val();
-		ws.send(JSON.stringify({'t':%R_SEARCH%,'v':id}));
+		search();
 	});
 
 	$('#ubtn_home').click(function() {
@@ -32,19 +64,23 @@ $(document).ready(function() {
 
 	$('#ubtn_movies').click(function() {
 		$('.defhid').hide();
+		$('#list_genres').hide();
 		$('#user_movies_tab').show();
 		ws.send(JSON.stringify({'t':%R_LIST_MOVIES%,'only_rated':false}));
 	});
 
 	$('#ubtn_rated').click(function() {
 		$('.defhid').hide();
+		$('#list_genres').hide();
 		$('#user_movies_tab').show();
 		ws.send(JSON.stringify({'t':%R_LIST_MOVIES%,'only_rated':true}));
 	});
 
 	$('#ubtn_genres').click(function() {
 		$('.defhid').hide();
+		$('#user_movies_tab').show();
 		$('#list_genres').show();
+		$('#list_movies').html('');
 		ws.send(JSON.stringify({'t':%R_LIST_GENRES%,'v':0}));
 	});
 
@@ -154,6 +190,7 @@ ws.onmessage = function(evt) {
 		for (var i = 0; i < e['v'].length; i++) {
 			tmp += '<div class="ui green basic button genres" data-name="' + e['v'][i]['name'] + '">' + e['v'][i]['name'] + ' (' + e['v'][i]['timesUsed'] + ')</div>';
 		}
+		tmp += '<br><br>';
 		$('#list_genres').html(tmp);
 
 		$('.genres').click(function() {
@@ -168,6 +205,19 @@ ws.onmessage = function(evt) {
 
 	if (e['t']==%A_LIST_MOVIES%) {
 		// console.log(e['v']);
+
+		$('#list_movies').html(populateMovies(e['v']));
+
+		$('.ui.rating').rating();
+		$('.ui.rating.readonly').rating('disable');
+
+	}
+
+	if (e['t']==%A_SEARCH%) {
+		// console.log(e['v']);
+
+		$('.defhid').hide();
+		$('#user_movies_tab').show();
 
 		$('#list_movies').html(populateMovies(e['v']));
 

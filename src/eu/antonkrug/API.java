@@ -42,6 +42,7 @@ public enum API {
   R_LIST_FILES(27),
   R_SEARCH(28),
   A_LIST_GENRES(29),
+  A_SEARCH(30),
   ;
   //@fo   turns on back formating
 
@@ -91,4 +92,15 @@ public enum API {
   public int getValue() {
     return value;
   }
+
+  /**
+   * Getting the value for enum
+   * 
+   * @return
+   */
+  public int getVal() {
+    return value;
+  }
+
+
 }

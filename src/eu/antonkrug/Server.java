@@ -19,7 +19,8 @@ import org.json.simple.JSONValue;
 
 //@ff
 /**
- * Main Class which is running server instance of the application
+ * Main Class which is running server instance of the application. After this the
+ * website client has to be run to connect to this server.
  * 
  * @author Anton Krug
  * 
@@ -31,6 +32,11 @@ import org.json.simple.JSONValue;
  * {"t":17}														   	//see ratings
  * {"t":25}															  //see genres
  * {"t":15}															  //see movies
+ * 
+ * Memos:
+ * cd y2s1ca2-movies
+ * ./runServer.sh
+ *  * Search in UI for "grap"
  * 
  */
 //@fo
@@ -370,6 +376,18 @@ public class Server extends WebSocketServer {
 				if (ws.isAdmin()) {
 					DBInputOutputEnum data = DBInputOutputEnum.getInstance(json.get("name").toString());
 					data.save();
+				}
+				break;
+
+			case R_SEARCH:
+				if (ws.isLogged()) {
+
+					JSONObject obj = new JSONObject();
+
+					obj.put("v", db.searchMovie(json.get("v").toString(), loggedUser));
+					obj.put("t", API.A_SEARCH.getValue());
+					ws.send(obj.toJSONString());
+
 				}
 				break;
 

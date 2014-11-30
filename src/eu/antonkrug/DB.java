@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.Predicate;
@@ -233,41 +234,114 @@ public class DB implements Serializable {
 		}
 	}
 
-	public void getMoviesRatedFlush() {
-		for (Entry<Integer, Movie> entry : movies.entrySet()) {
+	/**
+	 * Clear the user ratings for movies list
+	 */
+	public void userRatingsFlush(HashMap<Integer, Movie> list) {
+		for (Entry<Integer, Movie> entry : list.entrySet()) {
 			entry.getValue().setRated((byte) 0);
 		}
 	}
 
-	public HashMap<Integer, Movie> getMoviesRated(User user, boolean onlyRated) {
+	/**
+	 * Populate user ratings in the list
+	 */
+	public HashMap<Integer, Movie> userRatingsPopulate(HashMap<Integer, Movie> list, User user) {
+		for (int i = 0; i < user.getRatingMovie().size(); i++) {
+			int index = user.getRatingMovie().get(i);
+			byte rating = Rating.toZeroToFive(user.getRatingRating().get(i));
+
+			if (list.containsKey(index)) list.get(index).setRated(rating);
+		}
+		return list;
+	}
+
+	/**
+	 * Returns index of category which contains query keyword (case insensitive)
+	 * 
+	 * @param query
+	 * @return
+	 */
+	public int searchGenreContains(String query) {
+		for (int i = 0; i < genres.size(); i++) {
+			if (genres.get(i).getName().toLowerCase().contains(query.toLowerCase())) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	/**
+	 * Case insensitive search movies/genre containing query string
+	 * 
+	 * @param query
+	 * @return
+	 */
+	public HashMap<Integer, Movie> searchMovie(String query, User user) {
+		HashMap<Integer, Movie> tmp = new HashMap<Integer, Movie>();
+
+		query = query.toLowerCase();
+		MovieGenre category = null;
+
+		//find if it's matching a genre
+		int genre = searchGenreContains(query);
+		System.out.println(genre);
+		if (genre != -1) {
+			category = genres.get(genre);
+		}
+		System.out.println(category);
+
+		//compare categories & genres
+		for (Entry<Integer, Movie> entry : movies.entrySet()) {
+			Movie movie = entry.getValue();
+			if (movie.getName().toLowerCase().contains(query) || movie.getCategory().equals(category)) {
+				tmp.put(entry.getKey(), movie); 
+			}
+		}
+		System.out.println(tmp.size());
+
+		this.userRatingsPopulate(tmp, user);
 		
+		RatingComparator byRating =  new RatingComparator(tmp);
+		
+		TreeMap<Integer,Movie> sorterd_map = new TreeMap<Integer,Movie>(byRating);
+		
+		//TODO sort
+
+		return tmp;
+	}
+
+	/**
+	 * return Movies with user ratings populated
+	 * 
+	 * @param user
+	 * @param onlyRated
+	 * @return
+	 */
+	public HashMap<Integer, Movie> getMoviesRated(User user, boolean onlyRated) {
+
 		if (onlyRated) {
-			
-			//return only movies I rated 
-			
+
+			// return only movies I rated
+
 			HashMap<Integer, Movie> tmp = new HashMap<Integer, Movie>();
-			
+
 			for (int i = 0; i < user.getRatingMovie().size(); i++) {
 				int index = user.getRatingMovie().get(i);
 				byte rating = Rating.toZeroToFive(user.getRatingRating().get(i));
 
 				movies.get(index).setRated(rating);
-				tmp.put(index,movies.get(index));
+				tmp.put(index, movies.get(index));
 			}
 			return tmp;
 
 		} else {
-			
+
 			// return all movies regardles if I rated them
 
-			this.getMoviesRatedFlush();
+			this.userRatingsFlush(movies);
+			this.userRatingsPopulate(movies, user);
 
-			for (int i = 0; i < user.getRatingMovie().size(); i++) {
-				int index = user.getRatingMovie().get(i);
-				byte rating = Rating.toZeroToFive(user.getRatingRating().get(i));
-
-				movies.get(index).setRated(rating);
-			}
 			return movies;
 		}
 	}

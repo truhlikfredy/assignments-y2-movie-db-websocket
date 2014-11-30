@@ -48,14 +48,8 @@
     return value;
   }
 
-  /**
-   * Getting the value for enum
-   * 
-   * @return
-   */
-  public int getVal() {
-    return value;
+  @Override
+  public String toString() {
+    return ""+value;
   }
-
-
 }
