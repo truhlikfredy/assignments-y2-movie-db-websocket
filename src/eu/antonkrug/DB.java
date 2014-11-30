@@ -303,7 +303,7 @@ public class DB implements Serializable {
 		
 		List<Movie> ret = new ArrayList<Movie>(tmp.values());
 		System.out.println(ret.size());
-		Collections.sort(ret);
+		Collections.sort(ret,Movie.BY_RATING);
 		
 		return ret;
 	}
@@ -315,32 +315,34 @@ public class DB implements Serializable {
 	 * @param onlyRated
 	 * @return
 	 */
-	public HashMap<Integer, Movie> getMoviesRated(User user, boolean onlyRated) {
+	public List<Movie> getMoviesRated(User user, boolean onlyRated) {
 
+		List<Movie> tmp;
+		
+		//populate movie list by the rules
 		if (onlyRated) {
+			tmp = new ArrayList<Movie>();
 
 			// return only movies I rated
-
-			HashMap<Integer, Movie> tmp = new HashMap<Integer, Movie>();
-
 			for (int i = 0; i < user.getRatingMovie().size(); i++) {
 				int index = user.getRatingMovie().get(i);
 				byte rating = Rating.toZeroToFive(user.getRatingRating().get(i));
 
 				movies.get(index).setRated(rating);
-				tmp.put(index, movies.get(index));
+				tmp.add(movies.get(index));
 			}
-			return tmp;
-
 		} else {
-
-			// return all movies regardles if I rated them
+			// return all movies regardles if user rated them or not 
 
 			this.userRatingsFlush(movies);
 			this.userRatingsPopulate(movies, user);
 
-			return movies;
+			tmp = new ArrayList<Movie>(movies.values());
 		}
+		
+		//sort list
+		Collections.sort(tmp,Movie.BY_RATING);
+		return tmp;
 	}
 
 	/**

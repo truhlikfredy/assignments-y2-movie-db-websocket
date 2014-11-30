@@ -124,11 +124,12 @@ function populateMovies(input) {
 		// console.log(val['name']);
 		// console.log(val['year']);
 		// console.log(val['genre']['name']);
-		// console.log(val['plot']);
+		// console.log(val['plot']); 
 		// console.log(val['coverImageURL']);
 		// console.log(val['actors']);
 
-		var rating = 5 + Math.round(val['averageRating'] + 0.5);
+		var rating = val['averageRating'];
+		console.log(rating);
 
 		tmp += '<div><img src="' + val['coverImageURL'] + '" width=100 height=150 style="float:left;clear:both;">';
 		tmp += '<b>' + val['name'] + '</b><br>';

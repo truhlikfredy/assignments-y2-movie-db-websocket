@@ -19,7 +19,7 @@ import org.json.simple.JSONValue;
  * @author Anton Krug
  * 
  */
-public class Movie implements Serializable, JSONAware, Comparator<Movie> {
+public class Movie implements Serializable, JSONAware {
 
 	/**
 	 * Generate new ID if you will change anything in this class, if you change
@@ -27,6 +27,30 @@ public class Movie implements Serializable, JSONAware, Comparator<Movie> {
 	 * which will change automaticly if you will do any modifications to the class
 	 */
 	private static final long	serialVersionUID	= -2527051303955958396L;
+	
+  public static final Comparator<Movie> BY_NAME    = new ByName();
+  public static final Comparator<Movie> BY_GENRE  = new ByGenre();
+  public static final Comparator<Movie> BY_RATING = new ByRating();
+  
+  private static class ByName implements Comparator<Movie> {
+      public int compare(Movie a, Movie b) {
+          return a.name.compareTo(b.name);
+      }
+  }	
+
+  private static class ByGenre implements Comparator<Movie> {
+  	public int compare(Movie a, Movie b) {
+  		return a.category.getName().compareTo(b.category.getName());
+  	}
+  }	
+
+  private static class ByRating implements Comparator<Movie> {
+  	public int compare(Movie a, Movie b) {
+  		if (a.getAverageRating()>b.getAverageRating()) return -1;
+  		if (a.getAverageRating()<b.getAverageRating()) return 1;
+  		return 0;
+  	}
+  }	
 
 	private MovieGenre				category;
 	private String						name;
@@ -231,7 +255,7 @@ public class Movie implements Serializable, JSONAware, Comparator<Movie> {
     sb.append(",\"genre\":");
     sb.append(this.getCategory().toJSONString());
     sb.append(",\"averageRating\":");
-    sb.append(this.getAverageRating());
+    sb.append(5+Math.round(this.getAverageRating()));
     sb.append(",\"plot\":");
     sb.append("\""+JSONObject.escape(this.getPlot())+"\"");
     sb.append(",\"coverImageURL\":");
@@ -243,11 +267,6 @@ public class Movie implements Serializable, JSONAware, Comparator<Movie> {
     sb.append("}");
     
     return sb.toString();		
-	}
-
-	@Override
-	public int compare(Movie o1, Movie o2) {
-		return (int) (o1.getAverageRating() - o2.getAverageRating());
 	}
 	
 }
