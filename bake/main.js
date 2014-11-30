@@ -7,7 +7,6 @@
 
 var ws = new WebSocket("ws://localhost:9001/");
 
-
 //attach all event listeners
 $(document).ready(function() {
 
@@ -22,7 +21,7 @@ $(document).ready(function() {
 	});
 
 	$('#search').click(function() {
-		var id = $('#search_id').val();
+		var id = $('#search_text').val();
 		ws.send(JSON.stringify({'t':%R_SEARCH%,'v':id}));
 	});
 
@@ -71,11 +70,10 @@ $(document).ready(function() {
 	$("#u_list_genres").click(function() {
 		ws.send(JSON.stringify({'t':%R_LIST_GENRES%}));
 	});
-	
+
 	$('.defhidmain').hide();
 	$('.defhid').hide();
 	$("#welcome").show();
-	
 
 });
 
@@ -133,7 +131,7 @@ ws.onmessage = function(evt) {
 	e = JSON.parse(evt.data);
 
 	// will proccess to JSON answer packets
-	
+
 	if (e['t']==%A_PASS_FAIL%) {
 		if (e['v']) {
 			$('.defhidmain').hide();
@@ -154,15 +152,16 @@ ws.onmessage = function(evt) {
 		var tmp = '';
 
 		for (var i = 0; i < e['v'].length; i++) {
-			tmp += '<div class="ui green basic button genres">' + e['v'][i]['name'] + ' (' + e['v'][i]['timesUsed'] + ')</div>';
+			tmp += '<div class="ui green basic button genres" data-name="' + e['v'][i]['name'] + '">' + e['v'][i]['name'] + ' (' + e['v'][i]['timesUsed'] + ')</div>';
 		}
 		$('#list_genres').html(tmp);
 
 		$('.genres').click(function() {
 			var btn = $(this);
+			var query = btn.data('name');
 			$('.genres').removeClass('active');
 			btn.addClass('active');
-			// ws.send(JSON.stringify({'t':%R_LIST_GENRES%,'v':0}));
+			ws.send(JSON.stringify({'t':%R_SEARCH%,'v':query}));
 		});
 
 	}
