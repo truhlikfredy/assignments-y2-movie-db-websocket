@@ -39,6 +39,7 @@
         <ratingCount>36</ratingCount>
         <ratingSum>138</ratingSum>
         <year>2006</year>
+        <id>1</id>
       </eu.antonkrug.Movie>
     </entry>
     <entry>
@@ -49,6 +50,7 @@
         <ratingCount>20</ratingCount>
         <ratingSum>34</ratingSum>
         <year>1993</year>
+        <id>2</id>
       </eu.antonkrug.Movie>
     </entry>
     <entry>
@@ -59,6 +61,7 @@
         <ratingCount>12</ratingCount>
         <ratingSum>22</ratingSum>
         <year>1995</year>
+        <id>3</id>
       </eu.antonkrug.Movie>
     </entry>
     <entry>
@@ -69,6 +72,7 @@
         <ratingCount>6</ratingCount>
         <ratingSum>6</ratingSum>
         <year>2001</year>
+        <id>4</id>
       </eu.antonkrug.Movie>
     </entry>
     <entry>
@@ -79,6 +83,7 @@
         <ratingCount>6</ratingCount>
         <ratingSum>-2</ratingSum>
         <year>2003</year>
+        <id>5</id>
       </eu.antonkrug.Movie>
     </entry>
     <entry>
@@ -89,6 +94,7 @@
         <ratingCount>3</ratingCount>
         <ratingSum>-1</ratingSum>
         <year>2005</year>
+        <id>6</id>
       </eu.antonkrug.Movie>
     </entry>
     <entry>
@@ -99,6 +105,7 @@
         <ratingCount>14</ratingCount>
         <ratingSum>36</ratingSum>
         <year>2006</year>
+        <id>7</id>
       </eu.antonkrug.Movie>
     </entry>
     <entry>
@@ -109,6 +116,7 @@
         <ratingCount>21</ratingCount>
         <ratingSum>9</ratingSum>
         <year>1992</year>
+        <id>8</id>
       </eu.antonkrug.Movie>
     </entry>
     <entry>
@@ -119,6 +127,7 @@
         <ratingCount>4</ratingCount>
         <ratingSum>10</ratingSum>
         <year>1991</year>
+        <id>9</id>
       </eu.antonkrug.Movie>
     </entry>
     <entry>
@@ -129,6 +138,7 @@
         <ratingCount>40</ratingCount>
         <ratingSum>90</ratingSum>
         <year>1999</year>
+        <id>10</id>
       </eu.antonkrug.Movie>
     </entry>
     <entry>
@@ -139,6 +149,7 @@
         <ratingCount>21</ratingCount>
         <ratingSum>19</ratingSum>
         <year>1993</year>
+        <id>11</id>
       </eu.antonkrug.Movie>
     </entry>
     <entry>
@@ -149,6 +160,7 @@
         <ratingCount>27</ratingCount>
         <ratingSum>103</ratingSum>
         <year>1980</year>
+        <id>12</id>
       </eu.antonkrug.Movie>
     </entry>
     <entry>
@@ -159,6 +171,7 @@
         <ratingCount>9</ratingCount>
         <ratingSum>27</ratingSum>
         <year>2008</year>
+        <id>13</id>
       </eu.antonkrug.Movie>
     </entry>
     <entry>
@@ -169,6 +182,7 @@
         <ratingCount>4</ratingCount>
         <ratingSum>10</ratingSum>
         <year>2002</year>
+        <id>14</id>
       </eu.antonkrug.Movie>
     </entry>
     <entry>
@@ -179,6 +193,7 @@
         <ratingCount>24</ratingCount>
         <ratingSum>38</ratingSum>
         <year>2005</year>
+        <id>15</id>
       </eu.antonkrug.Movie>
     </entry>
     <entry>
@@ -189,6 +204,7 @@
         <ratingCount>26</ratingCount>
         <ratingSum>72</ratingSum>
         <year>2007</year>
+        <id>17</id>
       </eu.antonkrug.Movie>
     </entry>
     <entry>
@@ -199,6 +215,7 @@
         <ratingCount>5</ratingCount>
         <ratingSum>7</ratingSum>
         <year>1998</year>
+        <id>16</id>
       </eu.antonkrug.Movie>
     </entry>
     <entry>
@@ -209,6 +226,7 @@
         <ratingCount>39</ratingCount>
         <ratingSum>53</ratingSum>
         <year>1999</year>
+        <id>19</id>
       </eu.antonkrug.Movie>
     </entry>
     <entry>
@@ -219,6 +237,7 @@
         <ratingCount>13</ratingCount>
         <ratingSum>31</ratingSum>
         <year>2006</year>
+        <id>18</id>
       </eu.antonkrug.Movie>
     </entry>
     <entry>
@@ -229,6 +248,7 @@
         <ratingCount>4</ratingCount>
         <ratingSum>2</ratingSum>
         <year>1968</year>
+        <id>21</id>
       </eu.antonkrug.Movie>
     </entry>
     <entry>
@@ -239,6 +259,7 @@
         <ratingCount>16</ratingCount>
         <ratingSum>56</ratingSum>
         <year>2005</year>
+        <id>20</id>
       </eu.antonkrug.Movie>
     </entry>
     <entry>
@@ -249,6 +270,7 @@
         <ratingCount>3</ratingCount>
         <ratingSum>1</ratingSum>
         <year>2008</year>
+        <id>23</id>
       </eu.antonkrug.Movie>
     </entry>
     <entry>
@@ -259,6 +281,7 @@
         <ratingCount>3</ratingCount>
         <ratingSum>3</ratingSum>
         <year>1957</year>
+        <id>22</id>
       </eu.antonkrug.Movie>
     </entry>
     <entry>
@@ -269,6 +292,7 @@
         <ratingCount>5</ratingCount>
         <ratingSum>15</ratingSum>
         <year>2005</year>
+        <id>25</id>
       </eu.antonkrug.Movie>
     </entry>
     <entry>
@@ -279,6 +303,7 @@
         <ratingCount>25</ratingCount>
         <ratingSum>47</ratingSum>
         <year>1995</year>
+        <id>24</id>
       </eu.antonkrug.Movie>
     </entry>
     <entry>
@@ -289,6 +314,7 @@
         <ratingCount>2</ratingCount>
         <ratingSum>2</ratingSum>
         <year>2005</year>
+        <id>27</id>
       </eu.antonkrug.Movie>
     </entry>
     <entry>
@@ -299,6 +325,7 @@
         <ratingCount>16</ratingCount>
         <ratingSum>42</ratingSum>
         <year>2005</year>
+        <id>26</id>
       </eu.antonkrug.Movie>
     </entry>
     <entry>
@@ -309,6 +336,7 @@
         <ratingCount>15</ratingCount>
         <ratingSum>35</ratingSum>
         <year>1998</year>
+        <id>29</id>
       </eu.antonkrug.Movie>
     </entry>
     <entry>
@@ -319,6 +347,7 @@
         <ratingCount>23</ratingCount>
         <ratingSum>35</ratingSum>
         <year>1992</year>
+        <id>28</id>
       </eu.antonkrug.Movie>
     </entry>
     <entry>
@@ -329,6 +358,7 @@
         <ratingCount>53</ratingCount>
         <ratingSum>93</ratingSum>
         <year>1996</year>
+        <id>31</id>
       </eu.antonkrug.Movie>
     </entry>
     <entry>
@@ -339,6 +369,7 @@
         <ratingCount>1</ratingCount>
         <ratingSum>1</ratingSum>
         <year>2005</year>
+        <id>30</id>
       </eu.antonkrug.Movie>
     </entry>
     <entry>
@@ -349,6 +380,7 @@
         <ratingCount>50</ratingCount>
         <ratingSum>12</ratingSum>
         <year>2003</year>
+        <id>34</id>
       </eu.antonkrug.Movie>
     </entry>
     <entry>
@@ -359,6 +391,7 @@
         <ratingCount>0</ratingCount>
         <ratingSum>0</ratingSum>
         <year>2007</year>
+        <id>35</id>
       </eu.antonkrug.Movie>
     </entry>
     <entry>
@@ -369,6 +402,7 @@
         <ratingCount>50</ratingCount>
         <ratingSum>162</ratingSum>
         <year>1940</year>
+        <id>32</id>
       </eu.antonkrug.Movie>
     </entry>
     <entry>
@@ -379,6 +413,7 @@
         <ratingCount>14</ratingCount>
         <ratingSum>54</ratingSum>
         <year>2002</year>
+        <id>33</id>
       </eu.antonkrug.Movie>
     </entry>
     <entry>
@@ -389,6 +424,7 @@
         <ratingCount>24</ratingCount>
         <ratingSum>68</ratingSum>
         <year>1958</year>
+        <id>38</id>
       </eu.antonkrug.Movie>
     </entry>
     <entry>
@@ -399,6 +435,7 @@
         <ratingCount>44</ratingCount>
         <ratingSum>120</ratingSum>
         <year>2007</year>
+        <id>39</id>
       </eu.antonkrug.Movie>
     </entry>
     <entry>
@@ -409,6 +446,7 @@
         <ratingCount>34</ratingCount>
         <ratingSum>16</ratingSum>
         <year>2007</year>
+        <id>36</id>
       </eu.antonkrug.Movie>
     </entry>
     <entry>
@@ -419,6 +457,7 @@
         <ratingCount>4</ratingCount>
         <ratingSum>16</ratingSum>
         <year>2005</year>
+        <id>37</id>
       </eu.antonkrug.Movie>
     </entry>
     <entry>
@@ -429,6 +468,7 @@
         <ratingCount>34</ratingCount>
         <ratingSum>94</ratingSum>
         <year>1999</year>
+        <id>42</id>
       </eu.antonkrug.Movie>
     </entry>
     <entry>
@@ -439,6 +479,7 @@
         <ratingCount>63</ratingCount>
         <ratingSum>227</ratingSum>
         <year>2009</year>
+        <id>43</id>
       </eu.antonkrug.Movie>
     </entry>
     <entry>
@@ -449,6 +490,7 @@
         <ratingCount>24</ratingCount>
         <ratingSum>86</ratingSum>
         <year>2007</year>
+        <id>40</id>
       </eu.antonkrug.Movie>
     </entry>
     <entry>
@@ -459,6 +501,7 @@
         <ratingCount>10</ratingCount>
         <ratingSum>38</ratingSum>
         <year>1998</year>
+        <id>41</id>
       </eu.antonkrug.Movie>
     </entry>
     <entry>
@@ -469,6 +512,7 @@
         <ratingCount>4</ratingCount>
         <ratingSum>0</ratingSum>
         <year>2004</year>
+        <id>46</id>
       </eu.antonkrug.Movie>
     </entry>
     <entry>
@@ -479,6 +523,7 @@
         <ratingCount>17</ratingCount>
         <ratingSum>35</ratingSum>
         <year>1992</year>
+        <id>47</id>
       </eu.antonkrug.Movie>
     </entry>
     <entry>
@@ -489,6 +534,7 @@
         <ratingCount>43</ratingCount>
         <ratingSum>153</ratingSum>
         <year>2003</year>
+        <id>44</id>
       </eu.antonkrug.Movie>
     </entry>
     <entry>
@@ -499,6 +545,7 @@
         <ratingCount>9</ratingCount>
         <ratingSum>27</ratingSum>
         <year>2001</year>
+        <id>45</id>
       </eu.antonkrug.Movie>
     </entry>
     <entry>
@@ -509,6 +556,7 @@
         <ratingCount>56</ratingCount>
         <ratingSum>160</ratingSum>
         <year>2008</year>
+        <id>51</id>
       </eu.antonkrug.Movie>
     </entry>
     <entry>
@@ -519,6 +567,7 @@
         <ratingCount>46</ratingCount>
         <ratingSum>140</ratingSum>
         <year>1967</year>
+        <id>50</id>
       </eu.antonkrug.Movie>
     </entry>
     <entry>
@@ -529,6 +578,7 @@
         <ratingCount>9</ratingCount>
         <ratingSum>23</ratingSum>
         <year>1997</year>
+        <id>49</id>
       </eu.antonkrug.Movie>
     </entry>
     <entry>
@@ -539,6 +589,7 @@
         <ratingCount>6</ratingCount>
         <ratingSum>18</ratingSum>
         <year>2000</year>
+        <id>48</id>
       </eu.antonkrug.Movie>
     </entry>
     <entry>
@@ -549,6 +600,7 @@
         <ratingCount>25</ratingCount>
         <ratingSum>39</ratingSum>
         <year>2009</year>
+        <id>55</id>
       </eu.antonkrug.Movie>
     </entry>
     <entry>
@@ -559,6 +611,7 @@
         <ratingCount>5</ratingCount>
         <ratingSum>13</ratingSum>
         <year>2007</year>
+        <id>54</id>
       </eu.antonkrug.Movie>
     </entry>
     <entry>
@@ -569,6 +622,7 @@
         <ratingCount>23</ratingCount>
         <ratingSum>65</ratingSum>
         <year>2007</year>
+        <id>53</id>
       </eu.antonkrug.Movie>
     </entry>
     <entry>
@@ -579,6 +633,7 @@
         <ratingCount>6</ratingCount>
         <ratingSum>14</ratingSum>
         <year>2003</year>
+        <id>52</id>
       </eu.antonkrug.Movie>
     </entry>
   </movies>
