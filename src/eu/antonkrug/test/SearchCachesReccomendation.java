@@ -7,6 +7,7 @@ import org.junit.Test;
 
 import eu.antonkrug.DB;
 import eu.antonkrug.DBInputOutputEnum;
+import eu.antonkrug.Movie;
 import eu.antonkrug.User;
 
 public class SearchCachesReccomendation {
@@ -38,6 +39,15 @@ public class SearchCachesReccomendation {
 		// check if get same result
 		assertEquals(35, user.reccomendations().size());
 
+		//check and rate first recomended movie
+		Movie movie = user.reccomendations().get(0);
+		assertEquals("War", movie.getName());
+		assertEquals(36,movie.getId());
+		user.rateMovie(movie.getId(),(byte)5);
+
+		// check if it's excluded
+		assertEquals(34, user.reccomendations().size());
+		
 		// remove this users ratings
 		user.removeAllRatings();
 
