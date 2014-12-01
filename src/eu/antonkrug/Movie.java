@@ -31,6 +31,8 @@ public class Movie implements Serializable, JSONAware {
 	public static final Comparator<Movie>	BY_NAME						= new ByName();
 	public static final Comparator<Movie>	BY_GENRE					= new ByGenre();
 	public static final Comparator<Movie>	BY_RATING					= new ByRating();
+	public static final Comparator<Movie>	BY_RATING_COUNT		= new ByRatingCount();
+	public static final Comparator<Movie>	BY_YEAR						= new ByYear();
 
 	private static class ByName implements Comparator<Movie> {
 		public int compare(Movie a, Movie b) {
@@ -44,10 +46,26 @@ public class Movie implements Serializable, JSONAware {
 		}
 	}
 
+	private static class ByYear implements Comparator<Movie> {
+		public int compare(Movie a, Movie b) {
+			if (a.getYear() > b.getYear()) return -1;
+			if (a.getYear() < b.getYear()) return 1;
+			return 0;
+		}
+	}
+
 	private static class ByRating implements Comparator<Movie> {
 		public int compare(Movie a, Movie b) {
 			if (a.getAverageRating() > b.getAverageRating()) return -1;
 			if (a.getAverageRating() < b.getAverageRating()) return 1;
+			return 0;
+		}
+	}
+
+	private static class ByRatingCount implements Comparator<Movie> {
+		public int compare(Movie a, Movie b) {
+			if (a.getRatingCount() > b.getRatingCount()) return -1;
+			if (a.getRatingCount() < b.getRatingCount()) return 1;
 			return 0;
 		}
 	}

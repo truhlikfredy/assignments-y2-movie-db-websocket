@@ -7,6 +7,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 //high performance scientific libaries https://dst.lbl.gov/ACSSoftware/colt/
 import cern.colt.list.ByteArrayList;
@@ -184,6 +185,21 @@ public class User implements Comparable<User>, Serializable {
 	}
 
 	/**
+	 * @return the topCache
+	 */
+	public ArrayList<Cache> getTopCache() {
+		return topCache;
+	}
+
+	/**
+	 * @param topCache
+	 *          the topCache to set
+	 */
+	public void setTopCache(ArrayList<Cache> topCache) {
+		this.topCache = topCache;
+	}
+
+	/**
 	 * Calculate compatibility for all and keep just few top
 	 */
 	public void calculateAll() {
@@ -194,7 +210,7 @@ public class User implements Comparable<User>, Serializable {
 		for (User user : DB.obj().getUsers()) {
 			int scoreSum = this.calculateCompability(user);
 
-			//consider only positive matches
+			// consider only positive matches
 			if (scoreSum > 0) {
 				// if there is enough good matches stop
 				if (scoreSum > Cache.CACHE_THRESHOLD) bucket += scoreSum;
@@ -222,6 +238,23 @@ public class User implements Comparable<User>, Serializable {
 			if (this.ratingMovie.get(i) == movieID) return true;
 		}
 		return false;
+	}
+
+	/**
+	 * It will iterate map to find key, it will be used on small map, so it
+	 * soudn't slow down so much
+	 * 
+	 * @param hm
+	 * @param value
+	 * @return
+	 */
+	private Integer getKey(HashMap<Integer, Movie> hm, Object value) {
+		for (Integer o : hm.keySet()) {
+			if (hm.get(o).equals(value)) {
+				return o;
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -261,14 +294,21 @@ public class User implements Comparable<User>, Serializable {
 				if (!ratedMovie(movieIndex)) {
 					Movie movie = DB.obj().getMovie(movieIndex);
 
-					// add new recomendation only if we don't have it already
-					if (!recomend.containsValue(movie)) {
-						// multiply his rating with our compatibility score and use the
-						// result
-						// as key so we can have it sorted
-						int combined_score = cache.getSum() * user.getRatingRating().get(i);
+					// multiply his rating with our compatibility score and use the
+					// result as key so we can have it sorted
+					int combined_score = cache.getSum() * user.getRatingRating().get(i);
+					if (combined_score > 0) {
 
-						recomend.put(combined_score, movie);
+						if (!recomend.containsValue(movie)) {
+							// add new recomendation only if we don't have it already
+							recomend.put(combined_score, movie);
+						} else {
+							// or move it to better position if already we have it
+							int moveIndex = this.getKey(recomend, movie);
+							recomend.remove(movieIndex);
+							recomend.put(moveIndex + combined_score, movie);
+						}
+						
 					}
 				}
 			}
@@ -435,7 +475,7 @@ public class User implements Comparable<User>, Serializable {
 	 * Will call aproperiate sorting algorithm
 	 */
 	public void sortRating() {
-		if (ratingDirty > 0 && this.ratingMovie.size()>0) {
+		if (ratingDirty > 0 && this.ratingMovie.size() > 0) {
 			// add merge sort and depending how dirty it is change algorithms
 			this.sortRatingQuickSort(0, this.ratingMovie.size() - 1);
 			this.ratingDirty = 0;
