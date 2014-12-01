@@ -19,14 +19,16 @@ import org.apache.commons.collections4.Predicate;
 
 public class DB implements Serializable {
 
-	private static DB					instance					= null;
+	private static int				DIRTINES_THRESHOLD	= 10;
+
+	private static DB					instance						= null;
 
 	/**
 	 * Generate new ID if you will change anything in this class, if you change
 	 * stuff often then comment it out and let the compiler generate one for you
 	 * which will change automaticly if you will do any modifications to the class
 	 */
-	private static final long	serialVersionUID	= 6931673461215366115L;
+	private static final long	serialVersionUID		= 6931673461215366115L;
 
 	/**
 	 * Create new or return previous instance of this object, so each class can
@@ -55,6 +57,7 @@ public class DB implements Serializable {
 	private boolean									loaded;
 	private String									loadedFileName;
 	private HashMap<Integer, Movie>	movies;
+	private int											rattingDirtiness;
 	private ArrayList<User>					users;
 
 	/**
@@ -64,28 +67,6 @@ public class DB implements Serializable {
 		this.loaded = false;
 		this.loadedFileName = "";
 		this.purgeDB();
-	}
-
-	public void purgeDB() {
-		this.movies = new HashMap<Integer, Movie>();
-		this.genres = new ArrayList<MovieGenre>();
-		this.genresDirty = false;
-		this.users = new ArrayList<User>();
-	}
-
-	/**
-	 * @return the loadedFile
-	 */
-	public String getLoadedFileName() {
-		return loadedFileName;
-	}
-
-	/**
-	 * @param loadedFile
-	 *          the loadedFile to set
-	 */
-	public void setLoadedFileName(String loadedFileName) {
-		this.loadedFileName = loadedFileName;
 	}
 
 	/**
@@ -175,10 +156,10 @@ public class DB implements Serializable {
 	}
 
 	/**
-	 * @return the loaded
+	 * @return the loadedFile
 	 */
-	public boolean isLoaded() {
-		return loaded;
+	public String getLoadedFileName() {
+		return loadedFileName;
 	}
 
 	public Movie getMovie(int index) {
@@ -189,38 +170,69 @@ public class DB implements Serializable {
 		return movies;
 	}
 
+	/**
+	 * return Movies with user ratings populated
+	 * 
+	 * @param user
+	 * @param onlyRated
+	 * @return
+	 */
+	public List<Movie> getMoviesRated(User user, boolean onlyRated) {
+
+		List<Movie> tmp;
+
+		// populate movie list by the rules
+		if (onlyRated) {
+			tmp = new ArrayList<Movie>();
+
+			// return only movies I rated
+			for (int i = 0; i < user.getRatingMovie().size(); i++) {
+				int index = user.getRatingMovie().get(i);
+				byte rating = Rating.toZeroToFive(user.getRatingRating().get(i));
+
+				movies.get(index).setRated(rating);
+				tmp.add(movies.get(index));
+			}
+		} else {
+			// return all movies regardles if user rated them or not
+
+			this.userRatingsFlush(movies);
+			this.userRatingsPopulate(movies, user);
+
+			tmp = new ArrayList<Movie>(movies.values());
+		}
+
+		// sort list
+		Collections.sort(tmp, Movie.BY_RATING);
+		return tmp;
+	}
+
+	/**
+	 * @return the rattingDirtiness
+	 */
+	public int getRattingDirtiness() {
+		return rattingDirtiness;
+	}
+
 	public ArrayList<User> getUsers() {
 		return users;
 	}
 
-	public void purgeCacheForEachUser() {
-		for (User user : this.users) {
-			user.purgeCache();
-		}
-	}
-
-	public void setGenres(ArrayList<MovieGenre> genres) {
-		this.genres = genres;
-	}
-
-	public void setGenresDirty(boolean genresDirty) {
-		this.genresDirty = genresDirty;
-	}
-
 	/**
-	 * @param loaded
-	 *          the loaded to set
+	 * @return the loaded
 	 */
-	public void setLoaded(boolean loaded) {
-		this.loaded = loaded;
+	public boolean isLoaded() {
+		return loaded;
 	}
 
-	public void setMovies(HashMap<Integer, Movie> movies) {
-		this.movies = movies;
+	public void increaseDirtiness() {
+		this.rattingDirtiness++;
 	}
 
-	public void setUsers(ArrayList<User> users) {
-		this.users = users;
+	public boolean isTooDirty() {
+		if (rattingDirtiness > DIRTINES_THRESHOLD)
+			return true;
+		else return false;
 	}
 
 	/**
@@ -234,26 +246,57 @@ public class DB implements Serializable {
 		}
 	}
 
-	/**
-	 * Clear the user ratings for movies list
-	 */
-	public void userRatingsFlush(HashMap<Integer, Movie> list) {
-		for (Entry<Integer, Movie> entry : list.entrySet()) {
-			entry.getValue().setRated((byte) 0);
+	public void purgeCacheForEachUser() {
+		for (User user : this.users) {
+			user.purgeCache();
 		}
 	}
 
-	/**
-	 * Populate user ratings in the list
-	 */
-	public HashMap<Integer, Movie> userRatingsPopulate(HashMap<Integer, Movie> list, User user) {
-		for (int i = 0; i < user.getRatingMovie().size(); i++) {
-			int index = user.getRatingMovie().get(i);
-			byte rating = Rating.toZeroToFive(user.getRatingRating().get(i));
+	public void purgeDB() {
+		this.movies = new HashMap<Integer, Movie>();
+		this.genres = new ArrayList<MovieGenre>();
+		this.genresDirty = false;
+		this.users = new ArrayList<User>();
+		// as default db is considered dirty
+		this.rattingDirtiness = DIRTINES_THRESHOLD + 1;
+	}
 
-			if (list.containsKey(index)) list.get(index).setRated(rating);
+	/**
+	 * Request to log in, check if users exists and the password matches
+	 * 
+	 * @param name
+	 * @param pass
+	 * @return
+	 */
+	public int RLogIn(final String name, String pass) {
+
+		User user = CollectionUtils.find(this.users, new Predicate<User>() {
+			public boolean evaluate(User arg) {
+				return arg.getUserName().equals(name);
+			}
+		});
+
+		if (user != null && !user.getLoggedIn()) {
+			System.out.println("Found and not logged in");
+			if (user.matchPassword(pass)) {
+				System.out.println("Password match");
+				user.setLoggedIn(true);
+				return users.indexOf(user);
+			}
 		}
-		return list;
+		return -1;
+	}
+
+	/**
+	 * Request to log out user
+	 * 
+	 * @param userID
+	 */
+	public void RLogOut(int userID) {
+		if (userID != -1) {
+			User user = users.get(userID);
+			user.setLoggedIn(false);
+		}
 	}
 
 	/**
@@ -302,85 +345,72 @@ public class DB implements Serializable {
 		this.userRatingsPopulate(tmp, user);
 
 		List<Movie> ret = new ArrayList<Movie>(tmp.values());
-		//		System.out.println(ret.size());
+		// System.out.println(ret.size());
 		Collections.sort(ret, Movie.BY_RATING);
 
 		return ret;
 	}
 
-	/**
-	 * return Movies with user ratings populated
-	 * 
-	 * @param user
-	 * @param onlyRated
-	 * @return
-	 */
-	public List<Movie> getMoviesRated(User user, boolean onlyRated) {
+	public void setGenres(ArrayList<MovieGenre> genres) {
+		this.genres = genres;
+	}
 
-		List<Movie> tmp;
-
-		// populate movie list by the rules
-		if (onlyRated) {
-			tmp = new ArrayList<Movie>();
-
-			// return only movies I rated
-			for (int i = 0; i < user.getRatingMovie().size(); i++) {
-				int index = user.getRatingMovie().get(i);
-				byte rating = Rating.toZeroToFive(user.getRatingRating().get(i));
-
-				movies.get(index).setRated(rating);
-				tmp.add(movies.get(index));
-			}
-		} else {
-			// return all movies regardles if user rated them or not
-
-			this.userRatingsFlush(movies);
-			this.userRatingsPopulate(movies, user);
-
-			tmp = new ArrayList<Movie>(movies.values());
-		}
-
-		// sort list
-		Collections.sort(tmp, Movie.BY_RATING);
-		return tmp;
+	public void setGenresDirty(boolean genresDirty) {
+		this.genresDirty = genresDirty;
 	}
 
 	/**
-	 * Request to log in, check if users exists and the password matches
-	 * 
-	 * @param name
-	 * @param pass
-	 * @return
+	 * @param loaded
+	 *          the loaded to set
 	 */
-	public int RLogIn(final String name, String pass) {
-
-		User user = CollectionUtils.find(this.users, new Predicate<User>() {
-			public boolean evaluate(User arg) {
-				return arg.getUserName().equals(name);
-			}
-		});
-
-		if (user != null && !user.getLoggedIn()) {
-			System.out.println("Found and not logged in");
-			if (user.matchPassword(pass)) {
-				System.out.println("Password match");
-				user.setLoggedIn(true);
-				return users.indexOf(user);
-			}
-		}
-		return -1;
+	public void setLoaded(boolean loaded) {
+		this.loaded = loaded;
 	}
 
 	/**
-	 * Request to log out user
-	 * 
-	 * @param userID
+	 * @param loadedFile
+	 *          the loadedFile to set
 	 */
-	public void RLogOut(int userID) {
-		if (userID != -1) {
-			User user = users.get(userID);
-			user.setLoggedIn(false);
+	public void setLoadedFileName(String loadedFileName) {
+		this.loadedFileName = loadedFileName;
+	}
+
+	public void setMovies(HashMap<Integer, Movie> movies) {
+		this.movies = movies;
+	}
+
+	/**
+	 * @param rattingDirtiness
+	 *          the rattingDirtiness to set
+	 */
+	public void setRattingDirtiness(int rattingDirtiness) {
+		this.rattingDirtiness = rattingDirtiness;
+	}
+
+	public void setUsers(ArrayList<User> users) {
+		this.users = users;
+	}
+
+	/**
+	 * Clear the user ratings for movies list
+	 */
+	public void userRatingsFlush(HashMap<Integer, Movie> list) {
+		for (Entry<Integer, Movie> entry : list.entrySet()) {
+			entry.getValue().setRated((byte) 0);
 		}
+	}
+
+	/**
+	 * Populate user ratings in the list
+	 */
+	public HashMap<Integer, Movie> userRatingsPopulate(HashMap<Integer, Movie> list, User user) {
+		for (int i = 0; i < user.getRatingMovie().size(); i++) {
+			int index = user.getRatingMovie().get(i);
+			byte rating = Rating.toZeroToFive(user.getRatingRating().get(i));
+
+			if (list.containsKey(index)) list.get(index).setRated(rating);
+		}
+		return list;
 	}
 
 }

@@ -154,7 +154,8 @@ function populateMovies(input) {
 
 		tmp += '<i class="top aligned right triangle icon"></i>&nbsp;<b>Your rating</b>&nbsp;';
 
-		tmp += '<div class="ui large heart rating yourrating '+ ((val['rated']>0)?'readonly':'') + '" data-id="' + val['id'] + '" data-rating="' + val['rated'] + '" data-max-rating="5"></div>';
+		// tmp += '<div class="ui large heart rating yourrating '+ ((val['rated']>0)?'readonly':'') + '" data-id="' + val['id'] + '" data-rating="' + val['rated'] + '" data-max-rating="5"></div>';
+		tmp += '<div class="ui large heart rating yourrating" data-id="' + val['id'] + '" data-rating="' + val['rated'] + '" data-max-rating="5"></div>';
 		tmp += '<br>';
 		tmp += val['plot'];
 		

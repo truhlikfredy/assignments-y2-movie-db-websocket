@@ -48,6 +48,7 @@ public class MovieGenre implements Serializable, JSONAware {
 		}
 	}
 
+	// reverse can by used but this way it's done in one step
 	private static class ByUsageDesc implements Comparator<MovieGenre> {
 		public int compare(MovieGenre left, MovieGenre right) {
 			return right.timesUsed - left.timesUsed;

@@ -41,6 +41,7 @@ public class Cache implements Serializable {
 	 * 
 	 */
 	private static class BySumDesc implements Comparator<Cache> {
+		// reverse can by used but this way it's done in one step
 		public int compare(Cache left, Cache right) {
 			return right.sum - left.sum;
 		}

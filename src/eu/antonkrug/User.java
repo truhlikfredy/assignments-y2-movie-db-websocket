@@ -6,10 +6,12 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 //high performance scientific libaries https://dst.lbl.gov/ACSSoftware/colt/
 import cern.colt.list.ByteArrayList;
 import cern.colt.list.IntArrayList;
+
 // Benchmark: http://cern.antonkrug.eu/
 // low memory footprint and high performance libaries http://trove.starlight-systems.com/
 //import gnu.trove.list.array.TByteArrayList;
@@ -35,6 +37,7 @@ public class User implements Comparable<User>, Serializable {
 	private static final long	serialVersionUID	= 5878250555642530179L;
 
 	private static final int	CACHE_ENTRIES			= 100;
+	private static final int	RECCOMEND_LIMIT		= 50;
 
 	private String						firstName;
 	private String						lastName;
@@ -127,17 +130,49 @@ public class User implements Comparable<User>, Serializable {
 	 * @param movie
 	 * @param rating
 	 */
-	public void addRating(int movie, byte rating) {
-		// allow to rate just once!
-		for (int i=0;i<ratingMovie.size();i++) {
-			if (this.ratingMovie.get(i)==movie) return;
+	public void rateMovie(int movie, byte rating) {
+		// find out if rated already
+		int i = 0;
+		for (i = 0; i < ratingMovie.size(); i++) {
+			if (this.ratingMovie.get(i) == movie) break;
 		}
-		
-		this.ratingMovie.add(movie);
-		this.ratingRating.add(rating);
 
-		DB.obj().getMovie(movie).addRating(rating);
+		if (i == ratingMovie.size()) {
 
+			// not rated, add new rating
+			this.ratingMovie.add(movie);
+			this.ratingRating.add(rating);
+
+			DB.obj().getMovie(movie).addRating(rating);
+
+			this.ratingDirty++;
+		} else {
+
+			// rated already, change rating
+			DB.obj().getMovie(movie).removeRating(this.ratingRating.get(i));
+			DB.obj().getMovie(movie).addRating(rating);
+
+			this.ratingRating.set(i, rating);
+
+			this.ratingDirty++;
+
+		}
+		DB.obj().increaseDirtiness();
+	}
+
+	/**
+	 * Remove user ratings
+	 * 
+	 * @param movie
+	 * @param rating
+	 */
+	public void removeAllRatings() {
+		for (int i = 0; i < ratingMovie.size(); i++) {
+			Movie movie = DB.obj().getMovie(this.ratingMovie.get(i));
+			movie.removeRating(this.ratingRating.get(i));
+		}
+		this.ratingMovie = new IntArrayList();
+		this.ratingRating = new ByteArrayList();
 		this.ratingDirty++;
 	}
 
@@ -151,7 +186,6 @@ public class User implements Comparable<User>, Serializable {
 	/**
 	 * Calculate compatibility for all and keep just few top
 	 */
-
 	public void calculateAll() {
 		this.purgeCache();
 		ArrayList<Cache> tmp = new ArrayList<Cache>();
@@ -160,31 +194,107 @@ public class User implements Comparable<User>, Serializable {
 		for (User user : DB.obj().getUsers()) {
 			int scoreSum = this.calculateCompability(user);
 
-			// if there is enough good matches stop
-			if (scoreSum > Cache.CACHE_THRESHOLD) bucket += scoreSum;
-			if (bucket > Cache.CACHE_BUCKET) break;
+			//consider only positive matches
+			if (scoreSum > 0) {
+				// if there is enough good matches stop
+				if (scoreSum > Cache.CACHE_THRESHOLD) bucket += scoreSum;
+				if (bucket > Cache.CACHE_BUCKET) break;
 
-			tmp.add(new Cache(user, scoreSum));
+				tmp.add(new Cache(user, scoreSum));
+			}
 		}
 
 		Collections.sort(tmp, Cache.BY_SUM_DESC);
 
-		for (int i = 0; i < CACHE_ENTRIES && i < tmp.size(); i++) {
+		for (int i = 0; (i < CACHE_ENTRIES) && (i < tmp.size()); i++) {
 			this.topCache.add(tmp.get(i));
 		}
 	}
-	
+
+	/**
+	 * Check if movie was already rated
+	 * 
+	 * @param index
+	 * @return
+	 */
+	public boolean ratedMovie(int movieID) {
+		for (int i = 0; i < this.ratingMovie.size(); i++) {
+			if (this.ratingMovie.get(i) == movieID) return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Return list of reccomendations. Depending on memorry requirements and size
+	 * of database and way users use it (how often rating are made / how often
+	 * reccomendations are shown). But this list could be cached and kept dirty
+	 * flag and recalculated when the dirty flag is to big (or by admin scheduled
+	 * by every night). But without anymore specification is hard to decide,
+	 * caching this list would waste memorry, but if the recomendations are shown
+	 * on every single page, then worth it.
+	 * 
+	 * The RECCOMEND_LIMIT and even limits in caches will not produce perfect
+	 * results but in case the database would contain many users and movies, these
+	 * shortcuts still woul give good enough results and would not take as much
+	 * time.
+	 * 
+	 * @return
+	 */
+	public List<Movie> reccomendations() {
+
+		// if too many changes in ratings were made even user compatibility cache
+		// has to be redone
+		if (DB.obj().isTooDirty()) DB.obj().compatibilityForEachUser();
+
+		HashMap<Integer, Movie> recomend = new HashMap<Integer, Movie>();
+
+		// till RECCOMEND_LIMIT is reached go trough top matching users from the
+		// cache
+		for (Cache cache : this.topCache) {
+			User user = cache.getUser();
+			// System.out.println(user);
+
+			// go over cached user's rated movies to find some we didn't rated
+			for (int i = 0; i < user.getRatingMovie().size(); i++) {
+				int movieIndex = user.getRatingMovie().get(i);
+
+				if (!ratedMovie(movieIndex)) {
+					Movie movie = DB.obj().getMovie(movieIndex);
+
+					// add new recomendation only if we don't have it already
+					if (!recomend.containsValue(movie)) {
+						// multiply his rating with our compatibility score and use the
+						// result
+						// as key so we can have it sorted
+						int combined_score = cache.getSum() * user.getRatingRating().get(i);
+
+						recomend.put(combined_score, movie);
+					}
+				}
+			}
+
+			// it can get little bit bigger than limit because it checks after whole
+			// cached user is done
+			if (recomend.size() > RECCOMEND_LIMIT) break;
+		}
+
+		List<Movie> ret = new ArrayList<Movie>(recomend.values());
+
+		return ret;
+	}
+
 	/**
 	 * Combine first and last name
+	 * 
 	 * @return
 	 */
 	public String getFullName() {
-		return firstName+" "+lastName;
+		return firstName + " " + lastName;
 	}
 
 	// TODO adjust score by the number of ratings given user got, so it's better
 	// chance yeld recomendation
-	
+
 	/**
 	 * Calculate compability for given user
 	 * 
@@ -327,7 +437,7 @@ public class User implements Comparable<User>, Serializable {
 	public void sortRating() {
 		if (ratingDirty > 0) {
 			// add merge sort and depending how dirty it is change algorithms
-			this.sortRatingQuickSort(0, this.ratingMovie.size());
+			this.sortRatingQuickSort(0, this.ratingMovie.size() - 1);
 			this.ratingDirty = 0;
 		}
 	}

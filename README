@@ -12,7 +12,11 @@ the reccomendation than you will write. So I decided to calculated recomendation
 when change the data on write (giving rating) and keep stored results in cache.
 
 Like de-normalization of data in mongoDB and other no-SQL databases I decided to
-have some data redudant just to get faster responses.
+have some data redudant just to get faster responses. And like google or twitter
+I decide to not give 100% of time 100% acurate results. Some results are cached
+and some processes stopped after "good enough" results so in case of big 
+database it doesn't have to proccess all users and movies each time. But will
+returns acceptable results even they might be off from 100% acurate results.
 
 Ratings are kept in special format. Basicaly it's simple array of primitive types.
 

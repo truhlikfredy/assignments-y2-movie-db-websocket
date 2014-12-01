@@ -161,6 +161,10 @@ public class Server extends WebSocketServer {
 				data=DBInputOutputEnum.getInstance("data/database.dat");
 				data.save();
 			}
+			
+			
+//			System.out.println(DB.obj().getUsers().get(1));
+//			DB.obj().getUsers().get(1).calculateAll();
 
 
 			// System.out.println(JSONValue.toJSONString(DB.obj().getGenres()));
@@ -383,7 +387,7 @@ public class Server extends WebSocketServer {
 							.toString()));
 //					System.out.println(rating);
 //					System.out.println(rating.getValue());
-					loggedUser.addRating(Integer.parseInt(json.get("id").toString()), rating.getValue());
+					loggedUser.rateMovie(Integer.parseInt(json.get("id").toString()), rating.getValue());
 				}
 				break;
 
@@ -420,7 +424,11 @@ public class Server extends WebSocketServer {
 				
 			case R_LIST_REC: 
 				if (ws.isLogged()) {
-					
+					JSONObject obj = new JSONObject();
+					obj.put("v", loggedUser.reccomendations());
+					obj.put("t", API.A_LIST_MOVIES.getValue());
+					// System.out.println(obj.toJSONString());
+					ws.send(obj.toJSONString());					
 				}
 				break;
 

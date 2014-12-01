@@ -221,7 +221,7 @@ public class DBInputOutput implements Serializable {
 
 								// add all SEEN movies
 								if (rating != Rating.NOT_SEEN) {
-									lastUser.addRating(i + 1, rating.getValue());
+									lastUser.rateMovie(i + 1, rating.getValue());
 								}
 							}
 						}

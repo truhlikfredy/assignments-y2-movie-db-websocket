@@ -84,6 +84,16 @@ public class Movie implements Serializable, JSONAware {
 	}
 
 	/**
+	 * Remove some score from sum and decrements counter as well
+	 * 
+	 * @param value
+	 */
+	public void removeRating(byte value) {
+		this.ratingSum -= value;
+		this.ratingCount--;
+	}
+
+	/**
 	 * Calculates and returns the average rating for this movie
 	 * 
 	 * @return
