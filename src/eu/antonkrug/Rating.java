@@ -131,7 +131,7 @@ public enum Rating {
 				return REALLY_LIKED;
 
 			default:
-				System.out.println("ERROR: Getting wrong rating!");
+//				System.out.println("ERROR: Getting wrong rating!");
 				return NOT_SEEN;
 		}
 	}
