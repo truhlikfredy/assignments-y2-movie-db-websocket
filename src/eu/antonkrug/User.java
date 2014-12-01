@@ -435,7 +435,7 @@ public class User implements Comparable<User>, Serializable {
 	 * Will call aproperiate sorting algorithm
 	 */
 	public void sortRating() {
-		if (ratingDirty > 0) {
+		if (ratingDirty > 0 && this.ratingMovie.size()>0) {
 			// add merge sort and depending how dirty it is change algorithms
 			this.sortRatingQuickSort(0, this.ratingMovie.size() - 1);
 			this.ratingDirty = 0;
