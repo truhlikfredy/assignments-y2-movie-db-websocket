@@ -30,7 +30,7 @@ public class SearchCachesReccomendation {
 		// this will test sorting and caches as well
 
 		// how many recomendings
-		assertEquals(49, user.reccomendations().size());
+		assertEquals(30, user.reccomendations().size());
 
 		// purge precalculated data
 		db.purgeCacheForEachUser();
@@ -38,81 +38,83 @@ public class SearchCachesReccomendation {
 		user.calculateAll();
 
 		// check if get same result
-		assertEquals(49, user.reccomendations().size());
+		assertEquals(30, user.reccomendations().size());
 
 		// get cached reccomendation results without performance penalty
-		assertEquals(49, user.getReccomended().size());
+		assertEquals(30, user.getReccomended().size());
 
-		//check and rate first recomended movie
+		// check and rate first recomended movie top #1
 		Movie movie = user.reccomendations().get(0);
-		assertEquals("Scary Movie", movie.getName());
-		assertEquals(48,movie.getId());
-		user.rateMovie(movie.getId(),(byte)5);
+		assertEquals("Once Upon a Time in Mexico", movie.getName());
+		assertEquals(44, movie.getId());
+		user.rateMovie(movie.getId(), (byte) 5);
 
-		// check if after you rated it, it's not recomended to you anymore
-		assertEquals("Unfaithful", user.reccomendations().get(0).getName());
-		
+		// check if after you rated it, it's not recomended to you anymore and top#1
+		// is something else
+		assertEquals("Girl Interrupted", user.reccomendations().get(0).getName());
+
 		// remove this users ratings
 		user.removeAllRatings();
 
 		// can't match your trend with anybody so is not recomending anything
 		assertEquals(0, user.reccomendations().size());
 	}
-	
+
 	@Test
 	public void testRecomendedUpDownVoting() {
-		//checks if recomending changes in the way it's desired
-		
+		// checks if recomending changes in the way it's desired
+
 		assertEquals("John Moose", user.getFullName());
-		
+
 		User otherUser = db.getUsers().get(7);
 		assertEquals("Irene Baker", otherUser.getFullName());
 
-		//no cache calculated
+		// no cache calculated
 		assertEquals(null, user.getTopCache());
-		
-		//now who is compatible when cache is calculated
+
+		// now who is compatible when cache is calculated
 		user.calculateAll();
 		assertEquals("Andrew Smores", user.getTopCache().get(0).getUser().getFullName());
 
-		//and got reccomended as first choice 
-		assertEquals("Once Upon a Time in Mexico", user.reccomendations().get(0).getName());		
-		
-		//make johns rating the same as irene's so they should be very compatible
+		// and got reccomended as first choice
+		assertEquals("Once Upon a Time in Mexico", user.reccomendations().get(0).getName());
+
+		// make johns rating the same as irene's so they should be very compatible
 		user.removeAllRatings();
-		for (int i=0;i<otherUser.getRatingMovie().size();i++) {
+		for (int i = 0; i < otherUser.getRatingMovie().size(); i++) {
 			int movieID = otherUser.getRatingMovie().get(i);
 			byte movieRating = otherUser.getRatingRating().get(i);
-			
-			user.rateMovie( movieID, movieRating);
+
+			user.rateMovie(movieID, movieRating);
 		}
-		
-		//see if most compatible person now is Irene instead of Andrew Smores
+
+		// see if most compatible person now is Irene instead of Andrew Smores
 		user.calculateAll();
-		assertEquals(otherUser,user.getTopCache().get(0).getUser());
-		
-		//recomendations will recalculate user compatibility cache if needed
-		//and we should get different recomendation
+		assertEquals(otherUser, user.getTopCache().get(0).getUser());
+
+		// recomendations will recalculate user compatibility cache if needed
+		// and we should get different recomendation
 		assertEquals("Stick It", user.reccomendations().get(0).getName());
-		int movieForDownVote = user.reccomendations().get(0).getId();
-				
-		//Irene will downvote our top recomended movie.		
-		otherUser.rateMovie(movieForDownVote,(byte)-5);
+		assertEquals("Girl Interrupted", user.reccomendations().get(1).getName());
 
-		//And John's top recomedation should change
-		assertEquals("Two for the Money", user.reccomendations().get(0).getName());
-	
+		// Irene will downvote top #1 and upvote top #2
+		otherUser.rateMovie(user.reccomendations().get(0).getId(), (byte) -5);
+		otherUser.rateMovie(user.reccomendations().get(1).getId(), (byte) 5);
 
-		//Now everybody who is compatible with john will rate high his top 5 movie
+		// And john's recomendations should reflect the change
+		assertEquals("Girl Interrupted", user.reccomendations().get(0).getName());
+		assertEquals("Stick It", user.reccomendations().get(1).getName());
+
+		// Now everybody who is compatible with john will rate high his top 5 movie
 		int movieForUpVote = user.reccomendations().get(5).getId();
-		assertEquals("Hairspray",db.getMovie(movieForUpVote).getName());
-		
-		for (Cache compatibleUser:user.getTopCache()) {
-			compatibleUser.getUser().rateMovie(movieForUpVote, (byte)5);
+		assertEquals("The Limey", db.getMovie(movieForUpVote).getName());
+
+		for (Cache compatibleUser : user.getTopCache()) {
+			compatibleUser.getUser().rateMovie(movieForUpVote, (byte) 5);
 		}
 
-		//And should be enough to promote that movie from top 5 to top 1 for john
-		assertEquals("Hairspray", user.reccomendations().get(0).getName());
+		// And should be enough to promote that movie from top 5 to top 1 for john
+		assertEquals("The Limey", user.reccomendations().get(0).getName());
 	}
 
 	@Test
