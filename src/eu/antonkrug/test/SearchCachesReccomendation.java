@@ -25,13 +25,12 @@ public class SearchCachesReccomendation {
 		this.user = db.getUsers().get(1);
 	}
 
-	/*
 	@Test
 	public void testRecomended() {
 		// this will test sorting and caches as well
 
 		// how many recomendings
-		assertEquals(35, user.reccomendations().size());
+		assertEquals(49, user.reccomendations().size());
 
 		// purge precalculated data
 		db.purgeCacheForEachUser();
@@ -39,16 +38,16 @@ public class SearchCachesReccomendation {
 		user.calculateAll();
 
 		// check if get same result
-		assertEquals(35, user.reccomendations().size());
+		assertEquals(49, user.reccomendations().size());
 
 		//check and rate first recomended movie
 		Movie movie = user.reccomendations().get(0);
-		assertEquals("War", movie.getName());
-		assertEquals(36,movie.getId());
+		assertEquals("Scary Movie", movie.getName());
+		assertEquals(48,movie.getId());
 		user.rateMovie(movie.getId(),(byte)5);
 
-		// check if it's excluded
-		assertEquals(34, user.reccomendations().size());
+		// check if after you rated it, it's not recomended to you anymore
+		assertEquals("Unfaithful", user.reccomendations().get(0).getName());
 		
 		// remove this users ratings
 		user.removeAllRatings();
@@ -56,10 +55,9 @@ public class SearchCachesReccomendation {
 		// can't match your trend with anybody so is not recomending anything
 		assertEquals(0, user.reccomendations().size());
 	}
-	*/
 	
 	@Test
-	public void testRecomendedTrend() {
+	public void testRecomendedUpDownVoting() {
 		//checks if recomending changes in the way it's desired
 		
 		assertEquals("John Moose", user.getFullName());
@@ -74,8 +72,8 @@ public class SearchCachesReccomendation {
 		user.calculateAll();
 		assertEquals("Andrew Smores", user.getTopCache().get(0).getUser().getFullName());
 
-		//and got reccomended War as first choice 
-		assertEquals("Girl Interrupted", user.reccomendations().get(0).getName());		
+		//and got reccomended Scary Movie as first choice 
+		assertEquals("Scary Movie", user.reccomendations().get(0).getName());		
 		
 		//make johns rating the same as irene's so they should be very compatible
 		user.removeAllRatings();
@@ -90,59 +88,28 @@ public class SearchCachesReccomendation {
 		user.calculateAll();
 		assertEquals(otherUser,user.getTopCache().get(0).getUser());
 		
+		//recomendations will recalculate user compatibility cache if needed
 		//and we should get different recomendation
-		user.calculateAll();
-		assertEquals("Empire Records", user.reccomendations().get(0).getName());
-//		int movieForDownVote = user.reccomendations().get(0).getId();
+		assertEquals("Unfaithful", user.reccomendations().get(0).getName());
+		int movieForDownVote = user.reccomendations().get(0).getId();
 				
 		//Irene will downvote our top recomended movie.		
-//		otherUser.rateMovie(movieForDownVote,(byte)-5);
+		otherUser.rateMovie(movieForDownVote,(byte)-5);
 
 		//And John's top recomedation should change
-//		user.calculateAll();
-//		assertEquals("Empire Records", user.reccomendations().get(0).getName());
+		assertEquals("Two for the Money", user.reccomendations().get(0).getName());
 	
-		
-		//Irene will now rate 
-		//BTW IMO whe reading the plot, this movie doesn't sound very good !
-		//Really this is hypotethical situation that we will give it 5 rating.
-		int movieForUpVote = user.reccomendations().get(1).getId();
+
+		//Now everybody who is compatible with john will rate high hish top 5 movie
+		int movieForUpVote = user.reccomendations().get(5).getId();
 		assertEquals("Hairspray",db.getMovie(movieForUpVote).getName());
 		
 		for (Cache compatibleUser:user.getTopCache()) {
 			compatibleUser.getUser().rateMovie(movieForUpVote, (byte)5);
 		}
-		
-		otherUser.rateMovie(movieForUpVote, (byte)5 );
-		
-		user.calculateAll();
-		assertEquals("Fever Pitch", user.reccomendations().get(0).getName());
-		
-		
-		
-		
-		// purge precalculated data
-		db.purgeCacheForEachUser();
-		db.compatibilityForEachUser();
-		user.calculateAll();
-		
-		// check if get same result
-		assertEquals(35, user.reccomendations().size());
-		
-		//check and rate first recomended movie
-		Movie movie = user.reccomendations().get(0);
-		assertEquals("War", movie.getName());
-		assertEquals(36,movie.getId());
-		user.rateMovie(movie.getId(),(byte)5);
-		
-		// check if it's excluded
-		assertEquals(34, user.reccomendations().size());
-		
-		// remove this users ratings
-		user.removeAllRatings();
-		
-		// can't match your trend with anybody so is not recomending anything
-		assertEquals(0, user.reccomendations().size());
+
+		//And should be enough to promote that movie from top 5 to top 1 for john
+		assertEquals("Hairspray", user.reccomendations().get(0).getName());
 	}
 
 	@Test

@@ -9,6 +9,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import java.util.TreeMap;
+
 //high performance scientific libaries https://dst.lbl.gov/ACSSoftware/colt/
 import cern.colt.list.ByteArrayList;
 import cern.colt.list.IntArrayList;
@@ -248,7 +250,7 @@ public class User implements Comparable<User>, Serializable {
 	 * @param value
 	 * @return
 	 */
-	private Integer getKey(HashMap<Integer, Movie> hm, Object value) {
+	private Integer getKey(TreeMap<Integer, Movie> hm, Object value) {
 		for (Integer o : hm.keySet()) {
 			if (hm.get(o).equals(value)) {
 				return o;
@@ -279,7 +281,7 @@ public class User implements Comparable<User>, Serializable {
 		// has to be redone
 		if (DB.obj().isTooDirty()) DB.obj().compatibilityForEachUser();
 
-		HashMap<Integer, Movie> recomend = new HashMap<Integer, Movie>();
+		TreeMap<Integer, Movie> recomend = new TreeMap<Integer, Movie>();
 
 		// till RECCOMEND_LIMIT is reached go trough top matching users from the
 		// cache
@@ -297,19 +299,20 @@ public class User implements Comparable<User>, Serializable {
 					// multiply his rating with our compatibility score and use the
 					// result as key so we can have it sorted
 					int combined_score = cache.getSum() * user.getRatingRating().get(i);
-					if (combined_score > 0) {
 
-						if (!recomend.containsValue(movie)) {
-							// add new recomendation only if we don't have it already
-							recomend.put(combined_score, movie);
-						} else {
-							// or move it to better position if already we have it
-							int moveIndex = this.getKey(recomend, movie);
-							recomend.remove(movieIndex);
-							recomend.put(moveIndex + combined_score, movie);
-						}
-						
+					// considering negative and positive scores as well, because something
+					// upvoted by 2 people can be downvoted to middle by third person
+
+					if (!recomend.containsValue(movie)) {
+						// add new recomendation only if we don't have it already
+						recomend.put(combined_score, movie);
+					} else {
+						// or move it to better position if already we have it
+						int moveIndex = this.getKey(recomend, movie);
+						recomend.remove(movieIndex);
+						recomend.put(moveIndex + combined_score, movie);
 					}
+
 				}
 			}
 
@@ -317,8 +320,18 @@ public class User implements Comparable<User>, Serializable {
 			// cached user is done
 			if (recomend.size() > RECCOMEND_LIMIT) break;
 		}
+		
+		//return only movies which total sum ended up positive 
+		List<Movie> ret = new ArrayList<Movie>();
 
-		List<Movie> ret = new ArrayList<Movie>(recomend.values());
+		for(Map.Entry<Integer,Movie> entry : recomend.entrySet()) {
+		  Integer key = entry.getKey();
+		  Movie value = entry.getValue();
+
+		  if (key>0) ret.add(value);
+		}
+		
+		Collections.reverse(ret);
 
 		return ret;
 	}

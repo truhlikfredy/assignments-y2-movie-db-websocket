@@ -157,10 +157,14 @@ public class Server extends WebSocketServer {
 				data.load();
 				
 				DB.obj().populateIMDBmetaForEach();
+				DB.obj().compatibilityForEachUser();
 
 				data=DBInputOutputEnum.getInstance("data/database.dat");
 				data.save();
 			}
+			
+			//will populate caches with fresh data even loaded some older caches
+			DB.obj().compatibilityForEachUser();
 			
 			
 //			System.out.println(DB.obj().getUsers().get(1));
