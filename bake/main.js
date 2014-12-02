@@ -26,6 +26,8 @@ function search() {
 	ws.send(JSON.stringify({'t':%R_SEARCH%,'v':id}));	
 }
 
+var sort_by='rating';
+
 //attach all event listeners
 $(document).ready(function() {
 
@@ -62,12 +64,34 @@ $(document).ready(function() {
 		$('#user_home_tab').show();
 	});
 
+	$('#ubtn_movies_name').click(function() {
+		sort_by='name';
+	});
+
+	$('#ubtn_movies_rating').click(function() {
+		sort_by='rating';
+	});
+
+	$('#ubtn_movies_rating_count').click(function() {
+		sort_by='rating_count';
+	});
+
+	$('#ubtn_movies_year').click(function() {
+		sort_by='year';
+	});
+
+	$('#ubtn_movies_genre').click(function() {
+		sort_by='genre';
+	});
+	
 	$('#ubtn_movies').click(function() {
+		console.log(sort_by);
 		$('.defhid').hide();
 		$('#list_genres').hide();
 		$('#user_movies_tab').show();
-		ws.send(JSON.stringify({'t':%R_LIST_MOVIES%,'only_rated':false}));
+		ws.send(JSON.stringify({'t':%R_LIST_MOVIES%,'only_rated':false,'sort_by':sort_by}));
 	});
+
 
 	$('#ubtn_rated').click(function() {
 		$('.defhid').hide();

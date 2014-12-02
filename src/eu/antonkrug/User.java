@@ -56,7 +56,7 @@ public class User implements Comparable<User>, Serializable {
 	private ByteArrayList			ratingRating;
 	private String						userName;
 	private ArrayList<Cache>	topCache;
-	private ArrayList<Movie>	reccomended;
+	private List<Movie>				reccomended;
 
 	// Dirty is not Boolean but int, so I could support different algorithms,
 	// merge sort for little bit dirty arrays and quick sort for very dirty
@@ -85,7 +85,7 @@ public class User implements Comparable<User>, Serializable {
 	/**
 	 * @return the reccomended
 	 */
-	public ArrayList<Movie> getReccomended() {
+	public List<Movie> getReccomended() {
 		return reccomended;
 	}
 
@@ -250,7 +250,7 @@ public class User implements Comparable<User>, Serializable {
 	 * @param value
 	 * @return
 	 */
-	private Integer getKey(TreeMap<Integer, Movie> hm, Object value) {
+	private Integer getKey(TreeMap<Integer, Movie> hm, Movie value) {
 		for (Integer o : hm.keySet()) {
 			if (hm.get(o).equals(value)) {
 				return o;
@@ -308,8 +308,8 @@ public class User implements Comparable<User>, Serializable {
 						recomend.put(combined_score, movie);
 					} else {
 						// or move it to better position if already we have it
-						int moveIndex = this.getKey(recomend, movie);
-						recomend.remove(movieIndex);
+						Integer moveIndex = this.getKey(recomend, movie);
+						recomend.remove(moveIndex);
 						recomend.put(moveIndex + combined_score, movie);
 					}
 
@@ -320,20 +320,20 @@ public class User implements Comparable<User>, Serializable {
 			// cached user is done
 			if (recomend.size() > RECCOMEND_LIMIT) break;
 		}
-		
-		//return only movies which total sum ended up positive 
-		List<Movie> ret = new ArrayList<Movie>();
 
-		for(Map.Entry<Integer,Movie> entry : recomend.entrySet()) {
-		  Integer key = entry.getKey();
-		  Movie value = entry.getValue();
+		// return only movies which total sum ended up positive
+		reccomended = new ArrayList<Movie>();
 
-		  if (key>0) ret.add(value);
+		for (Map.Entry<Integer, Movie> entry : recomend.entrySet()) {
+			Integer key = entry.getKey();
+			Movie value = entry.getValue();
+
+			if (key > 0) reccomended.add(value);
 		}
-		
-		Collections.reverse(ret);
 
-		return ret;
+		Collections.reverse(reccomended);
+
+		return reccomended;
 	}
 
 	/**

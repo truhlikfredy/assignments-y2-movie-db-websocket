@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 import mws.WebSocket;
 import mws.handshake.ClientHandshake;
@@ -151,25 +152,23 @@ public class Server extends WebSocketServer {
 			DBInputOutputEnum data = DBInputOutputEnum.getInstance(Server.DEFAULT_DB);
 			data.load();
 
-			//set true to reload from CSV get IMDB meta and save to bytestream
+			// set true to reload from CSV get IMDB meta and save to bytestream
 			if (false) {
 				data = DBInputOutputEnum.getInstance("data/movies.csv");
 				data.load();
-				
+
 				DB.obj().populateIMDBmetaForEach();
 				DB.obj().compatibilityForEachUser();
 
-				data=DBInputOutputEnum.getInstance("data/database.dat");
+				data = DBInputOutputEnum.getInstance("data/database.dat");
 				data.save();
 			}
-			
-			//will populate caches with fresh data even loaded some older caches
-			DB.obj().compatibilityForEachUser();
-			
-			
-//			System.out.println(DB.obj().getUsers().get(1));
-//			DB.obj().getUsers().get(1).calculateAll();
 
+			// will populate caches with fresh data even loaded some older caches
+			DB.obj().compatibilityForEachUser();
+
+			// System.out.println(DB.obj().getUsers().get(1));
+			// DB.obj().getUsers().get(1).calculateAll();
 
 			// System.out.println(JSONValue.toJSONString(DB.obj().getGenres()));
 
@@ -312,7 +311,7 @@ public class Server extends WebSocketServer {
 				if (ws.isLogged()) {
 					ArrayList<MovieGenre> genres = (ArrayList<MovieGenre>) db.getGenres().clone();
 					Collections.sort(genres, MovieGenre.BY_USAGE_DESC);
-					
+
 					JSONObject obj = new JSONObject();
 					obj.put("v", genres);
 					obj.put("t", API.A_LIST_GENRES.getValue());
@@ -324,9 +323,26 @@ public class Server extends WebSocketServer {
 
 			case R_LIST_MOVIES:
 				if (ws.isLogged()) {
+
+					List<Movie> response = db.getMoviesRated(loggedUser,
+							Boolean.parseBoolean(json.get("only_rated").toString()));
+
+					//sort the list by desired order
+					if (json.get("sort_by").equals("name"))
+						Collections.sort(response, Movie.BY_NAME);
+					else if (json.get("sort_by").equals("rating"))
+						Collections.sort(response, Movie.BY_RATING);
+					else if (json.get("sort_by").equals("rating_count"))
+						Collections.sort(response, Movie.BY_RATING_COUNT);
+					else if (json.get("sort_by").equals("year"))
+						Collections.sort(response, Movie.BY_YEAR);
+					else if (json.get("sort_by").equals("genre")) {
+						Collections.sort(response, Movie.BY_GENRE);
+					}
+
 					JSONObject obj = new JSONObject();
-					obj.put("v", db.getMoviesRated(loggedUser,
-							Boolean.parseBoolean(json.get("only_rated").toString())));
+
+					obj.put("v", response);
 					obj.put("t", API.A_LIST_MOVIES.getValue());
 					// System.out.println(obj.toJSONString());
 					ws.send(obj.toJSONString());
@@ -389,8 +405,8 @@ public class Server extends WebSocketServer {
 				if (ws.isLogged()) {
 					Rating rating = Rating.getFromOneToFiveRating((byte) Integer.parseInt(json.get("v")
 							.toString()));
-//					System.out.println(rating);
-//					System.out.println(rating.getValue());
+					// System.out.println(rating);
+					// System.out.println(rating.getValue());
 					loggedUser.rateMovie(Integer.parseInt(json.get("id").toString()), rating.getValue());
 				}
 				break;
@@ -425,14 +441,14 @@ public class Server extends WebSocketServer {
 
 				}
 				break;
-				
-			case R_LIST_REC: 
+
+			case R_LIST_REC:
 				if (ws.isLogged()) {
 					JSONObject obj = new JSONObject();
 					obj.put("v", loggedUser.reccomendations());
 					obj.put("t", API.A_LIST_MOVIES.getValue());
 					// System.out.println(obj.toJSONString());
-					ws.send(obj.toJSONString());					
+					ws.send(obj.toJSONString());
 				}
 				break;
 

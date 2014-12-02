@@ -40,6 +40,9 @@ public class SearchCachesReccomendation {
 		// check if get same result
 		assertEquals(49, user.reccomendations().size());
 
+		// get cached reccomendation results without performance penalty
+		assertEquals(49, user.getReccomended().size());
+
 		//check and rate first recomended movie
 		Movie movie = user.reccomendations().get(0);
 		assertEquals("Scary Movie", movie.getName());
@@ -68,12 +71,12 @@ public class SearchCachesReccomendation {
 		//no cache calculated
 		assertEquals(null, user.getTopCache());
 		
-		//now who is compatible when it's calculated
+		//now who is compatible when cache is calculated
 		user.calculateAll();
 		assertEquals("Andrew Smores", user.getTopCache().get(0).getUser().getFullName());
 
-		//and got reccomended Scary Movie as first choice 
-		assertEquals("Scary Movie", user.reccomendations().get(0).getName());		
+		//and got reccomended as first choice 
+		assertEquals("Once Upon a Time in Mexico", user.reccomendations().get(0).getName());		
 		
 		//make johns rating the same as irene's so they should be very compatible
 		user.removeAllRatings();
@@ -90,7 +93,7 @@ public class SearchCachesReccomendation {
 		
 		//recomendations will recalculate user compatibility cache if needed
 		//and we should get different recomendation
-		assertEquals("Unfaithful", user.reccomendations().get(0).getName());
+		assertEquals("Stick It", user.reccomendations().get(0).getName());
 		int movieForDownVote = user.reccomendations().get(0).getId();
 				
 		//Irene will downvote our top recomended movie.		
@@ -100,7 +103,7 @@ public class SearchCachesReccomendation {
 		assertEquals("Two for the Money", user.reccomendations().get(0).getName());
 	
 
-		//Now everybody who is compatible with john will rate high hish top 5 movie
+		//Now everybody who is compatible with john will rate high his top 5 movie
 		int movieForUpVote = user.reccomendations().get(5).getId();
 		assertEquals("Hairspray",db.getMovie(movieForUpVote).getName());
 		

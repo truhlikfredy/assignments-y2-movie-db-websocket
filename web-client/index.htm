@@ -66,19 +66,28 @@
 
     <!-- ***********************************  USER part of webpage ********************************* -->
     <div id="user" class="defhidmain" >
-      
+
       <div class="ui segment">
 
         <div class="ui tertiary purple menu">
           <a class="active item" id="ubtn_home"> <i class="home icon"></i> Home </a>
-          <a class="item" id="ubtn_movies"> <i class="announcement icon"></i> Movies </a>
-          <a class="item" id="ubtn_rated"> <i class="dashboard icon"></i> Rated </a>
-          <a class="item" id="ubtn_genres"> <i class="folder outline icon"></i> Genres </a>
-<!--          <a class="item" id="ubtn_profile"> <i class="edit outline icon"></i> Edit profile </a>-->
+          <a class="item" id="ubtn_rated"> <i class="bar chart icon"></i> Rated </a>
+          <a class="item" id="ubtn_genres"> <i class="film outline icon"></i> Genres </a>
+          <div class="ui dropdown item" id="ubtn_movies">
+            <i class="announcement icon"></i>List movies<i class="dropdown icon"></i>
+            <div class="menu">
+              <a class="item" id="ubtn_movies_name"><i class="camera retro icon"></i>By name</a>
+              <a class="item" id="ubtn_movies_rating"><i class="bar chart icon"></i>By rating</a>
+              <a class="item" id="ubtn_movies_rating_count"><i class="wifi icon"></i>By rating count</a>
+              <a class="item" id="ubtn_movies_year"><i class="calendar icon"></i>By Year</a>
+              <a class="item" id="ubtn_movies_genre"><i class="film icon"></i>By Genre</a>
+            </div>
+          </div>
+          <!--          <a class="item" id="ubtn_profile"> <i class="edit outline icon"></i> Edit profile </a>-->
           <a class="item" id="ubtn_reccomendations"> <i class="flag outline icon"></i> Reccomendations </a>
 
           <div class="right menu">
-          <a class="item" id="ubtn_logout"> <i class="sign out icon"></i> Logout </a>
+            <a class="item" id="ubtn_logout"> <i class="sign out icon"></i> Logout </a>
             <div class="item">
               <div class="ui transparent icon input">
                 <input type="text" placeholder="Search..." id="search_text">
@@ -87,19 +96,24 @@
             </div>
           </div>
         </div>
-        
-        Terrible<div class="ui large heart rating readonly" data-rating="1" data-max-rating="5"></div>&nbsp;&nbsp;&nbsp;   &nbsp;
-        Didn't like it<div class="ui large heart rating readonly" data-rating="2" data-max-rating="5"></div> &nbsp;&nbsp;&nbsp;&nbsp;
-        OK<div class="ui large heart rating readonly" data-rating="3" data-max-rating="5"></div> &nbsp;&nbsp;&nbsp;&nbsp;
-        Liked it<div class="ui large heart rating readonly" data-rating="4" data-max-rating="5"></div>&nbsp;&nbsp;&nbsp;&nbsp;
+
+        Terrible<div class="ui large heart rating readonly" data-rating="1" data-max-rating="5"></div>
+        &nbsp;&nbsp;&nbsp;   &nbsp;
+        Didn't like it<div class="ui large heart rating readonly" data-rating="2" data-max-rating="5"></div>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        OK<div class="ui large heart rating readonly" data-rating="3" data-max-rating="5"></div>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        Liked it<div class="ui large heart rating readonly" data-rating="4" data-max-rating="5"></div>
+        &nbsp;&nbsp;&nbsp;&nbsp;
         Really liked it<div class="ui large heart rating readonly" data-rating="5" data-max-rating="5"></div>
-        <br><br>
+        <br>
+        <br>
 
         <div id="user_home_tab" class="defhid">
           <div class="ui raised segment">
             <a class="ui red ribbon label">Welcome</a>
             <p>
-              Welcome registered user, click on the menu options or type into search bar and click search icon.     
+              Welcome registered user, click on the menu options or type into search bar and click search icon.
             </p>
             <p align="center">
               <img src="img/db.jpg">
@@ -107,7 +121,7 @@
           </div>
 
         </div>
-        
+
         <div id="user_movies_tab" class="ui segment defhid">
           <div id="list_genres"></div>
           <div id="list_movies"></div>
