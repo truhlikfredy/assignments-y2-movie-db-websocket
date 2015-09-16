@@ -45,8 +45,8 @@ Lines of client code |    400
 
 #How to run and use
 
-Server: ./runServer.sh
-Client: (open in browser) ./web-client/index.htm 
+* Server: **./runServer.sh**
+* Client: (open in browser) **./web-client/index.htm** 
 Client has to have direct file access to HTML files because there is no webserver included.
 
 Check ./data/movies-users.csv to see users logins and passwords, but you can use 
