@@ -1,10 +1,62 @@
-Anton Krug - Movie DB assigment
+# Movie DB - sparse data and algorithm assigment
+
+![first]
+https://raw.githubusercontent.com/truhlikfredy/commitsFromPrivateRepos/master/screenShootsDB/01.png
+
+This is college's 2nd year project. Should be focused on sparse data and recomending movies to you by ratings of other users with similar taste to yours.
+
+# Features
+* WebSocket server (**no** webserver included) tested on Linux.
+* Semantic UI webclient (tested on Linux / Windows browsers).
+* Instant responces thans to websockets.
+* No 3rd party database server required, supported data storage:
+  * Bytestream support
+  * CSV files support
+  * XML
+  * JSON
+* JavaDoc.
+* JUint tests
+* Search can lookup different fields, not just title
+  * Can search content while you type (not needed to press enter/go button)
+* Recomendations given depending on other users which are similar to your taste.
+  * Some aspects of this algortihm are cached for better speed performance
+* Own implementation of sorting / searching (no collection class used)
+* Using library which fills gap between primitive arrays and object collections.
+
+
+## Can display genres
+![UI]
+https://raw.githubusercontent.com/truhlikfredy/commitsFromPrivateRepos/master/screenShootsDB/02.png
+
+
+## Can search genres
+![UI]
+https://raw.githubusercontent.com/truhlikfredy/commitsFromPrivateRepos/master/screenShootsDB/03.png
+
+# Statistics
+
+Number of            | Value   
+:--------------------| ------:
+Classes              |     15 
+Methods              |    175 
+Lines of server code |   1933 
+Lines of client cod  |    400
+
+## Displaying reccomendations
+![UI]
+https://raw.githubusercontent.com/truhlikfredy/commitsFromPrivateRepos/master/screenShootsDB/04.png
+
+
+#How to run and use
 
 Server: ./runServer.sh
-Client: (open in browser) ./web-client/index.htm
+Client: (open in browser) ./web-client/index.htm 
+Client has to have direct file access to HTML files because there is no webserver included.
 
 Check ./data/movies-users.csv to see users logins and passwords, but you can use 
 user pass:user to have regular user and admin pass:admin for administrator.
+
+#Additional assigment related informations
 
 Because of the fact that usually you see more pages than give ratings. And often
 on these pages are reccomendations. This means that more often you will read
