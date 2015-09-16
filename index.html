@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Movie Database - websocket : Seconds year college project. Sparse data and algorithms, instead of GUI there is websocket semantic UI client.">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Movie Database - websocket</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/truhlikfredy/assignments-y2-movie-db-websocket">View on GitHub</a>
+
+          <h1 id="project_title">Movie Database - websocket</h1>
+          <h2 id="project_tagline">Seconds year college project. Sparse data and algorithms, instead of GUI there is websocket semantic UI client.</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/truhlikfredy/assignments-y2-movie-db-websocket/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/truhlikfredy/assignments-y2-movie-db-websocket/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
+<a id="movie-db---sparse-data-and-algorithm-assigment" class="anchor" href="#movie-db---sparse-data-and-algorithm-assigment" aria-hidden="true"><span class="octicon octicon-link"></span></a>Movie DB - sparse data and algorithm assigment</h1>
+
+<p>This is college's 2nd year project. Focused on sparse data and recomending movies to you by ratings of other users with similar taste to yours. Instead of regular GUI decided to do browser UI in semanticUI and communicate to server over websockets with JSON.</p>
+
+<p><img src="https://raw.githubusercontent.com/truhlikfredy/commitsFromPrivateRepos/master/screenShootsDB/01.png" alt="first"></p>
+
+<h1>
+<a id="features" class="anchor" href="#features" aria-hidden="true"><span class="octicon octicon-link"></span></a>Features</h1>
+
+<ul>
+<li>WebSocket server (<strong>no</strong> webserver included) tested on Linux.</li>
+<li>Semantic UI webclient (tested on Linux / Windows browsers).</li>
+<li>Instant responces thans to websockets.</li>
+<li>No 3rd party database server required, supported data storage:
+
+<ul>
+<li>Bytestream support</li>
+<li>CSV files support</li>
+<li>XML</li>
+<li>JSON</li>
+</ul>
+</li>
+<li>JavaDoc.</li>
+<li>JUint tests</li>
+<li>Search can lookup different fields, not just title
+
+<ul>
+<li>Can search content while you type (not needed to press enter/go button)</li>
+</ul>
+</li>
+<li>Recomendations given depending on other users which are similar to your taste.
+
+<ul>
+<li>Some aspects of this algortihm are cached for better speed performance</li>
+</ul>
+</li>
+<li>Own implementation of sorting / searching (no collection class used)</li>
+<li>Using library which fills gap between primitive arrays and object collections.</li>
+</ul>
+
+<h2>
+<a id="can-display-genres" class="anchor" href="#can-display-genres" aria-hidden="true"><span class="octicon octicon-link"></span></a>Can display genres</h2>
+
+<p><img src="https://raw.githubusercontent.com/truhlikfredy/commitsFromPrivateRepos/master/screenShootsDB/02.png" alt="UI"></p>
+
+<h2>
+<a id="can-search-genres" class="anchor" href="#can-search-genres" aria-hidden="true"><span class="octicon octicon-link"></span></a>Can search genres</h2>
+
+<p><img src="https://raw.githubusercontent.com/truhlikfredy/commitsFromPrivateRepos/master/screenShootsDB/03.png" alt="UI"></p>
+
+<h1>
+<a id="statistics" class="anchor" href="#statistics" aria-hidden="true"><span class="octicon octicon-link"></span></a>Statistics</h1>
+
+<table>
+<thead>
+<tr>
+<th align="left">Number of</th>
+<th align="right">Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">Classes</td>
+<td align="right">15</td>
+</tr>
+<tr>
+<td align="left">Methods</td>
+<td align="right">175</td>
+</tr>
+<tr>
+<td align="left">Lines of server code</td>
+<td align="right">1933</td>
+</tr>
+<tr>
+<td align="left">Lines of client code</td>
+<td align="right">400</td>
+</tr>
+</tbody>
+</table>
+
+<h2>
+<a id="displaying-reccomendations" class="anchor" href="#displaying-reccomendations" aria-hidden="true"><span class="octicon octicon-link"></span></a>Displaying reccomendations</h2>
+
+<p><img src="https://raw.githubusercontent.com/truhlikfredy/commitsFromPrivateRepos/master/screenShootsDB/04.png" alt="UI"></p>
+
+<h1>
+<a id="how-to-run-and-use" class="anchor" href="#how-to-run-and-use" aria-hidden="true"><span class="octicon octicon-link"></span></a>How to run and use</h1>
+
+<ul>
+<li>Server: <strong>./runServer.sh</strong>
+</li>
+<li>Client: (open in browser) <strong>./web-client/index.htm</strong> 
+Client has to have direct file access to HTML files because there is no webserver included.</li>
+</ul>
+
+<p>Check ./data/movies-users.csv to see users logins and passwords, but you can use 
+user pass:user to have regular user and admin pass:admin for administrator.</p>
+
+<h1>
+<a id="additional-assigment-related-informations" class="anchor" href="#additional-assigment-related-informations" aria-hidden="true"><span class="octicon octicon-link"></span></a>Additional assigment related informations</h1>
+
+<p>Because of the fact that usually you see more pages than give ratings. And often
+on these pages are reccomendations. This means that more often you will read
+the reccomendation than you will write. So I decided to calculated recomendations
+when change the data on write (giving rating) and keep stored results in cache.</p>
+
+<p>Like de-normalization of data in mongoDB and other no-SQL databases I decided to
+have some data redudant just to get faster responses. And like google or twitter
+I decide to not give 100% of time 100% acurate results. Some results are cached
+and some processes stopped after "good enough" results so in case of big 
+database it doesn't have to proccess all users and movies each time. But will
+returns acceptable results even they might be off from 100% acurate results.
+One workable strategy could be to use cached in high load and high trafic situations,
+but recalculate and populate caches with fresh data in off peak hours (maybe durning
+night).</p>
+
+<p>Ratings are kept in special format. Basicaly it's simple array of primitive types.</p>
+
+<p>Instead of Class Integer primitive type would int be used. But now we can save even
+more and insted of int, just use byte. Score doesn't have to be 32bit (because int 
+is 4x bigger and not needed). Plus not objects overhead saves performance &amp; memorry
+ as well. And they are designed as sparse data so no wasting no matter how many movies
+are in database.</p>
+
+<p>Using libary meant for smaller footprint and
+faster accessing. Ratings are kept as 2d vector format in almost empty matrix. So 
+even if database is containing milion movies. If user rated just 10 movies, just 10 entries
+are kept in memorry. Some arrayList implementations resize to contain much more 
+reserved entries for future adds. This one still is still between  the smallest
+ones, but the speed is the fastest. Benchmark with HashMaps is here:</p>
+
+<p><a href="http://cern.antonkrug.eu">http://cern.antonkrug.eu</a></p>
+
+<p>Becuase I kept 2 separate lists as form of 2d vector and they have to be kept 
+aligned. This means that I had to write my custom quick sort method. But then I 
+could use cerns binary search methods. These classes support of multiple levels 
+of dirtines. For little bit dirty list a merge sort could be used, for worst case
+scenario quick sort is there.</p>
+
+<p>As practice there is findGenreByName in DB class which is own binary search. </p>
+
+<p>I implemented cache which will stop after some threshold (so enough high marked 
+matched users were found). So in case the database would be huge this would stop
+and woudn't process everything. Then results are ordered and just the cache is 
+populated with the best ones (again it's possible to change and tweek these thersholds).
+Even this cache is keept for each user and it's limited in number, but populated with
+good matches. This cache could be set dirty and purged it by admin. So you could
+force to repopulate it from scratch maybe with new matches. Or just force existing
+matches to update their matching score.</p>
+
+<p>For future it's possible to be extended to contain very bad matches (negative 
+ones, if there is user which has exactly oposite taste in movies, this can be used
+and recomend exactly the movies he hates. And still yeld good results for your
+reccomendation.</p>
+
+<p>Some classes like Cache, Movie or MovieGenre have comparators, so you can sort them
+by natural order, by usage, ratings or other factors.</p>
+
+<p>Some classes have serialVersionUID. Generate new ID if you will change
+anything in this class, if you change stuff often then comment it out and let
+the compiler generate one for you which will change automaticly if you will do
+any modifications to the class.</p>
+
+<p>CSV, XML, bytestream and JSON are used for data. CSV is meant for import even export
+is implemented (passwords encryption will lose plain text passwords).</p>
+
+<p>XML works as well, but the object references can make it into big file
+so bytestream is prefered and setup as default. JSON is used for API and supports 
+API calls where it returns data in JSON, so other aplications can use this as data 
+inport and export as well.</p>
+
+<p>Read the README file in ./bake folder for all shell script tools lincense.</p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Movie Database - websocket maintained by <a href="https://github.com/truhlikfredy">truhlikfredy</a></p>
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
