@@ -1,9 +1,8 @@
 # Movie DB - sparse data and algorithm assigment
 
-![first]
-https://raw.githubusercontent.com/truhlikfredy/commitsFromPrivateRepos/master/screenShootsDB/01.png
+This is college's 2nd year project. Focused on sparse data and recomending movies to you by ratings of other users with similar taste to yours. Instead of regular GUI decided to do browser UI in semanticUI and communicate to server over websockets with JSON.
 
-This is college's 2nd year project. Should be focused on sparse data and recomending movies to you by ratings of other users with similar taste to yours.
+![first](https://raw.githubusercontent.com/truhlikfredy/commitsFromPrivateRepos/master/screenShootsDB/01.png)
 
 # Features
 * WebSocket server (**no** webserver included) tested on Linux.
@@ -25,13 +24,11 @@ This is college's 2nd year project. Should be focused on sparse data and recomen
 
 
 ## Can display genres
-![UI]
-https://raw.githubusercontent.com/truhlikfredy/commitsFromPrivateRepos/master/screenShootsDB/02.png
+![UI](https://raw.githubusercontent.com/truhlikfredy/commitsFromPrivateRepos/master/screenShootsDB/02.png)
 
 
 ## Can search genres
-![UI]
-https://raw.githubusercontent.com/truhlikfredy/commitsFromPrivateRepos/master/screenShootsDB/03.png
+![UI](https://raw.githubusercontent.com/truhlikfredy/commitsFromPrivateRepos/master/screenShootsDB/03.png)
 
 # Statistics
 
@@ -40,11 +37,10 @@ Number of            | Value
 Classes              |     15 
 Methods              |    175 
 Lines of server code |   1933 
-Lines of client cod  |    400
+Lines of client code |    400
 
 ## Displaying reccomendations
-![UI]
-https://raw.githubusercontent.com/truhlikfredy/commitsFromPrivateRepos/master/screenShootsDB/04.png
+![UI](https://raw.githubusercontent.com/truhlikfredy/commitsFromPrivateRepos/master/screenShootsDB/04.png)
 
 
 #How to run and use
