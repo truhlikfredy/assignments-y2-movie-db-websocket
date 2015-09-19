@@ -45,7 +45,7 @@ Lines of client code |    400
 
 #How to run and use
 
-* Server: **./runServer.sh**
+* Server: **./runServer.sh** (location from where it's run is important, needs to access **data/database.dat**)
 * Client: (open in browser) **./web-client/index.htm** 
 Client has to have direct file access to HTML files because there is no webserver included.
 
