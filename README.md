@@ -2,7 +2,7 @@
 
 This is college's 2nd year project. Focused on sparse data and recomending movies to you by ratings of other users with similar taste to yours. Instead of regular GUI decided to do browser UI in semanticUI and communicate to server over websockets with JSON.
 
-![first](https://raw.githubusercontent.com/truhlikfredy/commitsFromPrivateRepos/master/screenShootsDB/01.png)
+![first](/screenShoots/01.png)
 
 # Features
 * WebSocket server (**no** webserver included) tested on Linux.
@@ -24,11 +24,11 @@ This is college's 2nd year project. Focused on sparse data and recomending movie
 
 
 ## Can display genres
-![UI](https://raw.githubusercontent.com/truhlikfredy/commitsFromPrivateRepos/master/screenShootsDB/02.png)
+![UI](/screenShoots/02.png)
 
 
 ## Can search genres
-![UI](https://raw.githubusercontent.com/truhlikfredy/commitsFromPrivateRepos/master/screenShootsDB/03.png)
+![UI](/screenShoots/03.png)
 
 # Statistics
 
@@ -40,7 +40,7 @@ Lines of server code |   1933
 Lines of client code |    400
 
 ## Displaying reccomendations
-![UI](https://raw.githubusercontent.com/truhlikfredy/commitsFromPrivateRepos/master/screenShootsDB/04.png)
+![UI](/screenShoots/04.png)
 
 
 #How to run and use
